@@ -2,7 +2,7 @@ using Utils.Noise.Profiles;
 
 namespace Utils.Noise
 {
-    public class FastNoise2D
+    public sealed class FastNoise2D
     {
         private const float DefaultCanvasSize = 1000.0f;
 

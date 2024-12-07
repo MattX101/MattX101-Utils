@@ -1,0 +1,16 @@
+{
+    "name": "Utils.FastNoise",
+    "rootNamespace": "Utils.FastNoise",
+    "references": [
+        "GUID:7e5d1fa1f43a52c42808d72d811c0abd"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

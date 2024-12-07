@@ -4,7 +4,7 @@ using System;
 namespace Utils.Noise.Profiles
 {
     [Serializable]
-    public class NoiseProfile : Profile
+    public sealed class NoiseProfile : Profile
     {
         [Header("Warp")]
         public bool warp = false;

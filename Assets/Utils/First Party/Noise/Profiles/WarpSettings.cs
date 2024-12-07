@@ -4,7 +4,7 @@ using System;
 namespace Utils.Noise.Profiles
 {
     [Serializable]
-    public class WarpProfile : Profile
+    public sealed class WarpProfile : Profile
     {
         [Header("Warp")]
         public float warpAmp = 1.0f;
