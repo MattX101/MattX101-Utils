@@ -1,10 +1,9 @@
-# if UNITY_EDITOR
 using UnityEngine;
 using TMPro;
 
 namespace Utils.IO
 {
-    public class SelectionDemo : MonoBehaviour
+    public sealed class SelectionDemo : MonoBehaviour
     {
         private IOSelection _ioSelection;
 
@@ -32,4 +31,3 @@ namespace Utils.IO
         }
     }
 }
-#endif

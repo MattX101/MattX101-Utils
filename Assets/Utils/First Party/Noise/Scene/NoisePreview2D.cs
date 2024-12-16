@@ -1,11 +1,10 @@
-# if UNITY_EDITOR
 using UnityEngine;
 using UnityEngine.UI;
 using Utils.Noise.Profiles;
 
 namespace Utils.Noise.Preview
 {
-    internal class NoisePreview2D : MonoBehaviour
+    internal sealed class NoisePreview2D : MonoBehaviour
     {
         [Header("Profiles")]
         [SerializeField] private NoiseProfile _noiseProfile;
@@ -93,7 +92,6 @@ namespace Utils.Noise.Preview
             }
 
             _texture = new Texture2D(_cameraWidth, _cameraHeight);
-            _texture.filterMode = FilterMode.Point;
             _texture.wrapMode = TextureWrapMode.Clamp;
             _texture.SetPixels(_colorMap);
             _texture.Apply();
@@ -105,4 +103,3 @@ namespace Utils.Noise.Preview
         }
     }
 }
-# endif

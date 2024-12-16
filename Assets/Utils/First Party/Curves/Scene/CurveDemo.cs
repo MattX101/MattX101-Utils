@@ -1,4 +1,3 @@
-# if UNITY_EDITOR
 using UnityEngine;
 using UnityEngine.UI;
 using System;
@@ -6,7 +5,7 @@ using TMPro;
 
 namespace Utils.Curves
 {
-    public class CurveDemo : MonoBehaviour
+    public sealed class CurveDemo : MonoBehaviour
     {
         [SerializeField]
         private LineRenderer _lineRenderer;
@@ -146,4 +145,3 @@ namespace Utils.Curves
         }
     }
 }
-#endif

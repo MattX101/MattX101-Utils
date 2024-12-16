@@ -1,0 +1,16 @@
+{
+    "name": "Utils.Filters",
+    "rootNamespace": "",
+    "references": [
+        "GUID:600dc5895527919418a524c8c5b3bfce"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

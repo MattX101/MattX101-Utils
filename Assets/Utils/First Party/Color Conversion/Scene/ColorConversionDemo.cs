@@ -1,4 +1,3 @@
-# if UNITY_EDITOR
 using Utils.Colors.Model;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +6,7 @@ using TMPro;
 
 namespace Utils.Colors
 {
-    public class ColorConversionDemo : MonoBehaviour
+    public sealed class ColorConversionDemo : MonoBehaviour
     {
         [Header("Dropdowns")]
         [SerializeField] private TMP_Dropdown _currentModelDropdown;
@@ -168,4 +167,3 @@ namespace Utils.Colors
         }
     }
 }
-#endif
