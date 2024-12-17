@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Utils.Filters.Blend
+namespace Utils.Colors.Blend
 {
     public sealed class BlendingDemo : MonoBehaviour
     {

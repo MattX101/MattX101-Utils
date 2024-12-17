@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Utils.Filters.Blend
+namespace Utils.Colors.Blend
 {
     internal static class Formulas
     {

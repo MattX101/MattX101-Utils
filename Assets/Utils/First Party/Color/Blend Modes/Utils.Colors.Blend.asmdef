@@ -1,6 +1,6 @@
 {
-    "name": "Utils.Filters",
-    "rootNamespace": "",
+    "name": "Utils.Colors.Blend",
+    "rootNamespace": "Utils.Colors.Blend",
     "references": [
         "GUID:600dc5895527919418a524c8c5b3bfce"
     ],

@@ -1,5 +1,5 @@
-namespace Utils.Filters.Blend
-{ 
+namespace Utils.Colors.Blend
+{
     public enum Blends
     {
         /// Arithmetic

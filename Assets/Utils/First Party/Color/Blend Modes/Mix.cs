@@ -1,8 +1,7 @@
-﻿using Utils.Colors;
-using Utils.Colors.Model;
+﻿using Utils.Colors.Model;
 using UnityEngine;
 
-namespace Utils.Filters.Blend
+namespace Utils.Colors.Blend
 {
     public static class Mix
     {
