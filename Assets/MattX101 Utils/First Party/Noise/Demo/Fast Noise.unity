@@ -167,58 +167,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f347e5a52d46dc47952057fbca8e597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _noiseShader: {fileID: 7200000, guid: b0d94f2bf20d16540b02c7d43637db97, type: 3}
   _noiseProfile:
     seed: 0
-    universalScale: 0.1
-    scale: {x: 1, y: 1, z: 1}
-    offset: {x: 0, y: 0, z: 0}
-    type: 0
-    fractal: 2
-    octaves: 4
-    lacunarity: 2.5
-    gain: 0.3
-    weightedStregth: 0
-    pingPongStregth: 2
-    cellularReturn: 1
-    cellularDistance: 0
-    jitter: 1
-    warp: 0
-  _warpProfile:
-    seed: 1
     universalScale: 0.04
     scale: {x: 1, y: 1, z: 1}
     offset: {x: 0, y: 0, z: 0}
     type: 0
     fractal: 1
-    octaves: 8
-    lacunarity: 3
-    gain: 0.5
-    weightedStregth: 0
-    pingPongStregth: 2
+    octaves: 6
+    lacunarity: 2
+    gain: 0.4
+    weightedStrength: 0.25
+    pingPongStrength: 2
     cellularReturn: 1
     cellularDistance: 0
     jitter: 1
-    warpAmp: 300
+    warp: 1
+  _warpProfile:
+    seed: 0
+    universalScale: 0.2
+    scale: {x: 2, y: 0.6, z: 1}
+    offset: {x: 1000, y: -800, z: 0}
+    type: 3
+    fractal: 2
+    octaves: 5
+    lacunarity: 3
+    gain: 0.6
+    weightedStrength: 0.5
+    pingPongStrength: 2
+    cellularReturn: 1
+    cellularDistance: 0
+    jitter: 1
+    warpAmp: 160
+  _useGPU: 1
   _toggle3D: 1
   _puase: 0
-  _increment: 100
-  _downScaler: 8
+  _increment: 2.5
+  _downScaler: 4
   _colorPalette:
     serializedVersion: 2
-    key0: {r: 0, g: 0, b: 1, a: 1}
-    key1: {r: 0, g: 1, b: 1, a: 1}
-    key2: {r: 0, g: 1, b: 1, a: 0}
-    key3: {r: 0, g: 0, b: 1, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
+    key0: {r: 0, g: 0.2390244, b: 1, a: 1}
+    key1: {r: 0, g: 0.87411356, b: 1, a: 1}
+    key2: {r: 0.03551086, g: 0.3584906, b: 0.33010116, a: 0}
+    key3: {r: 0.1, g: 0.1, b: 0.25, a: 0}
+    key4: {r: 0.03229074, g: 0, b: 0.8584906, a: 0}
+    key5: {r: 0.101960786, g: 0.101960786, b: 0.2509804, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 31129
-    ctime2: 34406
-    ctime3: 65535
-    ctime4: 0
-    ctime5: 0
+    ctime1: 13107
+    ctime2: 22937
+    ctime3: 39321
+    ctime4: 52428
+    ctime5: 65535
     ctime6: 0
     ctime7: 0
     atime0: 0
@@ -231,7 +233,7 @@ MonoBehaviour:
     atime7: 0
     m_Mode: 0
     m_ColorSpace: -1
-    m_NumColorKeys: 4
+    m_NumColorKeys: 6
     m_NumAlphaKeys: 2
   _preview: {fileID: 1424845645}
 --- !u!1 &863358004

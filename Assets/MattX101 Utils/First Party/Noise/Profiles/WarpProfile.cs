@@ -9,48 +9,24 @@ namespace Utils.Noise.Profiles
         [Header("Warp")]
         public float warpAmp = 1.0f;
 
-        public void Init(NoiseProfile noiseProfile)
+        public void Init()
         {
-            FastNoise.SetSeed(noiseProfile.seed);
-            FastNoise.SetFrequency(0.01f);
-            FastNoise.SetNoiseType(noiseProfile.type);
+            FastNoise.SetSeed(seed);
+            FastNoise.SetFrequency(Frequency);
+            FastNoise.SetNoiseType(type);
 
             // Fractal
-            FastNoise.SetFractalType(noiseProfile.fractal);
-            FastNoise.SetFractalOctaves(noiseProfile.octaves);
-            FastNoise.SetFractalLacunarity(noiseProfile.lacunarity);
-            FastNoise.SetFractalGain(noiseProfile.gain);
-            FastNoise.SetFractalWeightedStrength(noiseProfile.weightedStregth);
-            FastNoise.SetFractalPingPongStrength(noiseProfile.pingPongStregth);
+            FastNoise.SetFractalType(fractal);
+            FastNoise.SetFractalOctaves(octaves);
+            FastNoise.SetFractalLacunarity(lacunarity);
+            FastNoise.SetFractalGain(gain);
+            FastNoise.SetFractalWeightedStrength(weightedStrength);
+            FastNoise.SetFractalPingPongStrength(pingPongStrength);
 
             // Cellular
             FastNoise.SetCellularReturnType(cellularReturn);
-            FastNoise.SetCellularDistanceFunction(noiseProfile.cellularDistance);
-            FastNoise.SetCellularJitter(noiseProfile.jitter);
-
-            // Warp
-            if (noiseProfile.warp)
-            {
-                FastNoise.SetSeed(seed);
-                FastNoise.SetFrequency(0.01f);
-                FastNoise.SetNoiseType(type);
-
-                // Fractal
-                FastNoise.SetFractalType(fractal);
-                FastNoise.SetFractalOctaves(octaves);
-                FastNoise.SetFractalLacunarity(lacunarity);
-                FastNoise.SetFractalGain(gain);
-                FastNoise.SetFractalWeightedStrength(weightedStregth);
-                FastNoise.SetFractalPingPongStrength(pingPongStregth);
-
-                // Cellular
-                FastNoise.SetCellularReturnType(cellularReturn);
-                FastNoise.SetCellularDistanceFunction(cellularDistance);
-                FastNoise.SetCellularJitter(jitter);
-
-                // Warp
-                FastNoise.SetDomainWarpAmp(warpAmp);
-            }
+            FastNoise.SetCellularDistanceFunction(cellularDistance);
+            FastNoise.SetCellularJitter(jitter);
         }
 
         internal float GetWarp2D(float x, float y)

@@ -12,7 +12,7 @@ namespace Utils.Noise.Profiles
         public void Init()
         {
             FastNoise.SetSeed(seed);
-            FastNoise.SetFrequency(0.01f);
+            FastNoise.SetFrequency(Frequency);
             FastNoise.SetNoiseType(type);
 
             // Fractal
@@ -20,8 +20,8 @@ namespace Utils.Noise.Profiles
             FastNoise.SetFractalOctaves(octaves);
             FastNoise.SetFractalLacunarity(lacunarity);
             FastNoise.SetFractalGain(gain);
-            FastNoise.SetFractalWeightedStrength(weightedStregth);
-            FastNoise.SetFractalPingPongStrength(pingPongStregth);
+            FastNoise.SetFractalWeightedStrength(weightedStrength);
+            FastNoise.SetFractalPingPongStrength(pingPongStrength);
 
             // Cellular
             FastNoise.SetCellularReturnType(cellularReturn);

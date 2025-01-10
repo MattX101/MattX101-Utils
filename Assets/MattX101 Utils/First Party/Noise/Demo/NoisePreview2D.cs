@@ -6,12 +6,17 @@ namespace Utils.Noise.Preview
 {
     internal sealed class NoisePreview2D : MonoBehaviour
     {
+        private FastNoise2D _noise;
+
+        [Header("Shader"), SerializeField]
+        private ComputeShader _noiseShader;
+
         [Header("Profiles")]
         [SerializeField] private NoiseProfile _noiseProfile;
         [SerializeField] private WarpProfile _warpProfile;
 
         [SerializeField]
-        private bool _toggle3D = true, _puase = true;
+        private bool _useGPU = false, _toggle3D = true, _puase = true;
 
         [Space]
 
@@ -32,8 +37,6 @@ namespace Utils.Noise.Preview
         private Camera _camera;
         private int _cameraWidth, _cameraHeight;
 
-        private FastNoise2D _fastNoise;
-
         private float[] _noiseMap;
         private Color[] _colorMap;
 
@@ -41,8 +44,10 @@ namespace Utils.Noise.Preview
 
         void Awake()
         {
+            NoiseShader.Shader = _noiseShader;
+
             _camera = FindObjectOfType<Camera>();
-            _fastNoise = new FastNoise2D();
+            _noise = new FastNoise2D();
         }
 
         private void Update()
@@ -57,42 +62,25 @@ namespace Utils.Noise.Preview
 
             if (_noiseProfile.warp)
             {
-                _warpProfile.Init(_noiseProfile);
-
-                if (_toggle3D)
-                {
-                    _fastNoise.WarpedNoise3DToMap2D(ref _noiseMap, _cameraWidth, _cameraHeight, _noiseProfile, _warpProfile);
-                }
-                else
-                {
-                    _fastNoise.WarpedNoise2DToMap2D(ref _noiseMap, _cameraWidth, _cameraHeight, _noiseProfile, _warpProfile);
-                }
+                _noiseProfile.Init();
+                _warpProfile.Init();
             }
             else
             {
                 _noiseProfile.Init();
-
-                if (_toggle3D)
-                {
-                    _fastNoise.Noise3DToMap2D(ref _noiseMap, _cameraWidth, _cameraHeight, _noiseProfile);
-                }
-                else
-                {
-                    _fastNoise.Noise2DToMap2D(ref _noiseMap, _cameraWidth, _cameraHeight, _noiseProfile);
-                }
             }
 
+            _noise.Generate(ref _noiseMap, _cameraWidth, _cameraHeight, _noiseProfile, _warpProfile, _toggle3D, _useGPU);
+
             _colorMap = new Color[_cameraWidth * _cameraHeight];
-            for (int y = 0, i = 0; y < _cameraHeight; y++)
+            for (int i = 0; i < _colorMap.Length; i++)
             {
-                for (int x = 0; x < _cameraWidth; x++, i++)
-                {
-                    _colorMap[i] = _colorPalette.Evaluate(_noiseMap[i]);
-                }
+                _colorMap[i] = _colorPalette.Evaluate(_noiseMap[i]);
             }
 
             _texture = new Texture2D(_cameraWidth, _cameraHeight);
             _texture.wrapMode = TextureWrapMode.Clamp;
+            _texture.filterMode = FilterMode.Point;
             _texture.SetPixels(_colorMap);
             _texture.Apply();
 

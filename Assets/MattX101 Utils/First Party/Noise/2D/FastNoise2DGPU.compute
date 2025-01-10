@@ -1,0 +1,194 @@
+#pragma kernel Noise2D
+#pragma kernel Noise3D
+#pragma kernel WarpNoise2D
+#pragma kernel WarpNoise3D
+
+#include "../Libraries/FastNoiseLite.hlsl"
+
+int resX, resY;
+float halfResX, halfResY;
+
+RWStructuredBuffer<float> noise;
+
+// |-------|
+// | Noise |
+// |-------|
+
+fnl_state noiseState;
+
+// Noise
+int seed;
+float frequency;
+float2 scale;
+float3 offset;
+int noiseType;
+
+// Fractal
+int fractalType;
+int octaves;
+float lacunarity;
+float gain;
+float weightedStrength;
+float pingPong;
+
+// Cellular
+int cellularDistanceFunction;
+int cellularReturnType;
+float jitter;
+
+void NoiseInit()
+{
+    fnlCreateState(seed);
+    
+    noiseState.seed = seed;
+    noiseState.frequency = frequency;
+    noiseState.noise_type = noiseType;
+    noiseState.rotation_type_3d = 0;
+    noiseState.fractal_type = fractalType;
+    noiseState.octaves = octaves;
+    noiseState.lacunarity = lacunarity;
+    noiseState.gain = gain;
+    noiseState.weighted_strength = weightedStrength;
+    noiseState.ping_pong_strength = pingPong;
+    noiseState.cellular_distance_func = cellularDistanceFunction;
+    noiseState.cellular_return_type = cellularReturnType;
+    noiseState.cellular_jitter_mod = jitter;
+}
+
+// |-------|
+// | Noise |
+// |-------|
+
+// |------|
+// | Warp |
+// |------|
+
+fnl_state warpState;
+
+// Warp
+float warpAmp;
+
+// Warp Noise
+int warpSeed;
+float warpFrequency;
+float2 warpScale;
+float3 warpOffset;
+int warpNoiseType;
+
+// Warp Fractal
+int warpFractalType;
+int warpOctaves;
+float warpLacunarity;
+float warpGain;
+float warpWeightedStrength;
+float warpPingPong;
+
+// Warp Cellular
+int warpCellularDistanceFunction;
+int warpCellularReturnType;
+float warpJitter;
+
+void WarpInit()
+{
+    fnlCreateState(seed);
+    
+    warpState.seed = warpSeed;
+    warpState.frequency = warpFrequency;
+    warpState.noise_type = warpNoiseType;
+    warpState.rotation_type_3d = 0;
+    warpState.fractal_type = warpFractalType;
+    warpState.octaves = warpOctaves;
+    warpState.lacunarity = warpLacunarity;
+    warpState.gain = warpGain;
+    warpState.weighted_strength = warpWeightedStrength;
+    warpState.ping_pong_strength = warpPingPong;
+    warpState.cellular_distance_func = warpCellularDistanceFunction;
+    warpState.cellular_return_type = warpCellularReturnType;
+    warpState.cellular_jitter_mod = warpJitter;
+}
+
+// |------|
+// | Warp |
+// |------|
+
+int Index(int x, int y)
+{
+    if (x >= resX)
+        return -1;
+    
+    if (y >= resY)
+        return -1;
+    
+    return y * resX + x;
+}
+
+float NoisePosX(float x) { return ((x - halfResX) / scale.x) + offset.x; }
+float NoisePosY(float y) { return ((y - halfResY) / scale.y) + offset.y; }
+
+float WarpPosX(float x) { return ((x - halfResX) / warpScale.x) + warpOffset.x; }
+float WarpPosY(float y) { return ((y - halfResY) / warpScale.y) + warpOffset.y; }
+
+[numthreads(32, 32, 1)]
+void Noise2D(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    noise[index] = (fnlGetNoise2D(noiseState, NoisePosX(id.x), NoisePosY(id.y)) + 1) / 2;
+}
+
+[numthreads(32, 32, 1)]
+void Noise3D(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    noise[index] = (fnlGetNoise3D(noiseState, NoisePosX(id.x), NoisePosY(id.y), offset.z) + 1) / 2;
+}
+
+[numthreads(32, 32, 1)]
+void WarpNoise2D(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    WarpInit();
+    
+    float xNoisePos = NoisePosX(id.x);
+    float yNoisePos = NoisePosY(id.y);
+        
+    noise[index] =
+    (fnlGetNoise2D(
+        noiseState, 
+        WarpPosX(id.x) + (fnlGetNoise2D(warpState, xNoisePos, yNoisePos) * warpAmp),
+        WarpPosY(id.y) + (fnlGetNoise2D(warpState, yNoisePos, xNoisePos) * warpAmp))
+    + 1) / 2;
+}
+
+[numthreads(32, 32, 1)]
+void WarpNoise3D(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    WarpInit();
+    
+    float xNoisePos = NoisePosX(id.x);
+    float yNoisePos = NoisePosY(id.y);
+        
+    noise[index] =
+    (fnlGetNoise3D(
+        noiseState,
+        WarpPosX(id.x) + (fnlGetNoise3D(warpState, xNoisePos, yNoisePos, warpOffset.z) * warpAmp),
+        WarpPosY(id.y) + (fnlGetNoise3D(warpState, yNoisePos, xNoisePos, warpOffset.z) * warpAmp),
+        offset.z)
+    + 1) / 2;
+}
