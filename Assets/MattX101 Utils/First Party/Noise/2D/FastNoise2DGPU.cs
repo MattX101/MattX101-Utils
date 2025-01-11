@@ -3,50 +3,51 @@ using Utils.Noise.Profiles;
 
 namespace Utils.Noise
 {
-    internal static class FastNoise2DGPU
+    public static class FastNoise2DGPU
     {
         private const float DefaultCanvasSize = 1000.0f;
 
-        internal static void GenerateNoise(ref float[] noiseMap, int resX, int resY, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
+        public static ComputeShader Shader
+        {
+            get;
+            set;
+        }
+
+        public static void GenerateNoise(ref ComputeBuffer noiseBuffer, int resX, int resY, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
             float ratioX = DefaultCanvasSize / (float)resX;
             float ratioY = DefaultCanvasSize / (float)resY;
 
-            ComputeBuffer buffer = new ComputeBuffer(noiseMap.Length, sizeof(float));
-
-            NoiseShader.Shader.SetInt("resX", resX);
-            NoiseShader.Shader.SetFloat("resY", resY);
-            NoiseShader.Shader.SetFloat("halfResX", (float)resX / 2.0f);
-            NoiseShader.Shader.SetFloat("halfResY", (float)resY / 2.0f);
+            Shader.SetInt("resX", resX);
+            Shader.SetFloat("resY", resY);
+            Shader.SetFloat("halfResX", (float)resX / 2.0f);
+            Shader.SetFloat("halfResY", (float)resY / 2.0f);
 
             int kernel = 0;
             if (noiseProfile.warp)
             {
-                InitNoiseProfile(NoiseShader.Shader, noiseProfile, ratioX, ratioY);
-                InitWarpProfile(NoiseShader.Shader, warpProfile, ratioX, ratioY);
+                InitNoiseProfile(Shader, noiseProfile, ratioX, ratioY);
+                InitWarpProfile(Shader, warpProfile, ratioX, ratioY);
 
-                kernel = is3D ? NoiseShader.Shader.FindKernel("WarpNoise3D") : NoiseShader.Shader.FindKernel("WarpNoise2D");
+                kernel = is3D ? Shader.FindKernel("WarpNoise3D") : Shader.FindKernel("WarpNoise2D");
             }
             else
             {
-                InitNoiseProfile(NoiseShader.Shader, noiseProfile, ratioX, ratioY);
+                InitNoiseProfile(Shader, noiseProfile, ratioX, ratioY);
 
-                kernel = is3D ? NoiseShader.Shader.FindKernel("Noise3D") : NoiseShader.Shader.FindKernel("Noise2D");
+                kernel = is3D ? Shader.FindKernel("Noise3D") : Shader.FindKernel("Noise2D");
             }
 
-            NoiseShader.Shader.SetBuffer(kernel, "noise", buffer);
+            Shader.SetBuffer(kernel, "noise", noiseBuffer);
 
-            NoiseShader.Shader.Dispatch(
+            Shader.Dispatch(
                 kernel,
                 Mathf.CeilToInt(resX / 32.0f),
                 Mathf.CeilToInt(resY / 32.0f),
                 1);
-
-            buffer.GetData(noiseMap);
-            buffer.Release();
         }
 
-        internal static void InitNoiseProfile(ComputeShader noiseShader, NoiseProfile noiseProfile, float ratioX, float ratioY)
+        private static void InitNoiseProfile(ComputeShader noiseShader, NoiseProfile noiseProfile, float ratioX, float ratioY)
         {
             // Noise
             noiseShader.SetInt("seed", noiseProfile.seed);
@@ -72,7 +73,7 @@ namespace Utils.Noise
             noiseShader.SetFloat("jitter", noiseProfile.jitter);
         }
 
-        internal static void InitWarpProfile(ComputeShader noiseShader, WarpProfile warpProfile, float ratioX, float ratioY)
+        private static void InitWarpProfile(ComputeShader noiseShader, WarpProfile warpProfile, float ratioX, float ratioY)
         {
             noiseShader.SetFloat("warpAmp", warpProfile.warpAmp);
 

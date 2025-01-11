@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Utils.Colors.Coloring
 {
-    public class ChannelColoringDemo : MonoBehaviour
+    public sealed class ChannelColoringDemo : MonoBehaviour
     {
         [SerializeField]
         private ComputeShader _shader;
@@ -53,7 +53,10 @@ namespace Utils.Colors.Coloring
                     ComputeBuffer colorsBuffer = new ComputeBuffer(colors.Length, sizeof(float) * 4);
                     colorsBuffer.SetData(colors);
 
-                    Coloring.ChannelColorigGPU(ref colors, colorsBuffer, _channel, _color);
+                    Coloring.ChannelColorigGPU(ref colorsBuffer, _channel, _color);
+
+                    colorsBuffer.GetData(colors);
+                    colorsBuffer.Release();
                 }
                 else
                 {

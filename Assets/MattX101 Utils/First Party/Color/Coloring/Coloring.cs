@@ -6,7 +6,11 @@ namespace Utils.Colors.Coloring
     {
         private const int InterpolationGradientPoints = 128;
 
-        public static ComputeShader Shader;
+        public static ComputeShader Shader
+        {
+            get;
+            set;
+        }
 
         public enum Channel
         {
@@ -34,7 +38,7 @@ namespace Utils.Colors.Coloring
             }
         }
 
-        public static void ChannelColorigGPU(ref Color[] colors, ComputeBuffer colorsBuffer, Channel channel, Color source)
+        public static void ChannelColorigGPU(ref ComputeBuffer colorsBuffer, Channel channel, Color source)
         {
             int kernel = 0;
             switch (channel)
@@ -54,13 +58,8 @@ namespace Utils.Colors.Coloring
             }
 
             Shader.SetBuffer(kernel, "colors", colorsBuffer);
-
             Shader.SetFloats("source", source.r, source.g, source.b, 1);
-
-            Shader.Dispatch(kernel, Mathf.CeilToInt((float)colors.Length / 1024.0f), 1, 1);
-
-            colorsBuffer.GetData(colors);
-            colorsBuffer.Release();
+            Shader.Dispatch(kernel, Mathf.CeilToInt(colorsBuffer.count / 1024.0f), 1, 1);
         }
 
         public static void ColoringCPU(ref Color[] colors, float[] values, Color source)
@@ -75,7 +74,7 @@ namespace Utils.Colors.Coloring
             }
         }
 
-        public static void ColoringGPU(ref Color[] colors, ComputeBuffer colorsBuffer, ComputeBuffer valuesBuffer, Color source)
+        public static void ColoringGPU(ref ComputeBuffer colorsBuffer, ComputeBuffer valuesBuffer, Color source)
         {
             int kernel = Shader.FindKernel("Coloring");
             Shader.SetBuffer(kernel, "values", valuesBuffer);
@@ -83,10 +82,7 @@ namespace Utils.Colors.Coloring
 
             Shader.SetFloats("source", source.r, source.g, source.b, 1);
 
-            Shader.Dispatch(kernel, Mathf.CeilToInt((float)colors.Length / 1024.0f), 1, 1);
-
-            colorsBuffer.GetData(colors);
-            colorsBuffer.Release();
+            Shader.Dispatch(kernel, Mathf.CeilToInt(colorsBuffer.count / 1024.0f), 1, 1);
         }
 
         public static void GradientColoringCPU(ref Color[] colors, float[] values, Gradient gradient)
@@ -97,7 +93,7 @@ namespace Utils.Colors.Coloring
             }
         }
 
-        public static void GradientColoringGPU(ref Color[] colors, ComputeBuffer colorsBuffer, ComputeBuffer valuesBuffer, Gradient gradient)
+        public static void GradientColoringGPU(ref ComputeBuffer colorsBuffer, ComputeBuffer valuesBuffer, Gradient gradient)
         {
             Vector4[] interpolatedGradient = InterpolateGradient(gradient);
 
@@ -111,12 +107,9 @@ namespace Utils.Colors.Coloring
 
             Shader.SetInt("gradientLength", interpolatedGradient.Length - 1);
 
-            Shader.Dispatch(kernel, Mathf.CeilToInt((float)colors.Length / 1024.0f), 1, 1);
+            Shader.Dispatch(kernel, Mathf.CeilToInt((float)colorsBuffer.count / 1024.0f), 1, 1);
 
             gradientBuffer.Release();
-
-            colorsBuffer.GetData(colors);
-            colorsBuffer.Release();
         }
 
         private static Vector4[] InterpolateGradient(Gradient gradient)

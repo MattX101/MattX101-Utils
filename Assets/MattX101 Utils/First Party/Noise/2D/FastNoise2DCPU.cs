@@ -3,7 +3,7 @@ using Utils.Noise.Profiles;
 
 namespace Utils.Noise
 {
-    internal static class FastNoise2DCPU
+    public static class FastNoise2DCPU
     {
         private const float DefaultCanvasSize = 1000.0f;
 
@@ -13,7 +13,7 @@ namespace Utils.Noise
         private static float ResToLengthRatio => DefaultCanvasSize / _resX;
         private static float ResToWidthRatio => DefaultCanvasSize / _resY;
 
-        internal static void GenerateNoise2D(ref float[] noiseMap, int resX, int resY, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
+        public static void GenerateNoise2D(ref float[] noiseMap, int resX, int resY, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
             _resX = resX;
             _resY = resY;

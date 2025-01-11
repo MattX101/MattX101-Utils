@@ -6,8 +6,6 @@ namespace Utils.Noise.Preview
 {
     internal sealed class NoisePreview2D : MonoBehaviour
     {
-        private FastNoise2D _noise;
-
         [Header("Shader"), SerializeField]
         private ComputeShader _noiseShader;
 
@@ -44,10 +42,9 @@ namespace Utils.Noise.Preview
 
         void Awake()
         {
-            NoiseShader.Shader = _noiseShader;
+            FastNoise2DGPU.Shader = _noiseShader;
 
             _camera = FindObjectOfType<Camera>();
-            _noise = new FastNoise2D();
         }
 
         private void Update()
@@ -70,7 +67,20 @@ namespace Utils.Noise.Preview
                 _noiseProfile.Init();
             }
 
-            _noise.Generate(ref _noiseMap, _cameraWidth, _cameraHeight, _noiseProfile, _warpProfile, _toggle3D, _useGPU);
+            if (_useGPU)
+            {
+                ComputeBuffer noiseBuffer = new ComputeBuffer(_noiseMap.Length, sizeof(float));
+                noiseBuffer.SetData(_noiseMap);
+
+                FastNoise2DGPU.GenerateNoise(ref noiseBuffer, _cameraWidth, _cameraHeight, _toggle3D, _noiseProfile, _warpProfile);
+
+                noiseBuffer.GetData(_noiseMap);
+                noiseBuffer.Release();
+            }
+            else
+            {
+                FastNoise2DCPU.GenerateNoise2D(ref _noiseMap, _cameraWidth, _cameraHeight, _toggle3D, _noiseProfile, _warpProfile);
+            }
 
             _colorMap = new Color[_cameraWidth * _cameraHeight];
             for (int i = 0; i < _colorMap.Length; i++)

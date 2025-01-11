@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Utils.Colors.Coloring
 {
-    public class GradientColoringDemo : MonoBehaviour
+    public sealed class GradientColoringDemo : MonoBehaviour
     {
         [SerializeField]
         private ComputeShader _shader;
@@ -45,12 +45,13 @@ namespace Utils.Colors.Coloring
 
             if (_enableColoring)
             {
-                float[] noise = new float[colors.Length];
+                float[] values = new float[colors.Length];
                 for (int y = 0, i = 0; y < _texture.height; y++)
                 {
                     for (int x = 0; x < _texture.width; x++, i++)
                     {
-                        noise[i] = _texture.GetPixel(x, y).r;
+                        Color pixel = _texture.GetPixel(x, y);
+                        values[i] = (pixel.r + pixel.g + pixel.b) / 3.0f;
                     }
                 }
 
@@ -59,14 +60,17 @@ namespace Utils.Colors.Coloring
                     ComputeBuffer colorsBuffer = new ComputeBuffer(colors.Length, sizeof(float) * 4);
                     colorsBuffer.SetData(colors);
 
-                    ComputeBuffer valuesBuffer = new ComputeBuffer(noise.Length, sizeof(float));
-                    valuesBuffer.SetData(noise);
+                    ComputeBuffer valuesBuffer = new ComputeBuffer(values.Length, sizeof(float));
+                    valuesBuffer.SetData(values);
 
-                    Coloring.GradientColoringGPU(ref colors, colorsBuffer, valuesBuffer, _gradient);
+                    Coloring.GradientColoringGPU(ref colorsBuffer, valuesBuffer, _gradient);
+
+                    colorsBuffer.GetData(colors);
+                    colorsBuffer.Release();
                 }
                 else
                 {
-                    Coloring.GradientColoringCPU(ref colors, noise, _gradient);
+                    Coloring.GradientColoringCPU(ref colors, values, _gradient);
                 }
             }
             else
