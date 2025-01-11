@@ -80,7 +80,6 @@ namespace Utils.Noise.Preview
 
             _texture = new Texture2D(_cameraWidth, _cameraHeight);
             _texture.wrapMode = TextureWrapMode.Clamp;
-            _texture.filterMode = FilterMode.Point;
             _texture.SetPixels(_colorMap);
             _texture.Apply();
 

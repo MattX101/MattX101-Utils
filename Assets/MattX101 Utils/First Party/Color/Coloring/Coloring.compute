@@ -1,0 +1,73 @@
+﻿#pragma kernel RedChannelColoring
+#pragma kernel GreenChannelColoring
+#pragma kernel BlueChannelColoring
+#pragma kernel Coloring
+#pragma kernel GradientColoring
+
+RWStructuredBuffer<float4> colors;
+StructuredBuffer<float> values;
+
+StructuredBuffer<float4> gradient;
+
+int gradientLength;
+
+float3 source;
+
+float InverseLerp(float a, float b, float t)
+{
+    return (t - a) / (b - a);
+}
+
+float InterpolateGradientAtPoint(float time, float2 points, float2 timings)
+{
+    return lerp(
+		points.x,
+		points.y,
+        clamp(
+		    InverseLerp(
+			    timings.x,
+			    timings.y,
+			    time),
+            0,
+            1)
+		);
+}
+
+[numthreads(1024, 1, 1)]
+void RedChannelColoring(uint3 id : SV_DispatchThreadID)
+{
+    colors[id.x] = float4(colors[id.x].x * source.x, colors[id.x].x * source.y, colors[id.x].x * source.z, 1);
+}
+
+[numthreads(1024, 1, 1)]
+void GreenChannelColoring(uint3 id : SV_DispatchThreadID)
+{
+    colors[id.x] = float4(colors[id.x].y * source.x, colors[id.x].y * source.y, colors[id.x].y * source.z, 1);
+}
+
+[numthreads(1024, 1, 1)]
+void BlueChannelColoring(uint3 id : SV_DispatchThreadID)
+{
+    colors[id.x] = float4(colors[id.x].z * source.x, colors[id.x].z * source.y, colors[id.x].z * source.z, 1);
+}
+
+[numthreads(1024, 1, 1)]
+void Coloring(uint3 id : SV_DispatchThreadID)
+{
+    colors[id.x] = float4(values[id.x] * source.x, values[id.x] * source.y, values[id.x] * source.z, 1);
+}
+
+[numthreads(1024, 1, 1)]
+void GradientColoring(uint3 id : SV_DispatchThreadID)
+{
+    int a = floor(values[id.x] * gradientLength);
+    int b = ceil(values[id.x] * gradientLength);
+	
+    colors[id.x] =
+    float4(
+        InterpolateGradientAtPoint(values[id.x], float2(gradient[a].x, gradient[b].x), float2(gradient[a].w, gradient[b].w)),
+        InterpolateGradientAtPoint(values[id.x], float2(gradient[a].y, gradient[b].y), float2(gradient[a].w, gradient[b].w)),
+        InterpolateGradientAtPoint(values[id.x], float2(gradient[a].z, gradient[b].z), float2(gradient[a].w, gradient[b].w)),
+        1
+    );
+}
