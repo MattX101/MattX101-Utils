@@ -31,7 +31,7 @@ namespace Utils.Colors.Blend
         internal static float Lighten(float a, float b) => a > b ? a : b;
         internal static float Shine(float a, float b) => Add(Power(b), a);
         internal static float Screen(float a, float b) => Invert(Multiply(Invert(a), Invert(b)));
-        internal static float ColourDodge(float a, float b) => Divide(a, Invert(b));
+        internal static float ColorDodge(float a, float b) => Divide(a, Invert(b));
         internal static float Overlay(float a, float b)
         {
             return

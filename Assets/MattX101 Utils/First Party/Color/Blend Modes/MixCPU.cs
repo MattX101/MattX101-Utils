@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Utils.Colors.Blend
 {
-    public static class Mix
+    public static class MixCPU
     {
         /// Arithmetic
         public static Color Add(Color a, Color b) => new (Formulas.Add(a.r, b.r), Formulas.Add(a.g, b.g), Formulas.Add(a.b, b.b), 1);
@@ -22,7 +22,7 @@ namespace Utils.Colors.Blend
         public static Color Lighten(Color a, Color b) => new (Formulas.Lighten(a.r, b.r), Formulas.Lighten(a.g, b.g), Formulas.Lighten(a.b, b.b), 1);
         public static Color Shine(Color a, Color b) => new (Formulas.Shine(a.r, b.r), Formulas.Shine(a.g, b.g), Formulas.Shine(a.b, b.b), 1);
         public static Color Screen(Color a, Color b) => new (Formulas.Screen(a.r, b.r), Formulas.Screen(a.g, b.g), Formulas.Screen(a.b, b.b), 1);
-        public static Color ColourDodge(Color a, Color b) => new (Formulas.ColourDodge(a.r, b.r), Formulas.ColourDodge(a.g, b.g), Formulas.ColourDodge(a.b, b.b), 1);
+        public static Color ColorDodge(Color a, Color b) => new (Formulas.ColorDodge(a.r, b.r), Formulas.ColorDodge(a.g, b.g), Formulas.ColorDodge(a.b, b.b), 1);
         public static Color Overlay(Color a, Color b) => new (Formulas.Overlay(a.r, b.r), Formulas.Overlay(a.g, b.g), Formulas.Overlay(a.b, b.b), 1);
         public static Color SoftLight(Color a, Color b) => new (Formulas.SoftLight(a.r, b.r), Formulas.SoftLight(a.g, b.g), Formulas.SoftLight(a.b, b.b), 1);
         public static Color HardLight(Color a, Color b) => new (Formulas.HardLight(a.r, b.r), Formulas.HardLight(a.g, b.g), Formulas.HardLight(a.b, b.b), 1);

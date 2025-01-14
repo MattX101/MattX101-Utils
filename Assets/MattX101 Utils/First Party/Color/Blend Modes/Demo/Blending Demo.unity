@@ -312,10 +312,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333a080f6677c94da90f40ced52c7da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _blendShader: {fileID: 7200000, guid: 0bb37478f3f2b254f85f8f1670abb3fb, type: 3}
+  _useGPU: 1
   _noise1: {fileID: 2800000, guid: 7f90d90c27a7c9e49930ecbfdba5b8df, type: 3}
   _noise2: {fileID: 2800000, guid: 36a3904bb44664e48bc9d9edf041badb, type: 3}
   _image: {fileID: 1899666481}
-  _modes: 23
+  _modes: 0
 --- !u!4 &1546368244
 Transform:
   m_ObjectHideFlags: 0

@@ -11,14 +11,14 @@ namespace Utils.Colors.Blend
 
         /// Darken
         Darken,
-        ColourBurn,
+        ColorBurn,
         LinearBurn,
         GammaDark,
 
         /// Lighten
         Lighten,
         Shine,
-        ColourDodge,
+        ColorDodge,
         Screen,
         Overlay,
         SoftLight,
