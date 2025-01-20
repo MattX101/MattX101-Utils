@@ -1,0 +1,41 @@
+﻿#pragma kernel Values
+#pragma kernel Texture
+
+RWStructuredBuffer<float>  values;
+RWStructuredBuffer<float4> image;
+
+float bias;
+float gain;
+
+float Bias(float time, float bias)
+{
+    return time / (((1.0f / bias) - 2.0f) * (1.0f - time) + 1.0f);
+}
+
+float Gain(float time, float gain)
+{
+    return
+    time < 0.5f ?
+    Bias(time * 2, gain) / 2 :
+    Bias(time * 2 - 1, 1 - gain) / 2.0f + 0.5f;
+}
+
+float Calcualte(float time, float bias, float gain)
+{
+    return Gain(Bias(time, bias), gain);
+}
+
+[numthreads(1024, 1, 1)]
+void Values(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = Calcualte(values[id.x], bias, gain);
+}
+
+[numthreads(1024, 1, 1)]
+void Texture(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = Calcualte(image[id.x].x, bias, gain);
+    image[id.x].y = Calcualte(image[id.x].y, bias, gain);
+    image[id.x].z = Calcualte(image[id.x].z, bias, gain);
+    image[id.x].w = 1;
+}

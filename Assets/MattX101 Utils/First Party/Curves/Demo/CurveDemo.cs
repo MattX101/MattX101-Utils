@@ -37,7 +37,7 @@ namespace Utils.Curves
             EaseIn,
             EaseInCirc,
             EaseInOut,
-            EaseInOiutSine,
+            EaseInOutSine,
             Sine,
             SineSqrt,
             RepeatedSine,

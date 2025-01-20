@@ -1,0 +1,188 @@
+﻿// Easing Functions
+#pragma kernel EaseIn_Single
+#pragma kernel EaseIn_Image
+#pragma kernel EaseInCirc_Single
+#pragma kernel EaseInCirc_Image
+#pragma kernel EaseInOut_Single
+#pragma kernel EaseInOut_Image
+#pragma kernel EaseInOutSine_Single
+#pragma kernel EaseInOutSine_Image
+
+// Sin Functions
+#pragma kernel Sine_Single
+#pragma kernel Sine_Image
+#pragma kernel SineSqrt_Single
+#pragma kernel SineSqrt_Image
+#pragma kernel RepeatedSine_Single
+#pragma kernel RepeatedSine_Image
+#pragma kernel SineFrequency_Single
+#pragma kernel SineFrequency_Image
+#pragma kernel RadianArcSine_Single
+#pragma kernel RadianArcSine_Image
+#pragma kernel RadianArcSineSqrt_Single
+#pragma kernel RadianArcSineSqrt_Image
+#pragma kernel HalfDownUpSine_Single
+#pragma kernel HalfDownUpSine_Image
+
+#include "CurvesFormulas.hlsl"
+
+RWStructuredBuffer<float> values;
+RWStructuredBuffer<float4> image;
+
+float power;
+
+// Easing Functions
+[numthreads(1024, 1, 1)]
+void EaseIn_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = EaseIn(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void EaseIn_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = EaseIn(image[id.x].x, power);
+    image[id.x].y = EaseIn(image[id.x].y, power);
+    image[id.x].z = EaseIn(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+[numthreads(1024, 1, 1)]
+void EaseInCirc_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = EaseInCirc(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void EaseInCirc_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = EaseInCirc(image[id.x].x, power);
+    image[id.x].y = EaseInCirc(image[id.x].y, power);
+    image[id.x].z = EaseInCirc(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+[numthreads(1024, 1, 1)]
+void EaseInOut_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = EaseInOut(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void EaseInOut_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = EaseInOut(image[id.x].x, power);
+    image[id.x].y = EaseInOut(image[id.x].y, power);
+    image[id.x].z = EaseInOut(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+[numthreads(1024, 1, 1)]
+void EaseInOutSine_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = EaseInOutSine(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void EaseInOutSine_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = EaseInOutSine(image[id.x].x, power);
+    image[id.x].y = EaseInOutSine(image[id.x].y, power);
+    image[id.x].z = EaseInOutSine(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+// Sin Functions
+[numthreads(1024, 1, 1)]
+void Sine_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = Sine(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void Sine_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = Sine(image[id.x].x, power);
+    image[id.x].y = Sine(image[id.x].y, power);
+    image[id.x].z = Sine(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+[numthreads(1024, 1, 1)]
+void SineSqrt_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = SineSqrt(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void SineSqrt_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = SineSqrt(image[id.x].x, power);
+    image[id.x].y = SineSqrt(image[id.x].y, power);
+    image[id.x].z = SineSqrt(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+[numthreads(1024, 1, 1)]
+void RepeatedSine_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = RepeatedSine(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void RepeatedSine_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = RepeatedSine(image[id.x].x, power);
+    image[id.x].y = RepeatedSine(image[id.x].y, power);
+    image[id.x].z = RepeatedSine(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+[numthreads(1024, 1, 1)]
+void SineFrequency_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = SineFrequency(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void SineFrequency_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = SineFrequency(image[id.x].x, power);
+    image[id.x].y = SineFrequency(image[id.x].y, power);
+    image[id.x].z = SineFrequency(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+[numthreads(1024, 1, 1)]
+void RadianArcSine_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = RadianArcSine(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void RadianArcSine_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = RadianArcSine(image[id.x].x, power);
+    image[id.x].y = RadianArcSine(image[id.x].y, power);
+    image[id.x].z = RadianArcSine(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+[numthreads(1024, 1, 1)]
+void RadianArcSineSqrt_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = RadianArcSineSqrt(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void RadianArcSineSqrt_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = RadianArcSineSqrt(image[id.x].x, power);
+    image[id.x].y = RadianArcSineSqrt(image[id.x].y, power);
+    image[id.x].z = RadianArcSineSqrt(image[id.x].z, power);
+    image[id.x].w = 1;
+}
+
+[numthreads(1024, 1, 1)]
+void HalfDownUpSine_Single(uint3 id : SV_DispatchThreadID)
+{
+    values[id.x] = HalfDownUpSine(values[id.x], power);
+}
+[numthreads(1024, 1, 1)]
+void HalfDownUpSine_Image(uint3 id : SV_DispatchThreadID)
+{
+    image[id.x].x = HalfDownUpSine(image[id.x].x, power);
+    image[id.x].y = HalfDownUpSine(image[id.x].y, power);
+    image[id.x].z = HalfDownUpSine(image[id.x].z, power);
+    image[id.x].w = 1;
+}

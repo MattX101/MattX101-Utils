@@ -325,7 +325,7 @@ MonoBehaviour:
   _shader: {fileID: 7200000, guid: 02cc1dc8eb7d93041aad509ba2f1aca3, type: 3}
   _useGPU: 1
   _enableColoring: 1
-  _texture: {fileID: 2800000, guid: 6e249ec95645a0749a2621bcb38e3fa1, type: 3}
+  _texture: {fileID: 2800000, guid: 0275b5cea4f6cdc48929b2f52c83f2e4, type: 3}
   _channel: 0
   _color: {r: 1, g: 0, b: 0, a: 1}
   _image: {fileID: 1134264480}
