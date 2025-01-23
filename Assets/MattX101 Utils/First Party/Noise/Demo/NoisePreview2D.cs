@@ -6,9 +6,6 @@ namespace Utils.Noise.Preview
 {
     internal sealed class NoisePreview2D : MonoBehaviour
     {
-        [Header("Shader"), SerializeField]
-        private ComputeShader _noiseShader;
-
         [Header("Profiles")]
         [SerializeField] private NoiseProfile _noiseProfile;
         [SerializeField] private WarpProfile _warpProfile;
@@ -42,8 +39,6 @@ namespace Utils.Noise.Preview
 
         void Awake()
         {
-            FastNoise2DGPU.Shader = _noiseShader;
-
             _camera = FindObjectOfType<Camera>();
         }
 

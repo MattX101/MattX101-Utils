@@ -7,6 +7,9 @@ namespace Utils.Noise
     {
         private const float DefaultCanvasSize = 1000.0f;
 
+        [SerializeField]
+        private static ComputeShader _shader;
+
         public static ComputeShader Shader
         {
             get;
@@ -17,12 +20,11 @@ namespace Utils.Noise
         {
             float ratioX = DefaultCanvasSize / (float)resX;
             float ratioY = DefaultCanvasSize / (float)resY;
-
+            
             Shader.SetInt("resX", resX);
             Shader.SetFloat("resY", resY);
             Shader.SetFloat("halfResX", (float)resX / 2.0f);
-            Shader.SetFloat("halfResY", (float)resY / 2.0f);
-
+            
             int kernel = 0;
             if (noiseProfile.warp)
             {

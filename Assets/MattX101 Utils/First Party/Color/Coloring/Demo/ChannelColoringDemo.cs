@@ -6,11 +6,6 @@ namespace Utils.Colors.Coloring
     public sealed class ChannelColoringDemo : MonoBehaviour
     {
         [SerializeField]
-        private ComputeShader _shader;
-
-        [Space]
-
-        [SerializeField]
         private bool _useGPU = false;
         [SerializeField]
         private bool _enableColoring = false;
@@ -32,11 +27,6 @@ namespace Utils.Colors.Coloring
 
         [SerializeField]
         private RawImage _image;
-
-        private void Start()
-        {
-            Coloring.Shader = _shader;
-        }
 
         private void Update()
         {

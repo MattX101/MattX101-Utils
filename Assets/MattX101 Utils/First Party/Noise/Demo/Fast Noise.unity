@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 764777267}
+  - component: {fileID: 764777269}
   - component: {fileID: 764777268}
   m_Layer: 0
   m_Name: Scripts
@@ -167,7 +168,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f347e5a52d46dc47952057fbca8e597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _noiseShader: {fileID: 7200000, guid: b0d94f2bf20d16540b02c7d43637db97, type: 3}
   _noiseProfile:
     seed: 0
     universalScale: 0.04
@@ -236,6 +236,23 @@ MonoBehaviour:
     m_NumColorKeys: 6
     m_NumAlphaKeys: 2
   _preview: {fileID: 1424845645}
+--- !u!114 &764777269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764777266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31c1ee683fac47b408b780ab7eba5e4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fastNoise2D: {fileID: 7200000, guid: b0d94f2bf20d16540b02c7d43637db97, type: 3}
+  _curves: {fileID: 7200000, guid: 2aaeca91b411c1a4986d5a39697a75cb, type: 3}
+  _biasAndGain: {fileID: 7200000, guid: 515f45268225b734aa2d223ece905a5f, type: 3}
+  _coloring: {fileID: 7200000, guid: 02cc1dc8eb7d93041aad509ba2f1aca3, type: 3}
+  _colorMixer: {fileID: 7200000, guid: 0bb37478f3f2b254f85f8f1670abb3fb, type: 3}
 --- !u!1 &863358004
 GameObject:
   m_ObjectHideFlags: 0

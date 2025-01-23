@@ -7,11 +7,6 @@ namespace Utils.Curves
 {
     public class ImageModiferBiasAndGainDemo : MonoBehaviour
     {
-        [SerializeField]
-        private ComputeShader _shader;
-
-        [Space]
-
         [SerializeField] private Texture2D _texture;
         [SerializeField] private RawImage _image;
 
@@ -42,8 +37,6 @@ namespace Utils.Curves
 
         private void Awake()
         {
-            BiasAndGainGPU.Shader = _shader;
-
             _colorsBuffer = new ComputeBuffer(_texture.width * _texture.height, sizeof(float) * 4);
 
             _previewTexture = new Texture2D(_texture.width, _texture.height);

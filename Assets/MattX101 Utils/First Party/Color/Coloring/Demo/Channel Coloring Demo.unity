@@ -302,6 +302,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1037323518}
+  - component: {fileID: 1037323519}
   - component: {fileID: 1037323517}
   m_Layer: 0
   m_Name: Scripts
@@ -322,7 +323,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efaae0bc894f5764c92cc724ab104bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shader: {fileID: 7200000, guid: 02cc1dc8eb7d93041aad509ba2f1aca3, type: 3}
   _useGPU: 1
   _enableColoring: 1
   _texture: {fileID: 2800000, guid: 0275b5cea4f6cdc48929b2f52c83f2e4, type: 3}
@@ -344,6 +344,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1037323519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1037323516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31c1ee683fac47b408b780ab7eba5e4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fastNoise2D: {fileID: 7200000, guid: b0d94f2bf20d16540b02c7d43637db97, type: 3}
+  _curves: {fileID: 7200000, guid: 2aaeca91b411c1a4986d5a39697a75cb, type: 3}
+  _biasAndGain: {fileID: 7200000, guid: 515f45268225b734aa2d223ece905a5f, type: 3}
+  _coloring: {fileID: 7200000, guid: 02cc1dc8eb7d93041aad509ba2f1aca3, type: 3}
+  _colorMixer: {fileID: 7200000, guid: 0bb37478f3f2b254f85f8f1670abb3fb, type: 3}
 --- !u!1 &1134264479
 GameObject:
   m_ObjectHideFlags: 0

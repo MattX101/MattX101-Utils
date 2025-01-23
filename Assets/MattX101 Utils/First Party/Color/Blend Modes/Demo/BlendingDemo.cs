@@ -5,9 +5,6 @@ namespace Utils.Colors.Blend
 {
     public sealed class BlendingDemo : MonoBehaviour
     {
-        [Header("Shader"), SerializeField]
-        private ComputeShader _blendShader;
-
         [SerializeField]
         private bool _useGPU = false;
 
@@ -25,11 +22,6 @@ namespace Utils.Colors.Blend
         [SerializeField]
         private Blends _modes;
         private delegate Color BlendFormula(Color a, Color b);
-
-        private void Start()
-        {
-            MixGPU.Shader = _blendShader;
-        }
 
         private void Update()
         {
