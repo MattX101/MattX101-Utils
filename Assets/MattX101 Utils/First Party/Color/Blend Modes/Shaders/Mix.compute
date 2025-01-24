@@ -44,6 +44,7 @@ void Add(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Add(base[id.x].x, blend[id.x].x);
     result[id.x].y = Add(base[id.x].y, blend[id.x].y);
     result[id.x].z = Add(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -52,6 +53,7 @@ void Subtract(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Subtract(base[id.x].x, blend[id.x].x);
     result[id.x].y = Subtract(base[id.x].y, blend[id.x].y);
     result[id.x].z = Subtract(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -60,6 +62,7 @@ void Multiply(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Multiply(base[id.x].x, blend[id.x].x);
     result[id.x].y = Multiply(base[id.x].y, blend[id.x].y);
     result[id.x].z = Multiply(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -68,6 +71,7 @@ void Divide(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Divide(base[id.x].x, blend[id.x].x);
     result[id.x].y = Divide(base[id.x].y, blend[id.x].y);
     result[id.x].z = Divide(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -76,6 +80,7 @@ void Average(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Average(base[id.x].x, blend[id.x].x);
     result[id.x].y = Average(base[id.x].y, blend[id.x].y);
     result[id.x].z = Average(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 // Darken
@@ -85,6 +90,7 @@ void Darken(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Darken(base[id.x].x, blend[id.x].x);
     result[id.x].y = Darken(base[id.x].y, blend[id.x].y);
     result[id.x].z = Darken(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -93,6 +99,7 @@ void ColorBurn(uint3 id : SV_DispatchThreadID)
     result[id.x].x = ColorBurn(base[id.x].x, blend[id.x].x);
     result[id.x].y = ColorBurn(base[id.x].y, blend[id.x].y);
     result[id.x].z = ColorBurn(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -101,6 +108,7 @@ void LinearBurn(uint3 id : SV_DispatchThreadID)
     result[id.x].x = LinearBurn(base[id.x].x, blend[id.x].x);
     result[id.x].y = LinearBurn(base[id.x].y, blend[id.x].y);
     result[id.x].z = LinearBurn(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -109,6 +117,7 @@ void GammaDark(uint3 id : SV_DispatchThreadID)
     result[id.x].x = GammaDark(base[id.x].x, blend[id.x].x);
     result[id.x].y = GammaDark(base[id.x].y, blend[id.x].y);
     result[id.x].z = GammaDark(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 // Lighten
@@ -118,6 +127,7 @@ void Lighten(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Lighten(base[id.x].x, blend[id.x].x);
     result[id.x].y = Lighten(base[id.x].y, blend[id.x].y);
     result[id.x].z = Lighten(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -126,6 +136,7 @@ void Shine(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Shine(base[id.x].x, blend[id.x].x);
     result[id.x].y = Shine(base[id.x].y, blend[id.x].y);
     result[id.x].z = Shine(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -134,6 +145,7 @@ void Screen(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Screen(base[id.x].x, blend[id.x].x);
     result[id.x].y = Screen(base[id.x].y, blend[id.x].y);
     result[id.x].z = Screen(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -142,6 +154,7 @@ void ColorDodge(uint3 id : SV_DispatchThreadID)
     result[id.x].x = ColorDodge(base[id.x].x, blend[id.x].x);
     result[id.x].y = ColorDodge(base[id.x].y, blend[id.x].y);
     result[id.x].z = ColorDodge(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -150,6 +163,7 @@ void Overlay(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Overlay(base[id.x].x, blend[id.x].x);
     result[id.x].y = Overlay(base[id.x].y, blend[id.x].y);
     result[id.x].z = Overlay(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -158,6 +172,7 @@ void SoftLight(uint3 id : SV_DispatchThreadID)
     result[id.x].x = SoftLight(base[id.x].x, blend[id.x].x);
     result[id.x].y = SoftLight(base[id.x].y, blend[id.x].y);
     result[id.x].z = SoftLight(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -166,6 +181,7 @@ void HardLight(uint3 id : SV_DispatchThreadID)
     result[id.x].x = HardLight(base[id.x].x, blend[id.x].x);
     result[id.x].y = HardLight(base[id.x].y, blend[id.x].y);
     result[id.x].z = HardLight(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -174,6 +190,7 @@ void LinearLight(uint3 id : SV_DispatchThreadID)
     result[id.x].x = LinearLight(base[id.x].x, blend[id.x].x);
     result[id.x].y = LinearLight(base[id.x].y, blend[id.x].y);
     result[id.x].z = LinearLight(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -182,6 +199,7 @@ void HardMix(uint3 id : SV_DispatchThreadID)
     result[id.x].x = HardMix(base[id.x].x, blend[id.x].x);
     result[id.x].y = HardMix(base[id.x].y, blend[id.x].y);
     result[id.x].z = HardMix(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -190,6 +208,7 @@ void Tint(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Tint(base[id.x].x, blend[id.x].x);
     result[id.x].y = Tint(base[id.x].y, blend[id.x].y);
     result[id.x].z = Tint(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -198,6 +217,7 @@ void GammaLight(uint3 id : SV_DispatchThreadID)
     result[id.x].x = GammaLight(base[id.x].x, blend[id.x].x);
     result[id.x].y = GammaLight(base[id.x].y, blend[id.x].y);
     result[id.x].z = GammaLight(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -206,6 +226,7 @@ void GammaIllumination(uint3 id : SV_DispatchThreadID)
     result[id.x].x = GammaIllumination(base[id.x].x, blend[id.x].x);
     result[id.x].y = GammaIllumination(base[id.x].y, blend[id.x].y);
     result[id.x].z = GammaIllumination(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 // Other
@@ -215,6 +236,7 @@ void Exclusion(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Exclusion(base[id.x].x, blend[id.x].x);
     result[id.x].y = Exclusion(base[id.x].y, blend[id.x].y);
     result[id.x].z = Exclusion(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -223,6 +245,7 @@ void Difference(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Difference(base[id.x].x, blend[id.x].x);
     result[id.x].y = Difference(base[id.x].y, blend[id.x].y);
     result[id.x].z = Difference(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
 
 [numthreads(1024, 1, 1)]
@@ -231,4 +254,5 @@ void Negation(uint3 id : SV_DispatchThreadID)
     result[id.x].x = Negation(base[id.x].x, blend[id.x].x);
     result[id.x].y = Negation(base[id.x].y, blend[id.x].y);
     result[id.x].z = Negation(base[id.x].z, blend[id.x].z);
+    result[id.x].w = 1.0f;
 }
