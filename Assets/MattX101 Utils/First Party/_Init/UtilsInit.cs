@@ -16,6 +16,7 @@ namespace Utils.Init
 
         [SerializeField] private ComputeShader _curves;
         [SerializeField] private ComputeShader _biasAndGain;
+        [SerializeField] private ComputeShader _animationCurve;
 
         [Header("Shaders/Colors")]
 
@@ -28,6 +29,7 @@ namespace Utils.Init
 
             CurvesGPU.Shader = _curves;
             BiasAndGainGPU.Shader = _biasAndGain;
+            AnimationCurves.Shader = _animationCurve;
 
             Coloring.Shader = _coloring;
             MixGPU.Shader = _colorMixer;

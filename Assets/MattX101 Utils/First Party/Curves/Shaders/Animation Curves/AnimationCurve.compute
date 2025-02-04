@@ -1,0 +1,76 @@
+#pragma kernel SetToCurveFloat
+#pragma kernel SetToCurveColor
+
+StructuredBuffer<float2> curve;
+
+RWStructuredBuffer<float> noise;
+RWStructuredBuffer<float4> color;
+
+int length;
+
+float InverseLerp(float a, float b, float t)
+{
+    return (t - a) / (b - a);
+}
+
+float InterpolateCurveAtPoint(float time, float2 points, float2 timings)
+{
+    return lerp(
+		points.x,
+		points.y,
+        clamp(
+		    InverseLerp(
+			    timings.x,
+			    timings.y,
+			    time
+			    ),
+            0,
+            1)
+		);
+}
+
+[numthreads(1024, 1, 1)]
+void SetToCurveFloat(uint3 id : SV_DispatchThreadID)
+{
+    int indexA = floor(noise[id.x] * length);
+    int indexB = clamp(indexA + 1, 0, length);
+
+    noise[id.x] = InterpolateCurveAtPoint(
+		noise[id.x],
+		float2(curve[indexA].x, curve[indexB].x),
+		float2(curve[indexA].y, curve[indexB].y)
+		);
+}
+
+[numthreads(1024, 1, 1)]
+void SetToCurveColor(uint3 id : SV_DispatchThreadID)
+{
+    // Red
+    int indexRA = floor(color[id.x].x * length);
+    int indexRB = ceil(color[id.x].x * length);
+
+	// Green
+    int indexGA = floor(color[id.x].y * length);
+    int indexGB = ceil(color[id.x].y * length);
+
+	// Blue
+    int indexBA = floor(color[id.x].z * length);
+    int indexBB = ceil(color[id.x].z * length);
+	
+    color[id.x] =
+    float4(
+        InterpolateCurveAtPoint(
+            color[id.x].x,
+            float2(curve[indexRA].x, curve[indexRB].x),
+            float2(curve[indexRA].y, curve[indexRB].y)),
+        InterpolateCurveAtPoint(
+            color[id.x].y,
+            float2(curve[indexGA].x, curve[indexGB].x),
+            float2(curve[indexGA].y, curve[indexGB].y)),
+        InterpolateCurveAtPoint(
+            color[id.x].z,
+            float2(curve[indexBA].x, curve[indexBB].x),
+            float2(curve[indexBA].y, curve[indexBB].y)),
+        1
+        );
+}
