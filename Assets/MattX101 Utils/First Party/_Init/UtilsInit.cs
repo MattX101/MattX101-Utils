@@ -1,8 +1,9 @@
 using Utils.Noise;
 using Utils.Curves;
-using UnityEngine;
 using Utils.Colors.Blend;
 using Utils.Colors.Coloring;
+using Utils.Filters.Blur;
+using UnityEngine;
 
 namespace Utils.Init
 {
@@ -18,6 +19,10 @@ namespace Utils.Init
         [SerializeField] private ComputeShader _biasAndGain;
         [SerializeField] private ComputeShader _animationCurve;
 
+        [Space]
+        [Header("Shaders/Filters")]
+        [SerializeField] private ComputeShader _box;
+
         [Header("Shaders/Colors")]
 
         [SerializeField] private ComputeShader _coloring;
@@ -30,6 +35,8 @@ namespace Utils.Init
             CurvesGPU.Shader = _curves;
             BiasAndGainGPU.Shader = _biasAndGain;
             AnimationCurves.Shader = _animationCurve;
+
+            BoxBlur.Shader = _box;
 
             Coloring.Shader = _coloring;
             MixGPU.Shader = _colorMixer;

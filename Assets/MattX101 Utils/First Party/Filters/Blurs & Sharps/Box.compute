@@ -1,0 +1,133 @@
+#pragma kernel BlurFloat
+#pragma kernel BlurColor
+#pragma kernel SharpFloat
+#pragma kernel SharpColor
+
+StructuredBuffer<float> sourceFloat;
+RWStructuredBuffer<float> filterFloat;
+
+StructuredBuffer<float4> sourceColor;
+RWStructuredBuffer<float4> filterColor;
+
+int width, height;
+
+int IndexOf(int x, int y)
+{
+    if (x >= width)
+        return -1;
+    
+    if (y >= height)
+        return -1;
+    
+    return y * width + x;
+}
+
+float CalculateBlurFloat(float n1, float n2, float n3, float n4, float n5, float n6, float n7, float n8, float n9)
+{
+    return (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9) / 9.0f;
+}
+
+float4 CalculateBlurColor(float4 n1, float4 n2, float4 n3, float4 n4, float4 n5, float4 n6, float4 n7, float4 n8, float4 n9)
+{
+    return float4(
+        CalculateBlurFloat(n1.x, n2.x, n3.x, n4.x, n5.x, n6.x, n7.x, n8.x, n9.x),
+        CalculateBlurFloat(n1.y, n2.y, n3.y, n4.y, n5.y, n6.y, n7.y, n8.y, n9.y),
+        CalculateBlurFloat(n1.z, n2.z, n3.z, n4.z, n5.z, n6.z, n7.z, n8.z, n9.z),
+        1.0f
+    );
+}
+
+void CalcualteBlurFloat(int x, int y, int i)
+{
+    int l = x - 1;
+    int r = x + 1;
+    int b = y - 1;
+    int t = y + 1;
+
+    l = l < 0 ? 1 : l;
+    r = r >= width ? width - 1 : r;
+    b = b < 0 ? 1 : b;
+    t = t >= height ? height - 1 : t;
+    
+    filterFloat[i] = CalculateBlurFloat(
+        sourceFloat[i],
+        sourceFloat[y * width + l],
+        sourceFloat[y * width + r],
+        sourceFloat[b * width + x],
+        sourceFloat[t * width + x],
+        sourceFloat[b * width + l],
+        sourceFloat[b * width + r],
+        sourceFloat[t * width + l],
+        sourceFloat[t * width + r]
+    );
+}
+
+void CalcualteBlurColor(int x, int y, int i)
+{
+    int l = x - 1;
+    int r = x + 1;
+    int b = y - 1;
+    int t = y + 1;
+
+    l = l < 0 ? 1 : l;
+    r = r >= width ? width - 1 : r;
+    b = b < 0 ? 1 : b;
+    t = t >= height ? height - 1 : t;
+    
+    filterColor[i] = CalculateBlurColor(
+        sourceColor[i],
+        sourceColor[y * width + l],
+        sourceColor[y * width + r],
+        sourceColor[b * width + x],
+        sourceColor[t * width + x],
+        sourceColor[b * width + l],
+        sourceColor[b * width + r],
+        sourceColor[t * width + l],
+        sourceColor[t * width + r]
+    );
+}
+
+float CalculateSharpFloat(float source, float filter)
+{
+    return 2.0f * source - filter;
+}
+
+float4 CalculateSharpColor(int i)
+{
+    return float4(
+        CalculateSharpFloat(sourceColor[i].x, filterColor[i].x),
+        CalculateSharpFloat(sourceColor[i].y, filterColor[i].y),
+        CalculateSharpFloat(sourceColor[i].z, filterColor[i].z),
+        1
+    );
+}
+
+[numthreads(32, 32, 1)]
+void BlurFloat(uint3 id : SV_DispatchThreadID)
+{
+    CalcualteBlurFloat(id.x, id.y, IndexOf(id.x, id.y));
+}
+
+[numthreads(32, 32, 1)]
+void BlurColor(uint3 id : SV_DispatchThreadID)
+{    
+    CalcualteBlurColor(id.x, id.y, IndexOf(id.x, id.y));
+}
+
+[numthreads(32, 32, 1)]
+void SharpFloat(uint3 id : SV_DispatchThreadID)
+{
+    int i = IndexOf(id.x, id.y);
+    
+    CalcualteBlurFloat(id.x, id.y, i);
+    filterFloat[i] = CalculateSharpFloat(sourceFloat[i], filterFloat[i]);
+}
+
+[numthreads(32, 32, 1)]
+void SharpColor(uint3 id : SV_DispatchThreadID)
+{
+    int i = IndexOf(id.x, id.y);
+    
+    CalcualteBlurColor(id.x, id.y, i);
+    filterColor[i] = CalculateSharpColor(i);
+}
