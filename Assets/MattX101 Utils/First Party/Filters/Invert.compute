@@ -1,0 +1,32 @@
+#pragma kernel InvertFloat
+#pragma kernel InvertColor
+
+RWStructuredBuffer<float> sourceFloat;
+RWStructuredBuffer<float4> sourceColor;
+
+float CalcualteFloatInvert(float v)
+{
+    return 1.0f - v;
+}
+
+float4 CalcualteColorInvert(float4 c)
+{
+    return float4(
+        CalcualteFloatInvert(c.x),
+        CalcualteFloatInvert(c.y),
+        CalcualteFloatInvert(c.z),
+        1.0f
+    );
+}
+
+[numthreads(1024, 1, 1)]
+void InvertFloat(uint3 id : SV_DispatchThreadID)
+{
+    sourceFloat[id.x] = CalcualteFloatInvert(sourceFloat[id.x]);
+}
+
+[numthreads(1024, 1, 1)]
+void InvertColor(uint3 id : SV_DispatchThreadID)
+{
+    sourceColor[id.x] = CalcualteColorInvert(sourceColor[id.x]);
+}

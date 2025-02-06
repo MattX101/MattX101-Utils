@@ -4,6 +4,7 @@ using Utils.Colors.Blend;
 using Utils.Colors.Coloring;
 using Utils.Filters.Blur;
 using UnityEngine;
+using Utils.Filters;
 
 namespace Utils.Init
 {
@@ -22,6 +23,7 @@ namespace Utils.Init
         [Space]
         [Header("Shaders/Filters")]
         [SerializeField] private ComputeShader _box;
+        [SerializeField] private ComputeShader _invert;
 
         [Header("Shaders/Colors")]
 
@@ -37,6 +39,7 @@ namespace Utils.Init
             AnimationCurves.Shader = _animationCurve;
 
             BoxBlur.Shader = _box;
+            Invert.Shader = _invert;
 
             Coloring.Shader = _coloring;
             MixGPU.Shader = _colorMixer;
