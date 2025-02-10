@@ -5,7 +5,7 @@ namespace Utils.Curves
 {
     public class AnimationCurveDemo : MonoBehaviour
     {
-        [SerializeField] private AnimationCurve _curve;
+        [SerializeField] private UnityEngine.AnimationCurve _curve;
         
         [SerializeField] private Texture2D _texture;
         [SerializeField] private RawImage _image;
@@ -41,8 +41,7 @@ namespace Utils.Curves
             _colorsBuffer = new ComputeBuffer(colors.Length, sizeof(float) * 4);
             _colorsBuffer.SetData(colors);
 
-            //
-            AnimationCurves.SetToCurveColorGPU(_colorsBuffer, _curve, colors.Length);
+            Curves.SetToCurve(_colorsBuffer, _curve, false);
             _colorsBuffer.GetData(colors);
 
             _previewTexture.SetPixels(colors);

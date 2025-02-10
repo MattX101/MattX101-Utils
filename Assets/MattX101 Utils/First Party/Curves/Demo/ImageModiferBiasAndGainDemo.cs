@@ -86,16 +86,16 @@ namespace Utils.Curves
                     _colorsBuffer = new ComputeBuffer(colors.Length, sizeof(float) * 4);
                     _colorsBuffer.SetData(colors);
 
-                    BiasAndGainGPU.ModifyImage(ref _colorsBuffer, _biasSlider.value, _gainSlider.value);
+                    BiasAndGain.ModifyImage(ref _colorsBuffer, _biasSlider.value, _gainSlider.value);
                     _colorsBuffer.GetData(colors);
                 }
                 else
                 {
                     for (int i = 0; i < colors.Length; i++)
                     {
-                        colors[i].r = Gain.Calculate(Bias.Calculate(colors[i].r, _biasSlider.value), _gainSlider.value);
-                        colors[i].g = Gain.Calculate(Bias.Calculate(colors[i].g, _biasSlider.value), _gainSlider.value);
-                        colors[i].b = Gain.Calculate(Bias.Calculate(colors[i].b, _biasSlider.value), _gainSlider.value);
+                        colors[i].r = BiasAndGain.Gain(BiasAndGain.Bias(colors[i].r, _biasSlider.value), _gainSlider.value);
+                        colors[i].g = BiasAndGain.Gain(BiasAndGain.Bias(colors[i].g, _biasSlider.value), _gainSlider.value);
+                        colors[i].b = BiasAndGain.Gain(BiasAndGain.Bias(colors[i].b, _biasSlider.value), _gainSlider.value);
                     }
                 }
             }

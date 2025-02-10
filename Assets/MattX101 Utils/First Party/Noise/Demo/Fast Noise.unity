@@ -169,42 +169,43 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _noiseProfile:
-    seed: 0
-    universalScale: 0.04
-    scale: {x: 1, y: 1, z: 1}
-    offset: {x: 0, y: 0, z: 0}
-    type: 0
-    fractal: 1
-    octaves: 6
-    lacunarity: 2
-    gain: 0.4
-    weightedStrength: 0.25
-    pingPongStrength: 2
-    cellularReturn: 1
-    cellularDistance: 0
-    jitter: 1
-    warp: 1
+    _seed: 0
+    _universalScale: 0.2
+    _scale: {x: 1, y: 1, z: 1}
+    _offset: {x: 0, y: 0, z: 0}
+    _type: 0
+    _fractal: 1
+    _octaves: 5
+    _lacunarity: 3
+    _gain: 0.4
+    _weightedStrength: 0
+    _pingPongStrength: 2
+    _cellularReturn: 1
+    _cellularDistance: 0
+    _jitter: 1
+    _warp: 1
   _warpProfile:
-    seed: 0
-    universalScale: 0.2
-    scale: {x: 2, y: 0.6, z: 1}
-    offset: {x: 1000, y: -800, z: 0}
-    type: 3
-    fractal: 2
-    octaves: 5
-    lacunarity: 3
-    gain: 0.6
-    weightedStrength: 0.5
-    pingPongStrength: 2
-    cellularReturn: 1
-    cellularDistance: 0
-    jitter: 1
-    warpAmp: 160
-  _useGPU: 1
-  _toggle3D: 1
+    _seed: 1
+    _universalScale: 1
+    _scale: {x: 1, y: 1, z: 1}
+    _offset: {x: 0, y: 0, z: 0}
+    _type: 3
+    _fractal: 2
+    _octaves: 6
+    _lacunarity: 5
+    _gain: 0.5
+    _weightedStrength: 0
+    _pingPongStrength: 2
+    _cellularReturn: 1
+    _cellularDistance: 0
+    _jitter: 1
+    _warpAmp: 100
+  _useGPU: 0
+  _toggle3D: 0
   _puase: 0
-  _increment: 2.5
-  _downScaler: 4
+  _noiseShift: {x: 0, y: 0, z: 10}
+  _warpShift: {x: 0, y: 0, z: 0}
+  _downScaler: 16
   _colorPalette:
     serializedVersion: 2
     key0: {r: 0, g: 0.2390244, b: 1, a: 1}
@@ -251,6 +252,9 @@ MonoBehaviour:
   _fastNoise2D: {fileID: 7200000, guid: b0d94f2bf20d16540b02c7d43637db97, type: 3}
   _curves: {fileID: 7200000, guid: 2aaeca91b411c1a4986d5a39697a75cb, type: 3}
   _biasAndGain: {fileID: 7200000, guid: 515f45268225b734aa2d223ece905a5f, type: 3}
+  _animationCurve: {fileID: 0}
+  _box: {fileID: 0}
+  _invert: {fileID: 0}
   _coloring: {fileID: 7200000, guid: 02cc1dc8eb7d93041aad509ba2f1aca3, type: 3}
   _colorMixer: {fileID: 7200000, guid: 0bb37478f3f2b254f85f8f1670abb3fb, type: 3}
 --- !u!1 &863358004

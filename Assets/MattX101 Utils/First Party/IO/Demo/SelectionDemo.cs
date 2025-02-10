@@ -17,7 +17,7 @@ namespace Utils.IO
 
         public void SelectFile()
         {
-            _filePath.text = _ioSelection.SelectSingleFile("*");
+            _filePath.text = _ioSelection.SelectFile("*");
         }
 
         public void SelectFolder()

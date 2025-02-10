@@ -43,14 +43,14 @@ namespace Utils.Colors.Coloring
                     ComputeBuffer colorsBuffer = new ComputeBuffer(colors.Length, sizeof(float) * 4);
                     colorsBuffer.SetData(colors);
 
-                    Coloring.ChannelColorigGPU(ref colorsBuffer, _channel, _color);
+                    Coloring.ChannelColorig(ref colorsBuffer, _channel, _color);
 
                     colorsBuffer.GetData(colors);
                     colorsBuffer.Release();
                 }
                 else
                 {
-                    Coloring.ChannelColorigCPU(ref colors, _channel, _color);
+                    Coloring.ChannelColorig(ref colors, _channel, _color);
                 }
             }
 

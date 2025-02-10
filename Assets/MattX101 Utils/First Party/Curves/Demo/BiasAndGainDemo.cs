@@ -43,8 +43,8 @@ namespace Utils.Curves
                 float i = (float)x / NumOfPoints;
 
                 float xx = Mathf.Lerp(MinY, MaxY, i);
-                float v = Bias.Calculate(i, _biasSlider.value);
-                v = Gain.Calculate(v, _gainSlider.value);
+                float v = BiasAndGain.Bias(i, _biasSlider.value);
+                v = BiasAndGain.Gain(v, _gainSlider.value);
                 v = Mathf.Lerp(MinY, MaxY, v);
 
                 _lineRenderer.SetPosition(x, new Vector3(xx, v, -1));

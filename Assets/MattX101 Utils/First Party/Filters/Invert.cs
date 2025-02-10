@@ -10,16 +10,16 @@ namespace Utils.Filters
             set;
         }
 
-        private static void CalculateInverse(ref float v)
+        private static void Calculate(ref float v)
         {
             v = 1.0f - v;
         }
 
-        private static void CalculateInverse(ref Color c)
+        private static void Calculate(ref Color c)
         {
-            CalculateInverse(ref c.r);
-            CalculateInverse(ref c.g);
-            CalculateInverse(ref c.b);
+            Calculate(ref c.r);
+            Calculate(ref c.g);
+            Calculate(ref c.b);
             c.a = 1.0f;
         }
 
@@ -27,7 +27,7 @@ namespace Utils.Filters
         {
             for (int i = 0; i < values.Length; i++)
             {
-                CalculateInverse(ref values[i]);
+                Calculate(ref values[i]);
             }
         }
 
@@ -35,7 +35,7 @@ namespace Utils.Filters
         {
             for (int i = 0; i < colors.Length; i++)
             {
-                CalculateInverse(ref colors[i]);
+                Calculate(ref colors[i]);
             }
         }
 

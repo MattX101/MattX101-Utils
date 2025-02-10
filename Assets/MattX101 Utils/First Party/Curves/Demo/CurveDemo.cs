@@ -32,22 +32,6 @@ namespace Utils.Curves
 
         [Header("Dropdown")]
         [SerializeField] private TMP_Dropdown _curveDropdown;
-        private enum Equations
-        {
-            EaseIn,
-            EaseInCirc,
-            EaseInOut,
-            EaseInOutSine,
-            Sine,
-            SineSqrt,
-            RepeatedSine,
-            HalfDownUpSine,
-            SineFrequency,
-            RadianArcSine,
-            RadianArcSineSqrt
-        };
-
-        private delegate float Equation(float v, float p);
 
         private void Awake()
         {
@@ -63,75 +47,41 @@ namespace Utils.Curves
 
         public void Compute()
         {
-            Equation equation = GetEquation(_curveDropdown.value);
-
-            if (!_invertToggle.isOn && !_flipToggle.isOn)
+            float[] curve = new float[NumOfPoints + 1];
+            for (int i = 0; i < curve.Length; i++)
             {
-                for (int x = 0; x < NumOfPoints + 1; x++)
+                curve[i] = (float)i / NumOfPoints;
+            }
+
+            Curves.SetToCurve(
+                ref curve, 
+                (Curves.Equations)_curveDropdown.value, 
+                _powerSlider.value
+            );
+
+            for (int i = 0; i < curve.Length; i++)
+            {
+                float xx = Mathf.Lerp(MinY, MaxY, (float)i / NumOfPoints);
+
+                float v = 0.0f;
+                if (_flipToggle.isOn)
                 {
-                    float i = (float)x / NumOfPoints;
+                    v = Mathf.Lerp(MinY, MaxY, Mathf.Clamp01(curve[curve.Length - 1 - i]) * _strengthSlider.value);
+                }
+                else
+                {
+                    v = Mathf.Lerp(MinY, MaxY, Mathf.Clamp01(curve[i]) * _strengthSlider.value);
+                }
 
-                    float xx = Mathf.Lerp(MinY, MaxY, i);
-                    float v = Mathf.Lerp(MinY, MaxY, Mathf.Clamp01(equation(i, _powerSlider.value)) * _strengthSlider.value);
-
-                    _lineRenderer.SetPosition(x, new Vector3(xx, v, -1));
+                if (_invertToggle.isOn)
+                {
+                    _lineRenderer.SetPosition(i, new Vector3(xx, 1 - v, -1));
+                }
+                else
+                {
+                    _lineRenderer.SetPosition(i, new Vector3(xx, v, -1));
                 }
             }
-            else if (_invertToggle.isOn && !_flipToggle.isOn)
-            {
-                for (int x = 0; x < NumOfPoints + 1; x++)
-                {
-                    float i = (float)x / NumOfPoints;
-
-                    float xx = Mathf.Lerp(MinY, MaxY, i);
-                    float v = Mathf.Lerp(MinY, MaxY, Mathf.Clamp01(equation(i, _powerSlider.value)) * _strengthSlider.value);
-
-                    _lineRenderer.SetPosition(x, new Vector3(xx, 1 - v, -1));
-                }
-            }
-            else if (!_invertToggle.isOn && _flipToggle.isOn)
-            {
-                for (int x = 0; x < NumOfPoints + 1; x++)
-                {
-                    float i = (float)x / NumOfPoints;
-
-                    float xx = Mathf.Lerp(MinY, MaxY, i);
-                    float v = Mathf.Lerp(MinY, MaxY, Mathf.Clamp01(equation(1 - i, _powerSlider.value)) * _strengthSlider.value);
-
-                    _lineRenderer.SetPosition(x, new Vector3(xx, v, -1));
-                }
-            }
-            else
-            {
-                for (int x = 0; x < NumOfPoints + 1; x++)
-                {
-                    float i = (float)x / NumOfPoints;
-
-                    float xx = Mathf.Lerp(MinY, MaxY, i);
-                    float v = Mathf.Lerp(MinY, MaxY, Mathf.Clamp01(equation(1 - i, _powerSlider.value)) * _strengthSlider.value);
-
-                    _lineRenderer.SetPosition(x, new Vector3(xx, 1 - v, -1));
-                }
-            }
-        }
-
-        private Equation GetEquation(int index)
-        {
-            return index switch
-            {
-                0 => Curves.EaseIn,
-                1 => Curves.EaseInCirc,
-                2 => Curves.EaseInOut,
-                3 => Curves.EaseInOutSine,
-                4 => Curves.Sine,
-                5 => Curves.SineSqrt,
-                6 => Curves.RepeatedSine,
-                7 => Curves.HalfDownUpSine,
-                8 => Curves.SineFrequency,
-                9 => Curves.RadianArcSine,
-                10 => Curves.RadianArcSineSqrt,
-                _ => Curves.EaseIn
-            };
         }
 
         public void OnStrengthSliderValueChange()

@@ -53,14 +53,14 @@ namespace Utils.Colors.Coloring
                     ComputeBuffer valuesBuffer = new ComputeBuffer(values.Length, sizeof(float));
                     valuesBuffer.SetData(values);
 
-                    Coloring.GradientColoringGPU(ref colorsBuffer, valuesBuffer, _gradient);
+                    Coloring.GradientColoring(ref colorsBuffer, valuesBuffer, _gradient);
 
                     colorsBuffer.GetData(colors);
                     colorsBuffer.Release();
                 }
                 else
                 {
-                    Coloring.GradientColoringCPU(ref colors, values, _gradient);
+                    Coloring.GradientColoring(ref colors, values, _gradient);
                 }
             }
             else

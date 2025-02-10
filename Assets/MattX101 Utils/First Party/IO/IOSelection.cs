@@ -7,75 +7,26 @@ namespace Utils.IO
     {
         private static readonly string DefaultDirectory = Paths.GetPath(Paths.Desktop);
 
-        // Single File Selection
-        public string SelectSingleFile(string extension)
+        public string SelectFile(string extension, bool multiSelect = false)
         {
             extension ??= "*";
 
-            string[] paths = StandaloneFileBrowser.OpenFilePanel(
-                "Select File",
-                DefaultDirectory,
-                extension,
-                false);
-
-            return GetPath(paths);
+            return GetPath(StandaloneFileBrowser.OpenFilePanel("Select File", DefaultDirectory, extension, multiSelect));
         }
 
-        public string SelectSingleFile(ExtensionFilter[] extensions)
+        public string SelectFile(ExtensionFilter[] extensions, bool multiSelect = false)
         {
             extensions ??= new ExtensionFilter[1]
             {
                 new("All Files", "*")
             };
 
-            string[] paths = StandaloneFileBrowser.OpenFilePanel(
-                "Select File",
-                DefaultDirectory,
-                extensions,
-                false);
-
-            return GetPath(paths);
+            return GetPath(StandaloneFileBrowser.OpenFilePanel("Select File", DefaultDirectory, extensions, multiSelect));
         }
 
-        // Multi File Selection
-        public string SelectMultiFile(string extension)
-        {
-            extension ??= "*";
-
-            string[] paths = StandaloneFileBrowser.OpenFilePanel(
-                "Select File",
-                DefaultDirectory,
-                extension,
-                true);
-
-            return GetPath(paths);
-        }
-
-        public string SelectMultiFile(ExtensionFilter[] extensions)
-        {
-            extensions ??= new ExtensionFilter[1]
-            {
-                new("All Files", "*")
-            };
-
-            string[] paths = StandaloneFileBrowser.OpenFilePanel(
-                "Select File",
-                DefaultDirectory,
-                extensions,
-                true);
-
-            return GetPath(paths);
-        }
-
-        // Single Folder Selection
         public string SelectFolder(bool multiSelect = false)
         {
-            string[] paths = StandaloneFileBrowser.OpenFolderPanel(
-                "Select Folder",
-                DefaultDirectory,
-                multiSelect);
-
-            return GetPath(paths);
+            return GetPath(StandaloneFileBrowser.OpenFolderPanel("Select Folder", DefaultDirectory, multiSelect));
         }
 
         private string GetPath(string[] paths)
@@ -94,20 +45,12 @@ namespace Utils.IO
 
         public string SelectSavePath(string defaultFileName, string filter)
         {
-            return StandaloneFileBrowser.SaveFilePanel(
-                "Save As",
-                DefaultDirectory,
-                defaultFileName,
-                filter);
+            return StandaloneFileBrowser.SaveFilePanel("Save As", DefaultDirectory, defaultFileName, filter);
         }
 
         public string SelectSavePath(string defaultFileName, ExtensionFilter[] filters)
         {
-            return StandaloneFileBrowser.SaveFilePanel(
-                "Save As",
-                DefaultDirectory,
-                defaultFileName,
-                filters);
+            return StandaloneFileBrowser.SaveFilePanel("Save As", DefaultDirectory, defaultFileName, filters);
         }
     }
 }

@@ -87,18 +87,15 @@ namespace Utils.Curves
                     _colorsBuffer = new ComputeBuffer(colors.Length, sizeof(float) * 4);
                     _colorsBuffer.SetData(colors);
 
-                    CurvesGPU.ModifyImage(ref _colorsBuffer, _dropdown.value, _powerSlider.value);
+                    Curves.SetToCurve(ref _colorsBuffer, (Curves.Equations)_dropdown.value, _powerSlider.value, false);
                     _colorsBuffer.GetData(colors);
                 }
                 else
                 {
-                    Equation equation = GetEquation(_dropdown.value);
-                    for (int i = 0; i < colors.Length; i++)
-                    {
-                        colors[i].r = equation(colors[i].r, _powerSlider.value);
-                        colors[i].g = equation(colors[i].g, _powerSlider.value);
-                        colors[i].b = equation(colors[i].b, _powerSlider.value);
-                    }
+                    Curves.SetToCurve(
+                        ref colors, 
+                        (Curves.Equations)_dropdown.value,
+                        _powerSlider.value);
                 }    
             }
 
@@ -111,27 +108,6 @@ namespace Utils.Curves
         private void OnDestroy()
         {
             _colorsBuffer.Release();
-        }
-
-        private Equation GetEquation(int index)
-        {
-            return index switch
-            {
-                0 => Curves.EaseIn,
-                1 => Curves.EaseInCirc,
-                2 => Curves.EaseInOut,
-                3 => Curves.EaseInOutSine,
-
-                4 => Curves.Sine,
-                5 => Curves.SineSqrt,
-                6 => Curves.RepeatedSine,
-                7 => Curves.SineFrequency,
-                8 => Curves.RadianArcSine,
-                9 => Curves.RadianArcSineSqrt,
-                10 => Curves.HalfDownUpSine,
-
-                _ => Curves.EaseIn
-            };
         }
     }
 }

@@ -7,36 +7,39 @@ namespace Utils.Noise.Profiles
     public sealed class WarpProfile : Profile
     {
         [Header("Warp")]
-        public float warpAmp = 1.0f;
+
+        [SerializeField]
+        private float _warpAmp = 1.0f;
+        public float WarpAmp => _warpAmp;
 
         public void Init()
         {
-            FastNoise.SetSeed(seed);
+            FastNoise.SetSeed(Seed);
             FastNoise.SetFrequency(Frequency);
-            FastNoise.SetNoiseType(type);
+            FastNoise.SetNoiseType(Type);
 
             // Fractal
-            FastNoise.SetFractalType(fractal);
-            FastNoise.SetFractalOctaves(octaves);
-            FastNoise.SetFractalLacunarity(lacunarity);
-            FastNoise.SetFractalGain(gain);
-            FastNoise.SetFractalWeightedStrength(weightedStrength);
-            FastNoise.SetFractalPingPongStrength(pingPongStrength);
+            FastNoise.SetFractalType(Fractal);
+            FastNoise.SetFractalOctaves(Octaves);
+            FastNoise.SetFractalLacunarity(Lacunarity);
+            FastNoise.SetFractalGain(Gain);
+            FastNoise.SetFractalWeightedStrength(WeightedStrength);
+            FastNoise.SetFractalPingPongStrength(PingPongStrength);
 
             // Cellular
-            FastNoise.SetCellularReturnType(cellularReturn);
-            FastNoise.SetCellularDistanceFunction(cellularDistance);
-            FastNoise.SetCellularJitter(jitter);
+            FastNoise.SetCellularReturnType(CellularReturn);
+            FastNoise.SetCellularDistanceFunction(CellularDistance);
+            FastNoise.SetCellularJitter(Jitter);
         }
 
         internal float GetWarp2D(float x, float y)
         {
-            return FastNoise.GetNoise(x, y) * warpAmp;
+            return FastNoise.GetNoise(x, y) * WarpAmp;
         }
 
         internal float GetWarp3D(float x, float y, float z)
         {
-            return FastNoise.GetNoise(x, y, z) * warpAmp;
+            return FastNoise.GetNoise(x, y, z) * WarpAmp;
         }
     }
 }

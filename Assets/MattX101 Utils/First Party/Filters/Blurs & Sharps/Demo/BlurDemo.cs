@@ -46,7 +46,7 @@ namespace Utils.Filters.Blur
                     ComputeBuffer sourceBuffer = new ComputeBuffer(_source.Length, sizeof(float) * 4);
                     sourceBuffer.SetData(_source);
 
-                    BoxBlur.BlurColor(ref filterBuffer, sourceBuffer, _texture.width, _texture.height);
+                    BoxBlur.Compute(ref filterBuffer, sourceBuffer, _texture.width, _texture.height, false);
                     filterBuffer.GetData(_filter);
 
                     _previewTexture.SetPixels(_filter);
@@ -56,7 +56,7 @@ namespace Utils.Filters.Blur
                 }
                 else
                 {
-                    BoxBlur.BlurColor(ref _filter, _source, _texture.width, _texture.height);
+                    BoxBlur.Compute(ref _filter, _source, _texture.width, _texture.height);
                     _previewTexture.SetPixels(_filter);
                 }
             }
@@ -70,7 +70,7 @@ namespace Utils.Filters.Blur
                     ComputeBuffer sourceBuffer = new ComputeBuffer(_source.Length, sizeof(float) * 4);
                     sourceBuffer.SetData(_source);
 
-                    BoxSharpen.SharpenColor(ref filterBuffer, sourceBuffer, _texture.width, _texture.height);
+                    BoxSharpen.Compute(ref filterBuffer, sourceBuffer, _texture.width, _texture.height, false);
                     filterBuffer.GetData(_filter);
 
                     _previewTexture.SetPixels(_filter);
@@ -80,7 +80,7 @@ namespace Utils.Filters.Blur
                 }
                 else
                 {
-                    BoxSharpen.SharpenColor(ref _filter, _source, _texture.width, _texture.height);
+                    BoxSharpen.Compute(ref _filter, _source, _texture.width, _texture.height);
                     _previewTexture.SetPixels(_filter);
                 }
             }

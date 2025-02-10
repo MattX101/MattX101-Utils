@@ -7,26 +7,29 @@ namespace Utils.Noise.Profiles
     public sealed class NoiseProfile : Profile
     {
         [Header("Warp")]
-        public bool warp = false;
+
+        [SerializeField]
+        private bool _warp = false;
+        public bool Warp => _warp;
 
         public void Init()
         {
-            FastNoise.SetSeed(seed);
+            FastNoise.SetSeed(Seed);
             FastNoise.SetFrequency(Frequency);
-            FastNoise.SetNoiseType(type);
+            FastNoise.SetNoiseType(Type);
 
             // Fractal
-            FastNoise.SetFractalType(fractal);
-            FastNoise.SetFractalOctaves(octaves);
-            FastNoise.SetFractalLacunarity(lacunarity);
-            FastNoise.SetFractalGain(gain);
-            FastNoise.SetFractalWeightedStrength(weightedStrength);
-            FastNoise.SetFractalPingPongStrength(pingPongStrength);
+            FastNoise.SetFractalType(Fractal);
+            FastNoise.SetFractalOctaves(Octaves);
+            FastNoise.SetFractalLacunarity(Lacunarity);
+            FastNoise.SetFractalGain(Gain);
+            FastNoise.SetFractalWeightedStrength(WeightedStrength);
+            FastNoise.SetFractalPingPongStrength(PingPongStrength);
 
             // Cellular
-            FastNoise.SetCellularReturnType(cellularReturn);
-            FastNoise.SetCellularDistanceFunction(cellularDistance);
-            FastNoise.SetCellularJitter(jitter);
+            FastNoise.SetCellularReturnType(CellularReturn);
+            FastNoise.SetCellularDistanceFunction(CellularDistance);
+            FastNoise.SetCellularJitter(Jitter);
         }
 
         internal float GetNoise2D(float x, float y)

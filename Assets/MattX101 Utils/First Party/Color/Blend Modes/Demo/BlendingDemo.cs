@@ -37,7 +37,7 @@ namespace Utils.Colors.Blend
                 baseBuffer.SetData(_noise1.GetPixels());
                 blendBuffer.SetData(_noise2.GetPixels());
 
-                MixGPU.Blend(ref resultBuffer, baseBuffer, blendBuffer, _modes);
+                Mix.Blend(ref resultBuffer, baseBuffer, blendBuffer, _modes);
 
                 resultBuffer.GetData(result);
 
@@ -71,47 +71,47 @@ namespace Utils.Colors.Blend
             return index switch
             {
                 /// Arithmetic
-                (int)Blends.Add => MixCPU.Add,
-                (int)Blends.Subtract => MixCPU.Subtract,
-                (int)Blends.Multiply => MixCPU.Multiply,
-                (int)Blends.Divide => MixCPU.Divide,
-                (int)Blends.Average => MixCPU.Average,
+                (int)Blends.Add => Mix.Add,
+                (int)Blends.Subtract => Mix.Subtract,
+                (int)Blends.Multiply => Mix.Multiply,
+                (int)Blends.Divide => Mix.Divide,
+                (int)Blends.Average => Mix.Average,
 
                 /// Darken
-                (int)Blends.Darken => MixCPU.Darken,
-                (int)Blends.ColorBurn => MixCPU.ColorBurn,
-                (int)Blends.LinearBurn => MixCPU.LinearBurn,
-                (int)Blends.GammaDark => MixCPU.GammaDark,
+                (int)Blends.Darken => Mix.Darken,
+                (int)Blends.ColorBurn => Mix.ColorBurn,
+                (int)Blends.LinearBurn => Mix.LinearBurn,
+                (int)Blends.GammaDark => Mix.GammaDark,
 
                 /// Lighten
-                (int)Blends.Lighten => MixCPU.Lighten,
-                (int)Blends.Shine => MixCPU.Shine,
-                (int)Blends.ColorDodge => MixCPU.ColorDodge,
-                (int)Blends.Screen => MixCPU.Screen,
-                (int)Blends.Overlay => MixCPU.Overlay,
-                (int)Blends.SoftLight => MixCPU.SoftLight,
-                (int)Blends.HardLight => MixCPU.HardLight,
+                (int)Blends.Lighten => Mix.Lighten,
+                (int)Blends.Shine => Mix.Shine,
+                (int)Blends.ColorDodge => Mix.ColorDodge,
+                (int)Blends.Screen => Mix.Screen,
+                (int)Blends.Overlay => Mix.Overlay,
+                (int)Blends.SoftLight => Mix.SoftLight,
+                (int)Blends.HardLight => Mix.HardLight,
                 // Vivid Light
-                (int)Blends.LinearLight => MixCPU.LinearLight,
+                (int)Blends.LinearLight => Mix.LinearLight,
                 // Pin Light
-                (int)Blends.HardMix => MixCPU.HardMix,
-                (int)Blends.Tint => MixCPU.Tint,
-                (int)Blends.GammaLight => MixCPU.GammaLight,
-                (int)Blends.GammaIllumination => MixCPU.GammaIllumination,
+                (int)Blends.HardMix => Mix.HardMix,
+                (int)Blends.Tint => Mix.Tint,
+                (int)Blends.GammaLight => Mix.GammaLight,
+                (int)Blends.GammaIllumination => Mix.GammaIllumination,
 
                 /// Other
-                (int)Blends.Exclusion => MixCPU.Exclusion,
-                (int)Blends.Difference => MixCPU.Difference,
-                (int)Blends.Negation => MixCPU.Negation,
+                (int)Blends.Exclusion => Mix.Exclusion,
+                (int)Blends.Difference => Mix.Difference,
+                (int)Blends.Negation => Mix.Negation,
 
                 ///
-                (int)Blends.Hue => MixCPU.Hue,
-                (int)Blends.Saturation => MixCPU.Saturation,
-                (int)Blends.Color => MixCPU.Color,
-                (int)Blends.Luminosity => MixCPU.Luminosity,
+                (int)Blends.Hue => Mix.Hue,
+                (int)Blends.Saturation => Mix.Saturation,
+                (int)Blends.Color => Mix.Color,
+                (int)Blends.Luminosity => Mix.Luminosity,
 
                 /// Default
-                _ => MixCPU.Add
+                _ => Mix.Add
             };
         }
     }

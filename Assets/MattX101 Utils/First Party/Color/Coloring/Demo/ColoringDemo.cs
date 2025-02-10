@@ -52,14 +52,14 @@ namespace Utils.Colors.Coloring
                     ComputeBuffer valuesBuffer = new ComputeBuffer(values.Length, sizeof(float));
                     valuesBuffer.SetData(values);
 
-                    Coloring.ColoringGPU(ref colorsBuffer, valuesBuffer, _color);
+                    Coloring.Color(ref colorsBuffer, valuesBuffer, _color);
 
                     colorsBuffer.GetData(colors);
                     colorsBuffer.Release();
                 }
                 else
                 {
-                    Coloring.ColoringCPU(ref colors, values, _color);
+                    Coloring.Color(ref colors, values, _color);
                 }
             }
             else

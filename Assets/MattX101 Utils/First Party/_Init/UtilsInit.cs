@@ -15,13 +15,15 @@ namespace Utils.Init
         [SerializeField] private ComputeShader _fastNoise2D;
 
         [Space]
+        [Header("Shaders/Curves")]
 
         [SerializeField] private ComputeShader _curves;
-        [SerializeField] private ComputeShader _biasAndGain;
         [SerializeField] private ComputeShader _animationCurve;
+        [SerializeField] private ComputeShader _biasAndGain;
 
         [Space]
         [Header("Shaders/Filters")]
+
         [SerializeField] private ComputeShader _box;
         [SerializeField] private ComputeShader _invert;
 
@@ -32,17 +34,17 @@ namespace Utils.Init
 
         private void Awake()
         {
-            FastNoise2DGPU.Shader = _fastNoise2D;
+            FastNoise2D.Shader = _fastNoise2D;
 
-            CurvesGPU.Shader = _curves;
-            BiasAndGainGPU.Shader = _biasAndGain;
-            AnimationCurves.Shader = _animationCurve;
+            Curves.Curves.Shader = _curves;
+            Curves.Curves.AnimationCurveShader = _animationCurve;
+            BiasAndGain.Shader = _biasAndGain;
 
             BoxBlur.Shader = _box;
             Invert.Shader = _invert;
 
             Coloring.Shader = _coloring;
-            MixGPU.Shader = _colorMixer;
+            Mix.Shader = _colorMixer;
         }
     }
 }

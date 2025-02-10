@@ -5,49 +5,39 @@ namespace Utils.Filters.Sharpen
 {
     public static class BoxSharpen
     {
-        private static void SharpenFloat(ref float filter, float source)
+        private static void Sharpen(ref float filter, float source)
         {
             filter = 2.0f * source - filter;
         }
 
-        private static void SharpenColor(ref Color filter, Color source)
+        private static void Sharpen(ref Color filter, Color source)
         {
-            SharpenFloat(ref filter.r, source.r);
-            SharpenFloat(ref filter.g, source.g);
-            SharpenFloat(ref filter.b, source.b);
+            Sharpen(ref filter.r, source.r);
+            Sharpen(ref filter.g, source.g);
+            Sharpen(ref filter.b, source.b);
         }
 
-        public static void SharpenFloat(ref float[] filter, float[] source, int width, int height)
+        public static void Compute(ref float[] filter, float[] source, int width, int height)
         {
-            BoxBlur.BlurFloat(ref filter, source, width, height);
+            BoxBlur.Compute(ref filter, source, width, height);
 
             for (int i = 0; i < source.Length; i++)
             {
-                SharpenFloat(ref filter[i], source[i]);
+                Sharpen(ref filter[i], source[i]);
             }
         }
 
-        public static void SharpenColor(ref Color[] filter, Color[] source, int width, int height)
+        public static void Compute(ref Color[] filter, Color[] source, int width, int height)
         {
-            BoxBlur.BlurColor(ref filter, source, width, height);
+            BoxBlur.Compute(ref filter, source, width, height);
 
             for (int i = 0; i < source.Length; i++)
             {
-                SharpenColor(ref filter[i], source[i]);
+                Sharpen(ref filter[i], source[i]);
             }
         }
 
-        public static void SharpenFloat(ref ComputeBuffer filter, ComputeBuffer source, int width, int height)
-        {
-            DispatchShader(ref filter, source, width, height, true);
-        }
-
-        public static void SharpenColor(ref ComputeBuffer filter, ComputeBuffer source, int width, int height)
-        {
-            DispatchShader(ref filter, source, width, height, false);
-        }
-
-        private static void DispatchShader(ref ComputeBuffer filter, ComputeBuffer source, int width, int height, bool isFloat)
+        public static void Compute(ref ComputeBuffer filter, ComputeBuffer source, int width, int height, bool isFloat)
         {
             BoxBlur.Shader.SetInt("width", width);
             BoxBlur.Shader.SetInt("height", height);
@@ -65,11 +55,7 @@ namespace Utils.Filters.Sharpen
                 BoxBlur.Shader.SetBuffer(kernel, "filterColor", filter);
             }
 
-            BoxBlur.Shader.Dispatch(
-                kernel,
-                Mathf.CeilToInt(width / 32.0f),
-                Mathf.CeilToInt(height / 32.0f),
-                1);
+            BoxBlur.Shader.Dispatch(kernel, Mathf.CeilToInt(width / 32.0f), Mathf.CeilToInt(height / 32.0f), 1);
         }
     }
 }

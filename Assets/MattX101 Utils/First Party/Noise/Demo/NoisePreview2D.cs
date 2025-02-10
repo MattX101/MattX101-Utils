@@ -15,8 +15,8 @@ namespace Utils.Noise.Preview
 
         [Space]
 
-        [SerializeField]
-        private float _increment = 1.0f;
+        [SerializeField] private Vector3 _noiseShift = Vector3.zero;
+        [SerializeField] private Vector3 _warpShift = Vector3.zero;
 
         [SerializeField, Range(1, 16)]
         private int _downScaler = 16;
@@ -52,7 +52,7 @@ namespace Utils.Noise.Preview
 
             _noiseMap = new float[_cameraWidth * _cameraHeight];
 
-            if (_noiseProfile.warp)
+            if (_noiseProfile.Warp)
             {
                 _noiseProfile.Init();
                 _warpProfile.Init();
@@ -67,14 +67,14 @@ namespace Utils.Noise.Preview
                 ComputeBuffer noiseBuffer = new ComputeBuffer(_noiseMap.Length, sizeof(float));
                 noiseBuffer.SetData(_noiseMap);
 
-                FastNoise2DGPU.GenerateNoise(ref noiseBuffer, _cameraWidth, _cameraHeight, _toggle3D, _noiseProfile, _warpProfile);
+                FastNoise2D.Generate(ref noiseBuffer, _cameraWidth, _cameraHeight, _toggle3D, _noiseProfile, _warpProfile);
 
                 noiseBuffer.GetData(_noiseMap);
                 noiseBuffer.Release();
             }
             else
             {
-                FastNoise2DCPU.GenerateNoise2D(ref _noiseMap, _cameraWidth, _cameraHeight, _toggle3D, _noiseProfile, _warpProfile);
+                FastNoise2D.Generate(ref _noiseMap, _cameraWidth, _cameraHeight, _toggle3D, _noiseProfile, _warpProfile);
             }
 
             _colorMap = new Color[_cameraWidth * _cameraHeight];
@@ -85,13 +85,14 @@ namespace Utils.Noise.Preview
 
             _texture = new Texture2D(_cameraWidth, _cameraHeight);
             _texture.wrapMode = TextureWrapMode.Clamp;
+            _texture.filterMode = FilterMode.Point;
             _texture.SetPixels(_colorMap);
             _texture.Apply();
 
             _preview.texture = _texture;
 
-            _noiseProfile.offset.z += _increment * Time.deltaTime;
-            _warpProfile.offset.z -= _increment * Time.deltaTime;
+            _noiseProfile.AnimateOffset(_noiseShift);
+            _warpProfile.AnimateOffset(_warpShift);
         }
     }
 }
