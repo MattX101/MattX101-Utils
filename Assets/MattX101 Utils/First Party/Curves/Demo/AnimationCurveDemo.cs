@@ -5,12 +5,11 @@ namespace Utils.Curves
 {
     public class AnimationCurveDemo : MonoBehaviour
     {
-        [SerializeField] private UnityEngine.AnimationCurve _curve;
+        [SerializeField] private AnimationCurve _curve;
         
         [SerializeField] private Texture2D _texture;
         [SerializeField] private RawImage _image;
 
-        private Color[] _textureColors;
         private Texture2D _previewTexture;
 
         private ComputeBuffer _colorsBuffer;

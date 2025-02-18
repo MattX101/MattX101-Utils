@@ -12,8 +12,6 @@ namespace Utils.Curves
 
         private const int NumOfPoints = 100;
 
-        private const float MinX = -130.0f;
-        private const float MaxX = 130.0f;
         private const float MinY = -130.0f;
         private const float MaxY = 130.0f;
 

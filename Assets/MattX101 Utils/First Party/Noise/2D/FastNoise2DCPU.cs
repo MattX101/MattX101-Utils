@@ -1,4 +1,3 @@
-using UnityEngine;
 using Utils.Noise.Profiles;
 
 namespace Utils.Noise
@@ -10,11 +9,11 @@ namespace Utils.Noise
         private static int _width, _height;
         private static float _halfWidth, _halfHeight;
 
-        private static float _resToLengthRatio = 1.0f;
-        private static float ResToLengthRatio => _resToLengthRatio;
+        private static float _canvasToWidthRatio = 1.0f;
+        private static float CanvasToWidthRatio => _canvasToWidthRatio;
 
-        private static float _resToWidthRatio = 1.0f;
-        private static float ResToWidthRatio => _resToWidthRatio;
+        private static float _canvasToHeightRatio = 1.0f;
+        private static float CanvasToHeightRatio => _canvasToHeightRatio;
 
         private static float _noiseScaleX = 1.0f, _noiseScaleY = 1.0f, _warpScaleX = 1.0f, _warpScaleY = 1.0f;
         private static float _startNoiseX = 0.0f, _startNoiseY = 0.0f, _startWarpX = 0.0f, _startWarpY = 0.0f;
@@ -28,8 +27,8 @@ namespace Utils.Noise
             _halfWidth = _width / 2.0f;
             _halfHeight = _height / 2.0f;
 
-            _resToLengthRatio = DefaultCanvasSize / _width;
-            _resToWidthRatio  = DefaultCanvasSize / _height;
+            _canvasToWidthRatio = DefaultCanvasSize / _width;
+            _canvasToHeightRatio = DefaultCanvasSize / _height;
         }
 
         private static void Init(int width, int height, NoiseProfile noiseProfile, WarpProfile warpProfile)
@@ -166,11 +165,11 @@ namespace Utils.Noise
             }
         }
 
-        private static float GetNoiseScaleX(NoiseProfile profile) => profile.Scale.x / profile.UniversalScale / ResToLengthRatio;
-        private static float GetNoiseScaleY(NoiseProfile profile) => profile.Scale.y / profile.UniversalScale / ResToWidthRatio;
+        private static float GetNoiseScaleX(NoiseProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToWidthRatio;
+        private static float GetNoiseScaleY(NoiseProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToHeightRatio;
 
-        private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / ResToLengthRatio;
-        private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / ResToWidthRatio;
+        private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToWidthRatio;
+        private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToHeightRatio;
 
         private static float NoisePosX(float x, float scale, float offset) => ((x - _halfWidth) / scale) + offset;
         private static float NoisePosY(float y, float scale, float offset) => ((y - _halfHeight) / scale) + offset;

@@ -28,7 +28,6 @@ namespace Utils.Curves
         private bool _useGPU = true;
         private bool _modify = true;
 
-        private Color[] _textureColors;
         private Texture2D _previewTexture;
 
         private ComputeBuffer _colorsBuffer;

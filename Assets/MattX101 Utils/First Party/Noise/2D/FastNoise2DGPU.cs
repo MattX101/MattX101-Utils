@@ -15,10 +15,10 @@ namespace Utils.Noise
         {
             Init(width, height);
 
-            Shader.SetInt("resX", _width);
-            Shader.SetInt("resY", _height);
-            Shader.SetFloat("halfResX", _halfWidth);
-            Shader.SetFloat("halfResY", _halfHeight);
+            Shader.SetInt("width", _width);
+            Shader.SetInt("height", _height);
+            Shader.SetFloat("halfWidth", _halfWidth);
+            Shader.SetFloat("halfHeight", _halfHeight);
 
             int kernel = 0;
             if (noiseProfile.Warp)

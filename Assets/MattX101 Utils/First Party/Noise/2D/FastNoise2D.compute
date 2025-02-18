@@ -5,8 +5,8 @@
 
 #include "../Libraries/FastNoiseLite.hlsl"
 
-int resX, resY;
-float halfResX, halfResY;
+int width, height;
+float halfWidth, halfHeight;
 
 RWStructuredBuffer<float> noise;
 
@@ -113,20 +113,20 @@ void WarpInit()
 
 int Index(int x, int y)
 {
-    if (x >= resX)
+    if (x >= width)
         return -1;
     
-    if (y >= resY)
+    if (y >= height)
         return -1;
     
-    return y * resX + x;
+    return y * width + x;
 }
 
-float NoisePosX(float x) { return ((x - halfResX) / scale.x) + offset.x; }
-float NoisePosY(float y) { return ((y - halfResY) / scale.y) + offset.y; }
+float NoisePosX(float x) { return ((x - halfWidth) / scale.x) + offset.x; }
+float NoisePosY(float y) { return ((y - halfHeight) / scale.y) + offset.y; }
 
-float WarpPosX(float x) { return ((x - halfResX) / warpScale.x) + warpOffset.x; }
-float WarpPosY(float y) { return ((y - halfResY) / warpScale.y) + warpOffset.y; }
+float WarpPosX(float x) { return ((x - halfWidth) / warpScale.x) + warpOffset.x; }
+float WarpPosY(float y) { return ((y - halfHeight) / warpScale.y) + warpOffset.y; }
 
 [numthreads(32, 32, 1)]
 void Noise2D(uint3 id : SV_DispatchThreadID)
