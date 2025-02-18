@@ -11,15 +11,15 @@ namespace Utils.Noise
             set;
         }
 
-        public static void Generate(ref ComputeBuffer noiseBuffer, int resX, int resY, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
+        public static void Generate(ref ComputeBuffer noiseBuffer, int width, int height, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
-            Init();
+            Init(width, height);
 
-            Shader.SetInt("resX", resX);
-            Shader.SetInt("resY", resY);
-            Shader.SetFloat("halfResX", (float)resX / 2.0f);
-            Shader.SetFloat("halfResY", (float)resY / 2.0f);
-            
+            Shader.SetInt("resX", _width);
+            Shader.SetInt("resY", _height);
+            Shader.SetFloat("halfResX", _halfWidth);
+            Shader.SetFloat("halfResY", _halfHeight);
+
             int kernel = 0;
             if (noiseProfile.Warp)
             {
@@ -37,7 +37,7 @@ namespace Utils.Noise
 
             Shader.SetBuffer(kernel, "noise", noiseBuffer);
 
-            Shader.Dispatch(kernel,  Mathf.CeilToInt(resX / 32.0f), Mathf.CeilToInt(resY / 32.0f), 1);
+            Shader.Dispatch(kernel,  Mathf.CeilToInt(width / 32.0f), Mathf.CeilToInt(height / 32.0f), 1);
         }
 
         private static void InitNoiseProfile(ComputeShader noiseShader, NoiseProfile noiseProfile)

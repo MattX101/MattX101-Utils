@@ -1,3 +1,4 @@
+using UnityEngine;
 using Utils.Noise.Profiles;
 
 namespace Utils.Noise
@@ -6,8 +7,8 @@ namespace Utils.Noise
     {
         private const float DefaultCanvasSize = 1000.0f;
 
-        private static int _resX, _resY;
-        private static float _halfResX, _halfResY;
+        private static int _width, _height;
+        private static float _halfWidth, _halfHeight;
 
         private static float _resToLengthRatio = 1.0f;
         private static float ResToLengthRatio => _resToLengthRatio;
@@ -20,15 +21,20 @@ namespace Utils.Noise
         private static float _xNoisePos = 0.0f, _yNoisePos = 0.0f, _xWarpPos = 0.0f, _yWarpPos = 0.0f;
         private static float _xNoiseInc = 1.0f, _yNoiseInc = 1.0f, _xWarpInc = 1.0f, _yWarpInc = 1.0f;
 
-        private static void Init()
+        private static void Init(int width, int height)
         {
-            _resToLengthRatio = DefaultCanvasSize / _resX;
-            _resToWidthRatio  = DefaultCanvasSize / _resY;
+            _width = width;
+            _height = height;
+            _halfWidth = _width / 2.0f;
+            _halfHeight = _height / 2.0f;
+
+            _resToLengthRatio = DefaultCanvasSize / _width;
+            _resToWidthRatio  = DefaultCanvasSize / _height;
         }
 
-        private static void Init(NoiseProfile noiseProfile, WarpProfile warpProfile)
+        private static void Init(int width, int height, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
-            Init();
+            Init(width, height);
 
             _noiseScaleX = GetNoiseScaleX(noiseProfile);
             _noiseScaleY = GetNoiseScaleY(noiseProfile);
@@ -52,14 +58,9 @@ namespace Utils.Noise
             _yWarpInc = 1.0f / _warpScaleY;
         }
 
-        public static void Generate(ref float[] noiseMap, int resX, int resY, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
+        public static void Generate(ref float[] noiseMap, int width, int height, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
-            _resX = resX;
-            _resY = resY;
-            _halfResX = _resX / 2.0f;
-            _halfResY = _resY / 2.0f;
-
-            Init(noiseProfile, warpProfile);
+            Init(width, height, noiseProfile, warpProfile);
 
             if (noiseProfile.Warp)
             {
@@ -92,9 +93,9 @@ namespace Utils.Noise
 
         private static void Noise2D(ref float[] noiseMap, NoiseProfile noiseProfile)
         {
-            for (int y = 0, i = 0; y < _resY; y++)
+            for (int y = 0, i = 0; y < _height; y++)
             {
-                for (int x = 0; x < _resX; x++, i++)
+                for (int x = 0; x < _width; x++, i++)
                 {
                     noiseMap[i] = noiseProfile.GetNoise2D(_xNoisePos, _yNoisePos);
                     _xNoisePos += _xNoiseInc;
@@ -107,9 +108,9 @@ namespace Utils.Noise
 
         private static void Noise3D(ref float[] noiseMap, NoiseProfile noiseProfile)
         {
-            for (int y = 0, i = 0; y < _resY; y++)
+            for (int y = 0, i = 0; y < _height; y++)
             {
-                for (int x = 0; x < _resX; x++, i++)
+                for (int x = 0; x < _width; x++, i++)
                 {
                     noiseMap[i] = noiseProfile.GetNoise3D(_xNoisePos, _yNoisePos, noiseProfile.Offset.z);
                     _xNoisePos += _xNoiseInc;
@@ -122,9 +123,9 @@ namespace Utils.Noise
 
         private static void WarpedNoise2D(ref float[] noiseMap, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
-            for (int y = 0, i = 0; y < _resY; y++)
+            for (int y = 0, i = 0; y < _height; y++)
             {
-                for (int x = 0; x < _resX; x++, i++)
+                for (int x = 0; x < _width; x++, i++)
                 {
                     noiseMap[i] = noiseProfile.GetNoise2D(
                         _xWarpPos + warpProfile.GetWarp2D(_xNoisePos, _yNoisePos),
@@ -144,9 +145,9 @@ namespace Utils.Noise
 
         private static void WarpedNoise3D(ref float[] noiseMap, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
-            for (int y = 0, i = 0; y < _resY; y++)
+            for (int y = 0, i = 0; y < _height; y++)
             {
-                for (int x = 0; x < _resX; x++, i++)
+                for (int x = 0; x < _width; x++, i++)
                 {
                     noiseMap[i] = noiseProfile.GetNoise3D(
                         _xWarpPos + warpProfile.GetWarp3D(_xNoisePos, _yNoisePos, warpProfile.Offset.z),
@@ -171,10 +172,10 @@ namespace Utils.Noise
         private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / ResToLengthRatio;
         private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / ResToWidthRatio;
 
-        private static float NoisePosX(float x, float scale, float offset) => ((x - _halfResX) / scale) + offset;
-        private static float NoisePosY(float y, float scale, float offset) => ((y - _halfResY) / scale) + offset;
+        private static float NoisePosX(float x, float scale, float offset) => ((x - _halfWidth) / scale) + offset;
+        private static float NoisePosY(float y, float scale, float offset) => ((y - _halfHeight) / scale) + offset;
 
-        private static float WarpPosX(float x, float scale, float offset) => ((x - _halfResX) / scale) + offset;
-        private static float WarpPosY(float y, float scale, float offset) => ((y - _halfResY) / scale) + offset;
+        private static float WarpPosX(float x, float scale, float offset) => ((x - _halfWidth) / scale) + offset;
+        private static float WarpPosY(float y, float scale, float offset) => ((y - _halfHeight) / scale) + offset;
     }
 }
