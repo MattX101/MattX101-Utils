@@ -122,11 +122,58 @@ int Index(int x, int y)
     return y * width + x;
 }
 
-float NoisePosX(float x) { return ((x - halfWidth) / scale.x) + offset.x; }
-float NoisePosY(float y) { return ((y - halfHeight) / scale.y) + offset.y; }
+float NoisePosX(float x)
+{
+    return ((x - halfWidth) / scale.x) + offset.x;
+}
+float NoisePosY(float y) 
+{
+    return ((y - halfHeight) / scale.y) + offset.y;
+}
 
-float WarpPosX(float x) { return ((x - halfWidth) / warpScale.x) + warpOffset.x; }
-float WarpPosY(float y) { return ((y - halfHeight) / warpScale.y) + warpOffset.y; }
+float WarpPosX(float x)
+{ 
+    return ((x - halfWidth) / warpScale.x) + warpOffset.x;
+}
+float WarpPosY(float y)
+{
+    return ((y - halfHeight) / warpScale.y) + warpOffset.y;
+}
+
+float Single(float x, float y)
+{
+    return (fnlGetNoise2D(noiseState, NoisePosX(x), NoisePosY(y)) + 1) / 2;
+}
+
+float Single(float x, float y, float z)
+{
+    return (fnlGetNoise3D(noiseState, NoisePosX(x), NoisePosY(y), z) + 1) / 2;
+}
+
+float WarpSingle(float x, float y)
+{  
+    float warpX = WarpPosX(x);
+    float warpY = WarpPosY(y);
+    
+    return (fnlGetNoise2D(
+        noiseState, 
+        NoisePosX(x) + fnlGetNoise2D(warpState, warpX, warpY) * warpAmp,
+        NoisePosY(y) + fnlGetNoise2D(warpState, warpY, warpX) * warpAmp)
+        + 1) / 2;
+}
+
+float WarpSingle(float x, float y, float noiseZ, float warpZ)
+{
+    float warpX = WarpPosX(x);
+    float warpY = WarpPosY(y);
+    
+    return (fnlGetNoise3D(
+        noiseState,
+        NoisePosX(x) + fnlGetNoise2D(warpState, warpX, warpY) * warpAmp,
+        NoisePosY(y) + fnlGetNoise2D(warpState, warpY, warpX) * warpAmp,
+        noiseZ)
+        + 1) / 2;
+}
 
 [numthreads(32, 32, 1)]
 void Noise2D(uint3 id : SV_DispatchThreadID)
@@ -136,7 +183,8 @@ void Noise2D(uint3 id : SV_DispatchThreadID)
         return;
     
     NoiseInit();
-    noise[index] = (fnlGetNoise2D(noiseState, NoisePosX(id.x), NoisePosY(id.y)) + 1) / 2;
+    
+    noise[index] = Single(id.x, id.y);
 }
 
 [numthreads(32, 32, 1)]
@@ -147,7 +195,8 @@ void Noise3D(uint3 id : SV_DispatchThreadID)
         return;
     
     NoiseInit();
-    noise[index] = (fnlGetNoise3D(noiseState, NoisePosX(id.x), NoisePosY(id.y), offset.z) + 1) / 2;
+    
+    noise[index] = Single(id.x, id.y, offset.z);
 }
 
 [numthreads(32, 32, 1)]
@@ -160,15 +209,7 @@ void WarpNoise2D(uint3 id : SV_DispatchThreadID)
     NoiseInit();
     WarpInit();
     
-    float xNoisePos = NoisePosX(id.x);
-    float yNoisePos = NoisePosY(id.y);
-        
-    noise[index] =
-    (fnlGetNoise2D(
-        noiseState, 
-        WarpPosX(id.x) + (fnlGetNoise2D(warpState, xNoisePos, yNoisePos) * warpAmp),
-        WarpPosY(id.y) + (fnlGetNoise2D(warpState, yNoisePos, xNoisePos) * warpAmp))
-    + 1) / 2;
+    noise[index] = WarpSingle(id.x, id.y);
 }
 
 [numthreads(32, 32, 1)]
@@ -180,15 +221,6 @@ void WarpNoise3D(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     WarpInit();
-    
-    float xNoisePos = NoisePosX(id.x);
-    float yNoisePos = NoisePosY(id.y);
-        
-    noise[index] =
-    (fnlGetNoise3D(
-        noiseState,
-        WarpPosX(id.x) + (fnlGetNoise3D(warpState, xNoisePos, yNoisePos, warpOffset.z) * warpAmp),
-        WarpPosY(id.y) + (fnlGetNoise3D(warpState, yNoisePos, xNoisePos, warpOffset.z) * warpAmp),
-        offset.z)
-    + 1) / 2;
+            
+    noise[index] = WarpSingle(id.x, id.y, offset.z, warpOffset.z);
 }

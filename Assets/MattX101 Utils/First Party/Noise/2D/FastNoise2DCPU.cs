@@ -57,6 +57,33 @@ namespace Utils.Noise
             _yWarpInc = 1.0f / _warpScaleY;
         }
 
+        public static float Single(NoiseProfile noiseProfile, float noiseX, float noiseY)
+        {
+            return noiseProfile.GetNoise2D(noiseX, noiseY);
+        }
+
+        public static float Single(NoiseProfile noiseProfile, float noiseX, float noiseY, float offsetZ)
+        {
+            return noiseProfile.GetNoise3D(noiseX, noiseY, offsetZ);
+        }
+
+        public static float Single(NoiseProfile noiseProfile, WarpProfile warpProfile, float noiseX, float noiseY, float warpX, float warpY)
+        {
+            return Single(
+                noiseProfile,
+                noiseX + warpProfile.GetWarp2D(warpX, warpY),
+                noiseY + warpProfile.GetWarp2D(warpY, warpX));
+        }
+
+        public static float Single(NoiseProfile noiseProfile, WarpProfile warpProfile, float noiseX, float noiseY, float offsetZ, float warpX, float warpY, float warpOffsetZ)
+        {
+            return Single(
+                noiseProfile,
+                noiseX + warpProfile.GetWarp3D(warpX, warpY, warpOffsetZ),
+                noiseY + warpProfile.GetWarp3D(warpY, warpX, warpOffsetZ),
+                offsetZ);
+        }
+
         public static void Generate(ref float[] noiseMap, int width, int height, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
             Init(width, height, noiseProfile, warpProfile);
@@ -96,7 +123,7 @@ namespace Utils.Noise
             {
                 for (int x = 0; x < _width; x++, i++)
                 {
-                    noiseMap[i] = noiseProfile.GetNoise2D(_xNoisePos, _yNoisePos);
+                    noiseMap[i] = Single(noiseProfile, _xNoisePos, _yNoisePos);
                     _xNoisePos += _xNoiseInc;
                 }
 
@@ -111,7 +138,7 @@ namespace Utils.Noise
             {
                 for (int x = 0; x < _width; x++, i++)
                 {
-                    noiseMap[i] = noiseProfile.GetNoise3D(_xNoisePos, _yNoisePos, noiseProfile.Offset.z);
+                    noiseMap[i] = Single(noiseProfile, _xNoisePos, _yNoisePos, noiseProfile.Offset.z);
                     _xNoisePos += _xNoiseInc;
                 }
 
@@ -126,9 +153,7 @@ namespace Utils.Noise
             {
                 for (int x = 0; x < _width; x++, i++)
                 {
-                    noiseMap[i] = noiseProfile.GetNoise2D(
-                        _xWarpPos + warpProfile.GetWarp2D(_xNoisePos, _yNoisePos),
-                        _yWarpPos + warpProfile.GetWarp2D(_yNoisePos, _xNoisePos));
+                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePos, _yNoisePos, _xWarpPos, _yWarpPos);
 
                     _xNoisePos += _xNoiseInc;
                     _xWarpPos += _xWarpInc;
@@ -148,10 +173,7 @@ namespace Utils.Noise
             {
                 for (int x = 0; x < _width; x++, i++)
                 {
-                    noiseMap[i] = noiseProfile.GetNoise3D(
-                        _xWarpPos + warpProfile.GetWarp3D(_xNoisePos, _yNoisePos, warpProfile.Offset.z),
-                        _yWarpPos + warpProfile.GetWarp3D(_yNoisePos, _xNoisePos, warpProfile.Offset.z),
-                        noiseProfile.Offset.z);
+                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePos, _yNoisePos, noiseProfile.Offset.z, _xWarpPos, _yWarpPos, warpProfile.Offset.z);
 
                     _xNoisePos += _xNoiseInc;
                     _xWarpPos += _xWarpInc;
