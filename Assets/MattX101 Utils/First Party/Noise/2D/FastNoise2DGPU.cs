@@ -19,6 +19,7 @@ namespace Utils.Noise
             Shader.SetInt("height", _height);
             Shader.SetFloat("halfWidth", _halfWidth);
             Shader.SetFloat("halfHeight", _halfHeight);
+            Shader.SetFloats("canvasToScreenRatio", CanvasToWidthRatio, CanvasToHeightRatio);
 
             int kernel = 0;
             if (noiseProfile.Warp)
@@ -37,7 +38,7 @@ namespace Utils.Noise
 
             Shader.SetBuffer(kernel, "noise", noiseBuffer);
 
-            Shader.Dispatch(kernel,  Mathf.CeilToInt(width / 32.0f), Mathf.CeilToInt(height / 32.0f), 1);
+            Shader.Dispatch(kernel, Mathf.CeilToInt(width / 32.0f), Mathf.CeilToInt(height / 32.0f), 1);
         }
 
         private static void InitNoiseProfile(ComputeShader noiseShader, NoiseProfile noiseProfile)
@@ -72,7 +73,7 @@ namespace Utils.Noise
             noiseShader.SetFloat("warpFrequency", warpProfile.Frequency);
             noiseShader.SetFloats("warpScale", GetWarpScaleX(warpProfile), GetWarpScaleY(warpProfile));
             noiseShader.SetFloats("warpOffset", warpProfile.Offset.x, warpProfile.Offset.y, warpProfile.Offset.z);
-            noiseShader.SetInt("warpNoiseType", (int)warpProfile.Type);
+            //noiseShader.SetInt("warpNoiseType", (int)warpProfile.Type);
 
             // Fractal
             noiseShader.SetInt("warpFractalType", (int)warpProfile.Fractal);

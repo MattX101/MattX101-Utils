@@ -3,24 +3,26 @@
 #pragma kernel WarpNoise2D
 #pragma kernel WarpNoise3D
 
-#include "../Libraries/FastNoiseLite.hlsl"
+#include "./NoiseGenerator.hlsl"
 
 int width, height;
 float halfWidth, halfHeight;
 
-RWStructuredBuffer<float> noise;
+float2 canvasToScreenRatio;
 
-// |-------|
-// | Noise |
-// |-------|
+float2 scale;
+float3 offset;
+
+float2 warpScale;
+float3 warpOffset;
+
+RWStructuredBuffer<float> noise;
 
 fnl_state noiseState;
 
 // Noise
 int seed;
 float frequency;
-float2 scale;
-float3 offset;
 int noiseType;
 
 // Fractal
@@ -55,14 +57,6 @@ void NoiseInit()
     noiseState.cellular_jitter_mod = jitter;
 }
 
-// |-------|
-// | Noise |
-// |-------|
-
-// |------|
-// | Warp |
-// |------|
-
 fnl_state warpState;
 
 // Warp
@@ -71,9 +65,7 @@ float warpAmp;
 // Warp Noise
 int warpSeed;
 float warpFrequency;
-float2 warpScale;
-float3 warpOffset;
-int warpNoiseType;
+//int warpNoiseType;
 
 // Warp Fractal
 int warpFractalType;
@@ -94,7 +86,7 @@ void WarpInit()
     
     warpState.seed = warpSeed;
     warpState.frequency = warpFrequency;
-    warpState.noise_type = warpNoiseType;
+    warpState.noise_type = 0;
     warpState.rotation_type_3d = 0;
     warpState.fractal_type = warpFractalType;
     warpState.octaves = warpOctaves;
@@ -107,17 +99,12 @@ void WarpInit()
     warpState.cellular_jitter_mod = warpJitter;
 }
 
-// |------|
-// | Warp |
-// |------|
-
 int Index(int x, int y)
 {
-    if (x >= width)
+    if (x >= width ||y >= height)
+    {
         return -1;
-    
-    if (y >= height)
-        return -1;
+    }
     
     return y * width + x;
 }
@@ -126,53 +113,18 @@ float NoisePosX(float x)
 {
     return ((x - halfWidth) / scale.x) + offset.x;
 }
-float NoisePosY(float y) 
+float NoisePosY(float y)
 {
     return ((y - halfHeight) / scale.y) + offset.y;
 }
 
 float WarpPosX(float x)
-{ 
-    return ((x - halfWidth) / warpScale.x) + warpOffset.x;
+{
+    return ((x / warpScale.x) + warpOffset.x) / canvasToScreenRatio.x;
 }
 float WarpPosY(float y)
 {
-    return ((y - halfHeight) / warpScale.y) + warpOffset.y;
-}
-
-float Single(float x, float y)
-{
-    return (fnlGetNoise2D(noiseState, NoisePosX(x), NoisePosY(y)) + 1) / 2;
-}
-
-float Single(float x, float y, float z)
-{
-    return (fnlGetNoise3D(noiseState, NoisePosX(x), NoisePosY(y), z) + 1) / 2;
-}
-
-float WarpSingle(float x, float y)
-{  
-    float warpX = WarpPosX(x);
-    float warpY = WarpPosY(y);
-    
-    return (fnlGetNoise2D(
-        noiseState, 
-        NoisePosX(x) + fnlGetNoise2D(warpState, warpX, warpY) * warpAmp,
-        NoisePosY(y) + fnlGetNoise2D(warpState, warpY, warpX) * warpAmp)
-        + 1) / 2;
-}
-
-float WarpSingle(float x, float y, float noiseZ, float warpZ)
-{
-    float warpX = WarpPosX(x);
-    float warpY = WarpPosY(y);
-    
-    return (fnlGetNoise3D(
-        noiseState,
-        NoisePosX(x) + fnlGetNoise2D(warpState, warpX, warpY) * warpAmp,
-        NoisePosY(y) + fnlGetNoise2D(warpState, warpY, warpX) * warpAmp,
-        noiseZ)
-        + 1) / 2;
+    return ((y / warpScale.y) + warpOffset.y) / canvasToScreenRatio.y;
 }
 
 [numthreads(32, 32, 1)]
@@ -184,7 +136,7 @@ void Noise2D(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    noise[index] = Single(id.x, id.y);
+    noise[index] = Single(noiseState, NoisePosX(id.x), NoisePosY(id.y));
 }
 
 [numthreads(32, 32, 1)]
@@ -196,7 +148,7 @@ void Noise3D(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    noise[index] = Single(id.x, id.y, offset.z);
+    noise[index] = Single(noiseState, NoisePosX(id.x), NoisePosY(id.y), offset.z);
 }
 
 [numthreads(32, 32, 1)]
@@ -205,11 +157,13 @@ void WarpNoise2D(uint3 id : SV_DispatchThreadID)
     int index = Index(id.x, id.y);
     if (index == -1)
         return;
-    
     NoiseInit();
     WarpInit();
     
-    noise[index] = WarpSingle(id.x, id.y);
+    float xNoise = NoisePosX(id.x);
+    float yNoise = NoisePosY(id.y);
+    
+    noise[index] = Single(noiseState, xNoise, yNoise, warpState, WarpPosX(xNoise), WarpPosY(yNoise), warpAmp);
 }
 
 [numthreads(32, 32, 1)]
@@ -221,6 +175,9 @@ void WarpNoise3D(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     WarpInit();
+    
+    float xNoise = NoisePosX(id.x);
+    float yNoise = NoisePosY(id.y);
             
-    noise[index] = WarpSingle(id.x, id.y, offset.z, warpOffset.z);
+    noise[index] = Single(noiseState, xNoise, yNoise, offset.z, warpState, WarpPosX(xNoise), WarpPosY(yNoise), warpOffset.z, warpAmp);
 }

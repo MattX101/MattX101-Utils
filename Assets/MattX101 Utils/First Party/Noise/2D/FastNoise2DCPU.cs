@@ -16,9 +16,8 @@ namespace Utils.Noise
         private static float CanvasToHeightRatio => _canvasToHeightRatio;
 
         private static float _noiseScaleX = 1.0f, _noiseScaleY = 1.0f, _warpScaleX = 1.0f, _warpScaleY = 1.0f;
-        private static float _startNoiseX = 0.0f, _startNoiseY = 0.0f, _startWarpX = 0.0f, _startWarpY = 0.0f;
-        private static float _xNoisePos = 0.0f, _yNoisePos = 0.0f, _xWarpPos = 0.0f, _yWarpPos = 0.0f;
-        private static float _xNoiseInc = 1.0f, _yNoiseInc = 1.0f, _xWarpInc = 1.0f, _yWarpInc = 1.0f;
+
+        private static float[] _xNoisePoints, _yNoisePoints, _xWarpPoints, _yWarpPoints;
 
         private static void Init(int width, int height)
         {
@@ -37,24 +36,48 @@ namespace Utils.Noise
 
             _noiseScaleX = GetNoiseScaleX(noiseProfile);
             _noiseScaleY = GetNoiseScaleY(noiseProfile);
-            _startNoiseX = NoisePosX(0, _noiseScaleX, noiseProfile.Offset.x);
-            _startNoiseY = NoisePosY(0, _noiseScaleY, noiseProfile.Offset.y);
-            _xNoisePos = _startNoiseX;
-            _yNoisePos = _startNoiseY;
-            _xNoiseInc = 1.0f / _noiseScaleX;
-            _yNoiseInc = 1.0f / _noiseScaleY;
 
-            if (warpProfile == null)
-                return;
+            _xNoisePoints = new float[_width];
+            _yNoisePoints = new float[_height];
 
-            _warpScaleX = GetWarpScaleX(warpProfile);
-            _warpScaleY = GetWarpScaleY(warpProfile);
-            _startWarpX = WarpPosX(0, _warpScaleX, warpProfile.Offset.x);
-            _startWarpY = WarpPosY(0, _warpScaleY, warpProfile.Offset.y);
-            _xWarpPos = _startWarpX;
-            _yWarpPos = _startWarpY;
-            _xWarpInc = 1.0f / _warpScaleX;
-            _yWarpInc = 1.0f / _warpScaleY;
+            if (warpProfile != null)
+            {
+                _warpScaleX = GetWarpScaleX(warpProfile);
+                _warpScaleY = GetWarpScaleY(warpProfile);
+
+                _xWarpPoints = new float[_width];
+                _yWarpPoints = new float[_height];
+            }
+
+            SetPoints(noiseProfile, warpProfile);
+        }
+
+        private static void SetPoints(NoiseProfile noiseProfile, WarpProfile warpProfile)
+        {
+            for (int x = 0; x < _width; x++)
+            {
+                _xNoisePoints[x] = ((x - _halfWidth) / _noiseScaleX) + noiseProfile.Offset.x;
+            }
+
+            for (int y = 0; y < _height; y++)
+            {
+                _yNoisePoints[y] = ((y - _halfHeight) / _noiseScaleY) + noiseProfile.Offset.y;
+            }
+
+            if (warpProfile != null)
+            {
+                for (int x = 0; x < _width; x++)
+                {
+                    _xWarpPoints[x] = (_xNoisePoints[x] / _warpScaleX) + warpProfile.Offset.x;
+                    _xWarpPoints[x] /= CanvasToWidthRatio;
+                }
+
+                for (int y = 0; y < _height; y++)
+                {
+                    _yWarpPoints[y] = (_yNoisePoints[y] / _warpScaleY) + warpProfile.Offset.y;
+                    _yWarpPoints[y] /= CanvasToHeightRatio;
+                }
+            }
         }
 
         public static float Single(NoiseProfile noiseProfile, float noiseX, float noiseY)
@@ -123,12 +146,8 @@ namespace Utils.Noise
             {
                 for (int x = 0; x < _width; x++, i++)
                 {
-                    noiseMap[i] = Single(noiseProfile, _xNoisePos, _yNoisePos);
-                    _xNoisePos += _xNoiseInc;
+                    noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y]);
                 }
-
-                _xNoisePos = _startNoiseX;
-                _yNoisePos += _yNoiseInc;
             }
         }
 
@@ -138,12 +157,8 @@ namespace Utils.Noise
             {
                 for (int x = 0; x < _width; x++, i++)
                 {
-                    noiseMap[i] = Single(noiseProfile, _xNoisePos, _yNoisePos, noiseProfile.Offset.z);
-                    _xNoisePos += _xNoiseInc;
+                    noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z);
                 }
-
-                _xNoisePos = _startNoiseX;
-                _yNoisePos += _yNoiseInc;
             }
         }
 
@@ -153,17 +168,8 @@ namespace Utils.Noise
             {
                 for (int x = 0; x < _width; x++, i++)
                 {
-                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePos, _yNoisePos, _xWarpPos, _yWarpPos);
-
-                    _xNoisePos += _xNoiseInc;
-                    _xWarpPos += _xWarpInc;
+                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], _xWarpPoints[x], _yWarpPoints[y]);
                 }
-
-                _xNoisePos = _startNoiseX;
-                _xWarpPos = _startWarpX;
-
-                _yNoisePos += _yNoiseInc;
-                _yWarpPos += _yWarpInc;
             }
         }
 
@@ -173,17 +179,8 @@ namespace Utils.Noise
             {
                 for (int x = 0; x < _width; x++, i++)
                 {
-                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePos, _yNoisePos, noiseProfile.Offset.z, _xWarpPos, _yWarpPos, warpProfile.Offset.z);
-
-                    _xNoisePos += _xNoiseInc;
-                    _xWarpPos += _xWarpInc;
+                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z, _xWarpPoints[x], _yWarpPoints[y], warpProfile.Offset.z);
                 }
-
-                _xNoisePos = _startNoiseX;
-                _xWarpPos = _startWarpX;
-
-                _yNoisePos += _yNoiseInc;
-                _yWarpPos += _yWarpInc;
             }
         }
 
@@ -192,11 +189,5 @@ namespace Utils.Noise
 
         private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToWidthRatio;
         private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToHeightRatio;
-
-        private static float NoisePosX(float x, float scale, float offset) => ((x - _halfWidth) / scale) + offset;
-        private static float NoisePosY(float y, float scale, float offset) => ((y - _halfHeight) / scale) + offset;
-
-        private static float WarpPosX(float x, float scale, float offset) => ((x - _halfWidth) / scale) + offset;
-        private static float WarpPosY(float y, float scale, float offset) => ((y - _halfHeight) / scale) + offset;
     }
 }

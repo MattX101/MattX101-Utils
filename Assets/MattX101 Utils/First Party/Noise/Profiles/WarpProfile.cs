@@ -16,7 +16,7 @@ namespace Utils.Noise.Profiles
         {
             FastNoise.SetSeed(Seed);
             FastNoise.SetFrequency(Frequency);
-            FastNoise.SetNoiseType(Type);
+            FastNoise.SetNoiseType(Library.FastNoiseLite.NoiseType.OpenSimplex2);
 
             // Fractal
             FastNoise.SetFractalType(Fractal);

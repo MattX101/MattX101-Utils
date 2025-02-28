@@ -189,7 +189,7 @@ MonoBehaviour:
     _universalScale: 1
     _scale: {x: 1, y: 1, z: 1}
     _offset: {x: 0, y: 0, z: 0}
-    _type: 3
+    _type: 2
     _fractal: 2
     _octaves: 6
     _lacunarity: 5
@@ -203,9 +203,9 @@ MonoBehaviour:
   _useGPU: 1
   _toggle3D: 0
   _puase: 0
-  _noiseShift: {x: 0, y: 0, z: 10}
+  _noiseShift: {x: 0, y: 0, z: 0}
   _warpShift: {x: 0, y: 0, z: 0}
-  _downScaler: 8
+  _downScaler: 16
   _colorPalette:
     serializedVersion: 2
     key0: {r: 0, g: 0.2390244, b: 1, a: 1}
