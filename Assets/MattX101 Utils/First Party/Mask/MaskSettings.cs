@@ -1,0 +1,45 @@
+using UnityEngine;
+using System;
+
+namespace Utils.Mask
+{
+    [Serializable]
+    public class MaskSettings
+    {
+        [SerializeField]
+        private bool _invert = false;
+        public bool Invert => _invert;
+
+        [Space]
+
+        [SerializeField]
+        private float _power = 1;
+        public float Power => _power;
+
+        [Space]
+
+        [SerializeField, Range(0, 360)]
+        private float _roll = 1.0f;
+        public float Roll => _roll;
+
+        [Space]
+
+        [SerializeField, Range(0, 1)]
+        private float _minValue = 0.0f;
+        public float MinValue => _minValue;
+
+        [SerializeField, Range(0, 1)]
+        private float _maxValue = 1.0f;
+        public float MaxValue => _maxValue;
+
+        [Space]
+
+        [SerializeField]
+        private Vector2 _offset = Vector2.zero;
+        public Vector2 Offset => _offset;
+
+        [SerializeField]
+        private Vector2 _scale = Vector2.one;
+        public Vector2 Sclae => _scale;
+    }
+}
