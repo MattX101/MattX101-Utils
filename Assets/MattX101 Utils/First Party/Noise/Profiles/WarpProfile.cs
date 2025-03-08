@@ -16,10 +16,10 @@ namespace Utils.Noise.Profiles
         {
             FastNoise.SetSeed(Seed);
             FastNoise.SetFrequency(Frequency);
-            FastNoise.SetNoiseType(Library.FastNoiseLite.NoiseType.OpenSimplex2);
+            FastNoise.SetNoiseType(GetNoiseType(Type));
 
             // Fractal
-            FastNoise.SetFractalType(Fractal);
+            FastNoise.SetFractalType(GetFractalType(Fractal));
             FastNoise.SetFractalOctaves(Octaves);
             FastNoise.SetFractalLacunarity(Lacunarity);
             FastNoise.SetFractalGain(Gain);

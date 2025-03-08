@@ -9,11 +9,8 @@ namespace Utils.Noise
         private static int _width, _height;
         private static float _halfWidth, _halfHeight;
 
-        private static float _canvasToWidthRatio = 1.0f;
-        private static float CanvasToWidthRatio => _canvasToWidthRatio;
-
-        private static float _canvasToHeightRatio = 1.0f;
-        private static float CanvasToHeightRatio => _canvasToHeightRatio;
+        private static float _canvasToScreenRation = 1.0f;
+        private static float CanvasToScreenRation => _canvasToScreenRation;
 
         private static float _noiseScaleX = 1.0f, _noiseScaleY = 1.0f, _warpScaleX = 1.0f, _warpScaleY = 1.0f;
 
@@ -26,11 +23,13 @@ namespace Utils.Noise
             _halfWidth = _width / 2.0f;
             _halfHeight = _height / 2.0f;
 
-            _canvasToWidthRatio = DefaultCanvasSize / _width;
-            _canvasToHeightRatio = DefaultCanvasSize / _height;
+            _canvasToScreenRation =
+                DefaultCanvasSize / _width > DefaultCanvasSize / _height ?
+                DefaultCanvasSize / _width :
+                DefaultCanvasSize / _height;
         }
 
-        private static void Init(int width, int height, NoiseProfile noiseProfile, WarpProfile warpProfile)
+        private static void Init(int width, int height, NoiseProfile noiseProfile, WarpProfile warpProfile = null)
         {
             Init(width, height);
 
@@ -52,7 +51,7 @@ namespace Utils.Noise
             SetPoints(noiseProfile, warpProfile);
         }
 
-        private static void SetPoints(NoiseProfile noiseProfile, WarpProfile warpProfile)
+        private static void SetPoints(NoiseProfile noiseProfile, WarpProfile warpProfile = null)
         {
             for (int x = 0; x < _width; x++)
             {
@@ -69,125 +68,87 @@ namespace Utils.Noise
                 for (int x = 0; x < _width; x++)
                 {
                     _xWarpPoints[x] = (_xNoisePoints[x] / _warpScaleX) + warpProfile.Offset.x;
-                    _xWarpPoints[x] /= CanvasToWidthRatio;
+                    _xWarpPoints[x] /= CanvasToScreenRation;
                 }
 
                 for (int y = 0; y < _height; y++)
                 {
                     _yWarpPoints[y] = (_yNoisePoints[y] / _warpScaleY) + warpProfile.Offset.y;
-                    _yWarpPoints[y] /= CanvasToHeightRatio;
+                    _yWarpPoints[y] /= CanvasToScreenRation;
                 }
             }
         }
 
-        public static float Single(NoiseProfile noiseProfile, float noiseX, float noiseY)
-        {
-            return noiseProfile.GetNoise2D(noiseX, noiseY);
-        }
-
-        public static float Single(NoiseProfile noiseProfile, float noiseX, float noiseY, float offsetZ)
-        {
-            return noiseProfile.GetNoise3D(noiseX, noiseY, offsetZ);
-        }
-
-        public static float Single(NoiseProfile noiseProfile, WarpProfile warpProfile, float noiseX, float noiseY, float warpX, float warpY)
-        {
-            return Single(
-                noiseProfile,
-                noiseX + warpProfile.GetWarp2D(warpX, warpY),
-                noiseY + warpProfile.GetWarp2D(warpY, warpX));
-        }
-
-        public static float Single(NoiseProfile noiseProfile, WarpProfile warpProfile, float noiseX, float noiseY, float offsetZ, float warpX, float warpY, float warpOffsetZ)
-        {
-            return Single(
-                noiseProfile,
-                noiseX + warpProfile.GetWarp3D(warpX, warpY, warpOffsetZ),
-                noiseY + warpProfile.GetWarp3D(warpY, warpX, warpOffsetZ),
-                offsetZ);
-        }
-
-        public static void Generate(ref float[] noiseMap, int width, int height, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
+        public static void Generate(ref float[] noiseMap, int width, int height, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile = null)
         {
             Init(width, height, noiseProfile, warpProfile);
 
-            if (noiseProfile.Warp)
+            if (noiseProfile.Normalized)
             {
-                if (warpProfile == null)
-                    return;
-
-                switch (is3D)
+                if (noiseProfile.Warp)
                 {
-                    case false:
-                        WarpedNoise2D(ref noiseMap, noiseProfile, warpProfile);
-                        break;
-                    case true:
-                        WarpedNoise3D(ref noiseMap, noiseProfile, warpProfile);
-                        break;
+                    if (warpProfile == null)
+                        return;
+
+                    switch (is3D)
+                    {
+                        case false:
+                            WarpedNoise2D_Linear(ref noiseMap, noiseProfile, warpProfile);
+                            break;
+                        case true:
+                            WarpedNoise3D_Linear(ref noiseMap, noiseProfile, warpProfile);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (is3D)
+                    {
+                        case false:
+                            Noise2D_Linear(ref noiseMap, noiseProfile);
+                            break;
+                        case true:
+                            Noise3D_Linear(ref noiseMap, noiseProfile);
+                            break;
+                    }
                 }
             }
             else
             {
-                switch (is3D)
+                if (noiseProfile.Warp)
                 {
-                    case false:
-                        Noise2D(ref noiseMap, noiseProfile);
-                        break;
-                    case true:
-                        Noise3D(ref noiseMap, noiseProfile);
-                        break;
+                    if (warpProfile == null)
+                        return;
+
+                    switch (is3D)
+                    {
+                        case false:
+                            WarpedNoise2D(ref noiseMap, noiseProfile, warpProfile);
+                            break;
+                        case true:
+                            WarpedNoise3D(ref noiseMap, noiseProfile, warpProfile);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (is3D)
+                    {
+                        case false:
+                            Noise2D(ref noiseMap, noiseProfile);
+                            break;
+                        case true:
+                            Noise3D(ref noiseMap, noiseProfile);
+                            break;
+                    }
                 }
             }
         }
 
-        private static void Noise2D(ref float[] noiseMap, NoiseProfile noiseProfile)
-        {
-            for (int y = 0, i = 0; y < _height; y++)
-            {
-                for (int x = 0; x < _width; x++, i++)
-                {
-                    noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y]);
-                }
-            }
-        }
+        private static float GetNoiseScaleX(NoiseProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToScreenRation;
+        private static float GetNoiseScaleY(NoiseProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToScreenRation;
 
-        private static void Noise3D(ref float[] noiseMap, NoiseProfile noiseProfile)
-        {
-            for (int y = 0, i = 0; y < _height; y++)
-            {
-                for (int x = 0; x < _width; x++, i++)
-                {
-                    noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z);
-                }
-            }
-        }
-
-        private static void WarpedNoise2D(ref float[] noiseMap, NoiseProfile noiseProfile, WarpProfile warpProfile)
-        {
-            for (int y = 0, i = 0; y < _height; y++)
-            {
-                for (int x = 0; x < _width; x++, i++)
-                {
-                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], _xWarpPoints[x], _yWarpPoints[y]);
-                }
-            }
-        }
-
-        private static void WarpedNoise3D(ref float[] noiseMap, NoiseProfile noiseProfile, WarpProfile warpProfile)
-        {
-            for (int y = 0, i = 0; y < _height; y++)
-            {
-                for (int x = 0; x < _width; x++, i++)
-                {
-                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z, _xWarpPoints[x], _yWarpPoints[y], warpProfile.Offset.z);
-                }
-            }
-        }
-
-        private static float GetNoiseScaleX(NoiseProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToWidthRatio;
-        private static float GetNoiseScaleY(NoiseProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToHeightRatio;
-
-        private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToWidthRatio;
-        private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToHeightRatio;
+        private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToScreenRation;
+        private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToScreenRation;
     }
 }

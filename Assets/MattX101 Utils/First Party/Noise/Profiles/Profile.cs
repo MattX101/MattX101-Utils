@@ -31,12 +31,25 @@ namespace Utils.Noise.Profiles
         [Header("Fractal")]
 
         [SerializeField]
-        private FastNoiseLite.NoiseType _type = FastNoiseLite.NoiseType.Perlin;
-        public FastNoiseLite.NoiseType Type => _type;
+        private NoiseType _type = NoiseType.Perlin;
+        public NoiseType Type => _type;
+        public enum NoiseType
+        {
+            Perlin,
+            Simplex,
+            Value,
+            Cellular
+        }
 
         [SerializeField]
-        private FastNoiseLite.FractalType _fractal = FastNoiseLite.FractalType.FBm;
-        public FastNoiseLite.FractalType Fractal => _fractal;
+        private FractalType _fractal = FractalType.FBm;
+        public FractalType Fractal => _fractal;
+        public enum FractalType
+        {
+            FBm,
+            Ridged,
+            PingPong
+        }
 
         [SerializeField, Range(1, 10)]
         private int _octaves = 3;
@@ -68,22 +81,43 @@ namespace Utils.Noise.Profiles
         private FastNoiseLite.CellularDistanceFunction _cellularDistance = FastNoiseLite.CellularDistanceFunction.Euclidean;
         public FastNoiseLite.CellularDistanceFunction CellularDistance => _cellularDistance;
 
-        [SerializeField , Range(0, 1)] 
+        [SerializeField, Range(0, 1)] 
         private float _jitter = 1.0f;
         public float Jitter => _jitter;
 
         // Noise Types
-        public void SetNoiseType_Perlin() => _type = FastNoiseLite.NoiseType.Perlin;
-        public void SetNoiseType_OpenSimplex() => _type = FastNoiseLite.NoiseType.OpenSimplex2;
-        public void SetNoiseType_OpenSimplexS() => _type = FastNoiseLite.NoiseType.OpenSimplex2S;
-        public void SetNoiseType_Value() => _type = FastNoiseLite.NoiseType.Value;
-        public void SetNoiseType_ValueCubic() => _type = FastNoiseLite.NoiseType.ValueCubic;
-        public void SetNoiseType_Cellular() => _type = FastNoiseLite.NoiseType.Cellular;
+        internal FastNoiseLite.NoiseType GetNoiseType(NoiseType type)
+        {
+            return type switch
+            {
+                NoiseType.Perlin => FastNoiseLite.NoiseType.Perlin,
+                NoiseType.Simplex => FastNoiseLite.NoiseType.OpenSimplex2S,
+                NoiseType.Value => FastNoiseLite.NoiseType.Value,
+                NoiseType.Cellular => FastNoiseLite.NoiseType.Cellular,
+                _ => FastNoiseLite.NoiseType.Perlin
+            };
+        }
+
+        public void SetNoiseType_Perlin() => _type = NoiseType.Perlin;
+        public void SetNoiseType_Simplex() => _type = NoiseType.Simplex;
+        public void SetNoiseType_Value() => _type = NoiseType.Value;
+        public void SetNoiseType_Cellular() => _type = NoiseType.Cellular;
 
         // Fractal Types
-        public void SetFractalType_FBm() => _fractal = FastNoiseLite.FractalType.FBm;
-        public void SetFractalType_Ridged() => _fractal = FastNoiseLite.FractalType.Ridged;
-        public void SetFractalType_PingPong() => _fractal = FastNoiseLite.FractalType.PingPong;
+        internal FastNoiseLite.FractalType GetFractalType(FractalType fractal)
+        {
+            return fractal switch
+            {
+                FractalType.FBm => FastNoiseLite.FractalType.FBm,
+                FractalType.Ridged => FastNoiseLite.FractalType.Ridged,
+                FractalType.PingPong => FastNoiseLite.FractalType.PingPong,
+                _ => FastNoiseLite.FractalType.FBm
+            };
+        }
+
+        public void SetFractalType_FBm() => _fractal = FractalType.FBm;
+        public void SetFractalType_Ridged() => _fractal = FractalType.Ridged;
+        public void SetFractalType_PingPong() => _fractal = FractalType.PingPong;
 
         // Cellular
         public void SetCellular_Cell() => _cellularReturn = FastNoiseLite.CellularReturnType.CellValue;

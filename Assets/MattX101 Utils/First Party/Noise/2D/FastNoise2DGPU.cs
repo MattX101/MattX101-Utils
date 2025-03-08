@@ -19,7 +19,7 @@ namespace Utils.Noise
             Shader.SetInt("height", _height);
             Shader.SetFloat("halfWidth", _halfWidth);
             Shader.SetFloat("halfHeight", _halfHeight);
-            Shader.SetFloats("canvasToScreenRatio", CanvasToWidthRatio, CanvasToHeightRatio);
+            Shader.SetFloats("canvasToScreenRatio", CanvasToScreenRation, CanvasToScreenRation);
 
             int kernel = 0;
             if (noiseProfile.Warp)
@@ -27,13 +27,27 @@ namespace Utils.Noise
                 InitNoiseProfile(Shader, noiseProfile);
                 InitWarpProfile(Shader, warpProfile);
 
-                kernel = is3D ? Shader.FindKernel("WarpNoise3D") : Shader.FindKernel("WarpNoise2D");
+                if (noiseProfile.Normalized)
+                {
+                    kernel = is3D ? Shader.FindKernel("WarpNoise3D_Linear") : Shader.FindKernel("WarpNoise2D_Linear");
+                }
+                else
+                {
+                    kernel = is3D ? Shader.FindKernel("WarpNoise3D") : Shader.FindKernel("WarpNoise2D");
+                }
             }
             else
             {
                 InitNoiseProfile(Shader, noiseProfile);
 
-                kernel = is3D ? Shader.FindKernel("Noise3D") : Shader.FindKernel("Noise2D");
+                if (noiseProfile.Normalized)
+                {
+                    kernel = is3D ? Shader.FindKernel("Noise3D_Linear") : Shader.FindKernel("Noise2D_Linear");
+                }
+                else
+                {
+                    kernel = is3D ? Shader.FindKernel("Noise3D") : Shader.FindKernel("Noise2D");
+                }
             }
 
             Shader.SetBuffer(kernel, "noise", noiseBuffer);
@@ -48,10 +62,10 @@ namespace Utils.Noise
             noiseShader.SetFloat("frequency", noiseProfile.Frequency);
             noiseShader.SetFloats("scale", GetNoiseScaleX(noiseProfile), GetNoiseScaleY(noiseProfile));
             noiseShader.SetFloats("offset", noiseProfile.Offset.x, noiseProfile.Offset.y, noiseProfile.Offset.z);
-            noiseShader.SetInt("noiseType", (int)noiseProfile.Type);
+            noiseShader.SetInt("noiseType", (int)noiseProfile.GetNoiseType(noiseProfile.Type));
 
             // Fractal
-            noiseShader.SetInt("fractalType", (int)noiseProfile.Fractal);
+            noiseShader.SetInt("fractalType", (int)noiseProfile.GetFractalType(noiseProfile.Fractal));
             noiseShader.SetInt("octaves", noiseProfile.Octaves);
             noiseShader.SetFloat("lacunarity", noiseProfile.Lacunarity);
             noiseShader.SetFloat("gain", noiseProfile.Gain);
@@ -73,10 +87,10 @@ namespace Utils.Noise
             noiseShader.SetFloat("warpFrequency", warpProfile.Frequency);
             noiseShader.SetFloats("warpScale", GetWarpScaleX(warpProfile), GetWarpScaleY(warpProfile));
             noiseShader.SetFloats("warpOffset", warpProfile.Offset.x, warpProfile.Offset.y, warpProfile.Offset.z);
-            //noiseShader.SetInt("warpNoiseType", (int)warpProfile.Type);
+            noiseShader.SetInt("warpNoiseType", (int)warpProfile.GetNoiseType(warpProfile.Type));
 
             // Fractal
-            noiseShader.SetInt("warpFractalType", (int)warpProfile.Fractal);
+            noiseShader.SetInt("warpFractalType", (int)warpProfile.GetFractalType(warpProfile.Fractal));
             noiseShader.SetInt("warpOctaves", warpProfile.Octaves);
             noiseShader.SetFloat("warpLacunarity", warpProfile.Lacunarity);
             noiseShader.SetFloat("warpGain", warpProfile.Gain);

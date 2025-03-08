@@ -173,16 +173,17 @@ MonoBehaviour:
     _universalScale: 0.2
     _scale: {x: 1, y: 1, z: 1}
     _offset: {x: 0, y: 0, z: 0}
-    _type: 0
-    _fractal: 1
+    _type: 1
+    _fractal: 0
     _octaves: 5
     _lacunarity: 3
-    _gain: 0.4
+    _gain: 0.6
     _weightedStrength: 0
     _pingPongStrength: 2
     _cellularReturn: 1
     _cellularDistance: 0
     _jitter: 1
+    _normalized: 1
     _warp: 1
   _warpProfile:
     _seed: 1
@@ -205,7 +206,7 @@ MonoBehaviour:
   _puase: 0
   _noiseShift: {x: 0, y: 0, z: 0}
   _warpShift: {x: 0, y: 0, z: 0}
-  _downScaler: 16
+  _downScaler: 1
   _colorPalette:
     serializedVersion: 2
     key0: {r: 0, g: 0.2390244, b: 1, a: 1}

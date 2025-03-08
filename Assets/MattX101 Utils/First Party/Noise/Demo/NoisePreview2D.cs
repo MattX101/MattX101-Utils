@@ -24,7 +24,7 @@ namespace Utils.Noise.Preview
         [Space]
 
         [SerializeField]
-        public Gradient _colorPalette;
+        private Gradient _colorPalette;
 
         [SerializeField]
         private RawImage _preview;
