@@ -1,3 +1,4 @@
+using Utils.Noise;
 using UnityEngine;
 
 namespace Utils.Mask
@@ -7,6 +8,10 @@ namespace Utils.Mask
         private static float _sin;
         private static float _cos;
 
+        private static float _canvasToWidthRatio;
+        private static float _canvasToHeightRatio;
+        private static float _canvasRatio;
+
         private static float GetStart(float offset, float ratio)
         {
             return -ratio - offset;
@@ -14,144 +19,111 @@ namespace Utils.Mask
 
         public static void Generate(ref float[] values, int width, int height, MaskSettings settings)
         {
+            _canvasToWidthRatio = width / 1000.0f;
+            _canvasToHeightRatio = height / 1000.0f;
+            _canvasRatio = _canvasToWidthRatio < _canvasToHeightRatio ? _canvasToWidthRatio : _canvasToHeightRatio;
+
+            if (settings.ApplyNoise)
+            {
+                settings.NoiseProfile.Init();
+                settings.WarpProfile.Init();
+
+                FastNoise2D.Generate(ref values, width, height, false, settings.NoiseProfile, settings.WarpProfile);
+
+                for (int i = 0; i < values.Length; i++)
+                {
+                    values[i] *= settings.Warp * _canvasRatio;
+                }
+            }
+
             CalculateAngles(-settings.Roll);
 
-            float canvasToWidthRatio = width / 1000.0f;
-            float canvasToHeightRatio = height / 1000.0f;
+            float xP = GetStart(settings.Offset.x, _canvasToWidthRatio);
+            float yP = GetStart(settings.Offset.y, _canvasToHeightRatio);
 
-            float xInc = (canvasToWidthRatio * 2.0f) / width;
-            float yInc = (canvasToHeightRatio * 2.0f) / height;
+            float xInc = (_canvasToWidthRatio * 2.0f) / width;
+            float yInc = (_canvasToHeightRatio * 2.0f) / height; 
 
-            float xP = GetStart(settings.Offset.x, canvasToWidthRatio);
-            float yP = GetStart(settings.Offset.y, canvasToHeightRatio);
+            Vector2 correctedScale = settings.Scale / _canvasRatio;
 
-            Vector2 correctedScale = settings.Sclae / (canvasToWidthRatio < canvasToHeightRatio ? canvasToWidthRatio : canvasToHeightRatio);
-
-            if (settings.Invert)
+            if (settings.ApplyNoise)
             {
-                for (int y = 0, i = 0; y < height; y++)
+                for (int y = 0, i = 0; y < height; y++, yP += yInc)
                 {
-                    for (int x = 0; x < width; x++, i++)
+                    for (int x = 0; x < width; x++, xP += xInc, i++)
                     {
-                        values[i] = CalcualteInvertedMask(xP, yP, correctedScale, settings.Power, settings.MinValue, settings.MaxValue);
-
-                        xP += xInc;
+                        GetValue_Noise(
+                            ref values[i],
+                            RotateX(xP, yP),
+                            RotateY(xP, yP), 
+                            correctedScale
+                        );
                     }
 
-                    xP = GetStart(settings.Offset.x, canvasToWidthRatio);
-                    yP += yInc;
+                    xP = GetStart(settings.Offset.x, _canvasToWidthRatio);
                 }
             }
             else
             {
-                for (int y = 0, i = 0; y < height; y++)
+                for (int y = 0, i = 0; y < height; y++, yP += yInc)
                 {
-                    for (int x = 0; x < width; x++, i++)
+                    for (int x = 0; x < width; x++, xP += xInc, i++)
                     {
-                        values[i] = CalcualteMask(xP, yP, correctedScale, settings.Power, settings.MinValue, settings.MaxValue);
-
-                        xP += xInc;
+                        GetValue(
+                            ref values[i],
+                            RotateX(xP, yP),
+                            RotateY(xP, yP), 
+                            correctedScale
+                        );
                     }
 
-                    xP = GetStart(settings.Offset.x, canvasToWidthRatio);
-                    yP += yInc;
+                    xP = GetStart(settings.Offset.x, _canvasToWidthRatio);
                 }
             }
-        }
 
-        public static void Generate(ref Color[] colors, int width, int height, MaskSettings settings)
-        {
-            CalculateAngles(-settings.Roll);
-
-            float canvasToWidthRatio = width / 1000.0f;
-            float canvasToHeightRatio = height / 1000.0f;
-
-            float xInc = (canvasToWidthRatio * 2.0f) / width;
-            float yInc = (canvasToHeightRatio * 2.0f) / height;
-
-            float startX = -canvasToWidthRatio - settings.Offset.x;
-            float startY = -canvasToHeightRatio - settings.Offset.y;
-
-            float xP = startX;
-            float yP = startY;
-
-            Vector2 correctedScale = settings.Sclae / (canvasToWidthRatio < canvasToHeightRatio ? canvasToWidthRatio : canvasToHeightRatio);
+            for (int i = 0; i < values.Length; i++)
+            {
+                values[i] = Mathf.InverseLerp(0, settings.MaxValue, values[i]);
+                values[i] = Mathf.Pow(values[i], Mathf.Max(Mathf.Abs(settings.Power), 1));
+            }
 
             if (settings.Invert)
             {
-                for (int y = 0, i = 0; y < height; y++)
+                for (int i = 0; i < values.Length; i++)
                 {
-                    for (int x = 0; x < width; x++, i++)
-                    {
-                        colors[i] = Color.Lerp(Color.black, Color.white, CalcualteInvertedMask(xP, yP, correctedScale, settings.Power, settings.MinValue, settings.MaxValue));
-                        colors[i].a = 1;
-
-                        xP += xInc;
-                    }
-
-                    xP = startX;
-                    yP += yInc;
+                    values[i] = 1 - values[i];
                 }
             }
-            else
+
+            for (int i = 0; i < values.Length; i++)
             {
-                for (int y = 0, i = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++, i++)
-                    {
-                        colors[i] = Color.Lerp(Color.black, Color.white, CalcualteMask(xP, yP, correctedScale, settings.Power, settings.MinValue, settings.MaxValue));
-                        colors[i].a = 1;
-
-                        xP += xInc;
-                    }
-
-                    xP = startX;
-                    yP += yInc;
-                }
+                values[i] = Mathf.Clamp(values[i], settings.MinValue, 1);
             }
         }
 
-        private static float GetValue(float x, float y, Vector2 scale)
+        private static void GetValue(ref float value, float x, float y, Vector2 scale)
         {
-            return Mathf.Sqrt(Mathf.Abs(Mathf.Pow(GetPointX(x, y) * scale.x, 2)) + Mathf.Abs(Mathf.Pow(GetPointY(x, y) * scale.y, 2)));
+            value = Mathf.Sqrt(
+                Mathf.Abs(Mathf.Pow(x * scale.x, 2)) + 
+                Mathf.Abs(Mathf.Pow(y * scale.y, 2))
+            );
         }
 
-        private static float CalcualteInvertedMask(float x, float y, Vector2 scale, float power, float min, float max)
+        private static void GetValue_Noise(ref float value, float x, float y, Vector2 scale)
         {
-            float value = GetValue(x, y, scale);
-            value = Mathf.InverseLerp(0, max, value);
-            value = 1 - Mathf.Pow(value, Mathf.Max(Mathf.Abs(power), 1));
-            value = value < min ? min : value;
+            x = x < 0 ? x + value : x - value;
+            y = y < 0 ? y + value : y - value;
 
-            return value;
+            GetValue(ref value, x, y, scale);
         }
 
-        private static float CalcualteMask(float x, float y, Vector2 scale, float power, float min, float max)
-        {
-            float value = GetValue(x, y, scale);
-            value = Mathf.InverseLerp(0, max, value);
-            value = Mathf.Pow(value, Mathf.Max(Mathf.Abs(power), 1));
-            value = value < min ? min : value;
-
-            return value;
-        }
+        private static float RotateX(float x, float y) => x * _sin + y * _cos;
+        private static float RotateY(float x, float y) => x * _cos - y * _sin;
 
         private static void CalculateAngles(float roll)
         {
             _sin = Mathf.Cos(roll * Mathf.Deg2Rad);
             _cos = Mathf.Sin(roll * Mathf.Deg2Rad);
-        }
-
-        private static float GetPointX(float x, float y)
-        {
-            float rotatedX = x * _sin + y * _cos;
-            return rotatedX < 0 ? rotatedX : rotatedX;
-        }
-
-        private static float GetPointY(float x, float y)
-        {
-            float rotatedY = x * _cos - y * _sin;
-            return rotatedY < 0 ? rotatedY : rotatedY;
         }
     }
 }

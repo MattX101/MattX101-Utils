@@ -1,7 +1,9 @@
 {
     "name": "Utils.Mask",
     "rootNamespace": "Utils.Mask",
-    "references": [],
+    "references": [
+        "GUID:52e98eac364459c438271a819ba926cc"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

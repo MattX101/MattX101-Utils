@@ -278,14 +278,47 @@ MonoBehaviour:
   _camera: {fileID: 754375304}
   _image: {fileID: 692225624}
   _maskSettings:
-    _invert: 0
-    _stregth: 2
+    _invert: 1
     _power: 1
     _roll: 1
     _minValue: 0
     _maxValue: 1
     _offset: {x: 0, y: 0}
     _scale: {x: 1, y: 1}
+    _warp: 1
+    _noiseProfile:
+      _seed: 0
+      _universalScale: 1
+      _scale: {x: 1, y: 1, z: 1}
+      _offset: {x: 0, y: 0, z: 0}
+      _type: 0
+      _fractal: 0
+      _octaves: 3
+      _lacunarity: 2
+      _gain: 0.5
+      _weightedStrength: 0
+      _pingPongStrength: 2
+      _cellularReturn: 1
+      _cellularDistance: 0
+      _jitter: 1
+      _normalized: 0
+      _warp: 0
+    _warpProfile:
+      _seed: 0
+      _universalScale: 1
+      _scale: {x: 1, y: 1, z: 1}
+      _offset: {x: 0, y: 0, z: 0}
+      _type: 0
+      _fractal: 0
+      _octaves: 3
+      _lacunarity: 2
+      _gain: 0.5
+      _weightedStrength: 0
+      _pingPongStrength: 2
+      _cellularReturn: 1
+      _cellularDistance: 0
+      _jitter: 1
+      _warpAmp: 1
 --- !u!114 &692225624
 MonoBehaviour:
   m_ObjectHideFlags: 0

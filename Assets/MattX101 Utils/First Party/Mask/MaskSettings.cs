@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Utils.Noise.Profiles;
 
 namespace Utils.Mask
 {
@@ -40,6 +41,26 @@ namespace Utils.Mask
 
         [SerializeField]
         private Vector2 _scale = Vector2.one;
-        public Vector2 Sclae => _scale;
+        public Vector2 Scale => _scale;
+
+        [Space]
+
+        [Header("Noise")]
+
+        [SerializeField]
+        private bool _applyNoise = true;
+        public bool ApplyNoise => _applyNoise;
+
+        [SerializeField]
+        private float _warp = 1.0f;
+        public float Warp => Mathf.Abs(_warp);
+
+        [SerializeField]
+        private NoiseProfile _noiseProfile;
+        public NoiseProfile NoiseProfile => _noiseProfile;
+
+        [SerializeField]
+        private WarpProfile _warpProfile;
+        public WarpProfile WarpProfile => _warpProfile;
     }
 }
