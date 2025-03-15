@@ -1,0 +1,138 @@
+#pragma kernel Normal
+#pragma kernel Normal_Invert
+#pragma kernel Noise
+#pragma kernel Noise_Invert
+
+float sin, cos;
+
+int width;
+int height;
+
+float power;
+
+float2 scale;
+float2 range;
+
+float warp;
+float ratio;
+
+StructuredBuffer<float> pointsX;
+StructuredBuffer<float> pointsY;
+
+RWStructuredBuffer<float> values;
+
+float RotateX(float x, float y)
+{
+    return x * sin + y * cos;
+}
+float RotateY(float x, float y)
+{
+    return x * cos - y * sin;
+}
+
+float GetValue(float x, float y, float2 scale)
+{
+    return sqrt(
+        abs(pow(x * scale.x, 2)) +
+        abs(pow(y * scale.y, 2))
+    );
+}
+float GetValue_Noise(float noise, float x, float y, float2 scale)
+{
+    noise *= warp * ratio;
+    
+    x = x < 0 ? x + noise : x - noise;
+    y = y < 0 ? y + noise : y - noise;
+    
+    return GetValue(x, y, scale);
+}
+
+int Index(int x, int y)
+{
+    if (x >= width)
+        return -1;
+    
+    if (y >= height)
+        return -1;
+    
+    return y * width + x;
+}
+
+float InverseLerp(float a, float b, float t)
+{
+    return (t - a) / (b - a);
+}
+
+[numthreads(32, 32, 1)]
+void Normal(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    
+    values[index] = GetValue(
+        RotateX(pointsX[id.x], pointsY[id.y]), 
+        RotateY(pointsX[id.x], pointsY[id.y]),
+        scale
+    );
+    
+    values[index] = InverseLerp(0, range.y, values[index]);
+    values[index] = pow(values[index], max(abs(power), 1));
+    
+    values[index] = clamp(values[index], range.x, 1);
+}
+
+[numthreads(32, 32, 1)]
+void Normal_Invert(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    
+    values[index] = GetValue(
+        RotateX(pointsX[id.x], pointsY[id.y]),
+        RotateY(pointsX[id.x], pointsY[id.y]),
+        scale
+    );
+    
+    values[index] = InverseLerp(0, range.y, values[index]);
+    values[index] = pow(values[index], max(abs(power), 1));
+    
+    values[index] = 1 - values[index];
+    
+    values[index] = clamp(values[index], range.x, 1);
+}
+
+[numthreads(32, 32, 1)]
+void Noise(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    
+    values[index] = GetValue_Noise(
+        values[index],
+        RotateX(pointsX[id.x], pointsY[id.y]),
+        RotateY(pointsX[id.x], pointsY[id.y]),
+        scale
+    );
+    
+    values[index] = InverseLerp(0, range.y, values[index]);
+    values[index] = pow(values[index], max(abs(power), 1));
+    
+    values[index] = clamp(values[index], range.x, 1);
+}
+
+[numthreads(32,32,1)]
+void Noise_Invert(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    
+    values[index] = GetValue_Noise(
+        values[index],
+        RotateX(pointsX[id.x], pointsY[id.y]),
+        RotateY(pointsX[id.x], pointsY[id.y]),
+        scale
+    );
+    
+    values[index] = InverseLerp(0, range.y, values[index]);
+    values[index] = pow(values[index], max(abs(power), 1));
+    
+    values[index] = 1 - values[index];
+    
+    values[index] = clamp(values[index], range.x, 1);
+}

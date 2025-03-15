@@ -11,6 +11,13 @@ namespace Utils.Mask
         [SerializeField]
         private RawImage _image;
 
+        [Space]
+
+        [SerializeField]
+        private bool _useGPU = false;
+
+        [Space]
+
         [SerializeField]
         private MaskSettings _maskSettings;
 
@@ -24,7 +31,20 @@ namespace Utils.Mask
             _mask = new float[_camera.pixelWidth * _camera.pixelHeight];
             _colors = new Color[_camera.pixelWidth * _camera.pixelHeight];
 
-            MaskGenerator.Generate(ref _mask, _camera.pixelWidth, _camera.pixelHeight, _maskSettings);
+            if (_useGPU)
+            {
+                ComputeBuffer buffer = new ComputeBuffer(_camera.pixelWidth * _camera.pixelHeight, sizeof(float));
+                buffer.SetData(_mask);
+
+                MaskGenerator.Generate(ref buffer, _camera.pixelWidth, _camera.pixelHeight, _maskSettings);
+
+                buffer.GetData(_mask);
+                buffer.Dispose();
+            }
+            else
+            {
+                MaskGenerator.Generate(ref _mask, _camera.pixelWidth, _camera.pixelHeight, _maskSettings);
+            }
 
             for (int i = 0; i < _colors.Length; i++)
             {

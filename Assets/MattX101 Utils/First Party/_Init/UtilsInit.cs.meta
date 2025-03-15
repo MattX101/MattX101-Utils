@@ -6,12 +6,13 @@ MonoImporter:
   defaultReferences:
   - _fastNoise2D: {fileID: 7200000, guid: b0d94f2bf20d16540b02c7d43637db97, type: 3}
   - _curves: {fileID: 7200000, guid: 2aaeca91b411c1a4986d5a39697a75cb, type: 3}
-  - _biasAndGain: {fileID: 7200000, guid: 515f45268225b734aa2d223ece905a5f, type: 3}
   - _animationCurve: {fileID: 7200000, guid: f1cc418f79974934793a2efea3b9f2e6, type: 3}
+  - _biasAndGain: {fileID: 7200000, guid: 515f45268225b734aa2d223ece905a5f, type: 3}
   - _box: {fileID: 7200000, guid: 90c37fab8a6b4c3479065a2bfefb44f0, type: 3}
   - _invert: {fileID: 7200000, guid: 976934f1c21554949a7fb808eef0e7cd, type: 3}
   - _coloring: {fileID: 7200000, guid: 02cc1dc8eb7d93041aad509ba2f1aca3, type: 3}
   - _colorMixer: {fileID: 7200000, guid: 0bb37478f3f2b254f85f8f1670abb3fb, type: 3}
+  - _maskGenerator: {fileID: 7200000, guid: f2c63d1c0c6303444b24f898e91f99c5, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

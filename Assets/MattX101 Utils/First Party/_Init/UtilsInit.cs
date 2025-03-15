@@ -5,6 +5,7 @@ using Utils.Colors.Coloring;
 using Utils.Filters.Blur;
 using UnityEngine;
 using Utils.Filters;
+using Utils.Mask;
 
 namespace Utils.Init
 {
@@ -32,6 +33,10 @@ namespace Utils.Init
         [SerializeField] private ComputeShader _coloring;
         [SerializeField] private ComputeShader _colorMixer;
 
+        [Header("Shaders/Mask")]
+
+        [SerializeField] private ComputeShader _maskGenerator;
+
         private void Awake()
         {
             FastNoise2D.Shader = _fastNoise2D;
@@ -45,6 +50,8 @@ namespace Utils.Init
 
             Coloring.Shader = _coloring;
             Mix.Shader = _colorMixer;
+
+            MaskGenerator.Shader = _maskGenerator;
         }
     }
 }
