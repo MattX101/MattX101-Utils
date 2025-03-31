@@ -19,7 +19,7 @@ namespace Utils.Noise
             Shader.SetInt("height", _height);
             Shader.SetFloat("halfWidth", _halfWidth);
             Shader.SetFloat("halfHeight", _halfHeight);
-            Shader.SetFloats("canvasToScreenRatio", CanvasToScreenRation, CanvasToScreenRation);
+            Shader.SetFloats("canvasToScreenRatio", CanvasToScreenRatio, CanvasToScreenRatio);
 
             int kernel = 0;
             if (noiseProfile.Warp)

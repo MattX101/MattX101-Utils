@@ -22,11 +22,47 @@ namespace Utils.Noise.Profiles
 
         [SerializeField]
         private Vector3 _scale = Vector3.one;
-        public Vector3 Scale => _scale;
+        private Vector3 _scaleAddition = Vector3.one;
+        public Vector3 Scale
+        {
+            get
+            {
+                return new Vector3(
+                    _scale.x * _scaleAddition.x,
+                    _scale.y * _scaleAddition.y,
+                    _scale.z * _scaleAddition.z
+                    );
+            }
+            private set
+            {
+                Scale = value;
+            }
+        }
+
+        public void SetScale(Vector3 scale)
+        {
+            _scaleAddition = scale;
+        }
 
         [SerializeField]
         private Vector3 _offset = Vector3.zero;
-        public Vector3 Offset => _offset;
+        private Vector3 _offsetAddition = Vector3.zero;
+        public Vector3 Offset
+        {
+            get
+            {
+                return _offset + _offsetAddition;
+            }
+            private set
+            {
+                Offset = value;
+            }
+        }
+
+        public void SetOffset(Vector3 offset)
+        {
+            _offsetAddition = _offset - offset;
+        }
 
         [Header("Fractal")]
 

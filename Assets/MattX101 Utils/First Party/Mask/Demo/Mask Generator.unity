@@ -278,16 +278,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 754375304}
   _image: {fileID: 692225624}
-  _useGPU: 1
+  _downScaler: 1
+  _useGPU: 0
   _maskSettings:
     _invert: 1
     _power: 1
-    _roll: 1
+    _computeRoll: 1
+    _roll: 0
     _minValue: 0
     _maxValue: 1
+    _zoom: 1
+    _scale: {x: 5, y: 5}
     _offset: {x: 0, y: 0}
-    _scale: {x: 1, y: 1}
-    _applyNoise: 1
+    _applyNoise: 0
     _warp: 1
     _noiseProfile:
       _seed: 0
@@ -322,6 +325,7 @@ MonoBehaviour:
       _cellularDistance: 0
       _jitter: 1
       _warpAmp: 1
+    _previewNoise: 0
 --- !u!114 &692225624
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,6 +13,11 @@ namespace Utils.Mask
 
         [Space]
 
+        [SerializeField, Range(1, 16)]
+        private int _downScaler = 1;
+
+        [Space]
+
         [SerializeField]
         private bool _useGPU = false;
 
@@ -28,22 +33,25 @@ namespace Utils.Mask
 
         void Update()
         {
-            _mask = new float[_camera.pixelWidth * _camera.pixelHeight];
-            _colors = new Color[_camera.pixelWidth * _camera.pixelHeight];
+            int width = _camera.pixelWidth / _downScaler;
+            int height = _camera.pixelHeight / _downScaler;
+
+            _mask = new float[width * height];
+            _colors = new Color[width * height];
 
             if (_useGPU)
             {
-                ComputeBuffer buffer = new ComputeBuffer(_camera.pixelWidth * _camera.pixelHeight, sizeof(float));
+                ComputeBuffer buffer = new ComputeBuffer(width * height, sizeof(float));
                 buffer.SetData(_mask);
 
-                MaskGenerator.Generate(ref buffer, _camera.pixelWidth, _camera.pixelHeight, _maskSettings);
+                MaskGenerator.Generate(ref buffer, width, height, _maskSettings);
 
                 buffer.GetData(_mask);
                 buffer.Dispose();
             }
             else
             {
-                MaskGenerator.Generate(ref _mask, _camera.pixelWidth, _camera.pixelHeight, _maskSettings);
+                MaskGenerator.Generate(ref _mask, width, height, _maskSettings);
             }
 
             for (int i = 0; i < _colors.Length; i++)
@@ -52,7 +60,7 @@ namespace Utils.Mask
                 _colors[i].a = 1;
             }
 
-            _texture = new Texture2D(_camera.pixelWidth, _camera.pixelHeight);
+            _texture = new Texture2D(width, height);
             _texture.wrapMode = TextureWrapMode.Clamp;
             _texture.filterMode = FilterMode.Point;
             _texture.SetPixels(_colors);

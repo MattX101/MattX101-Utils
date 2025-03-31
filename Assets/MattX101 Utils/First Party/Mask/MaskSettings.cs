@@ -19,6 +19,10 @@ namespace Utils.Mask
 
         [Space]
 
+        [SerializeField]
+        private bool _computeRoll = false;
+        public bool ComputeRoll => _computeRoll;
+
         [SerializeField, Range(0, 360)]
         private float _roll = 1.0f;
         public float Roll => _roll;
@@ -36,12 +40,16 @@ namespace Utils.Mask
         [Space]
 
         [SerializeField]
-        private Vector2 _offset = Vector2.zero;
-        public Vector2 Offset => _offset;
-
+        private float _zoom = 1.0f;
+        public float Zoom => MathF.Abs(_zoom);
+        
         [SerializeField]
         private Vector2 _scale = Vector2.one;
         public Vector2 Scale => _scale;
+
+        [SerializeField]
+        private Vector2 _offset = Vector2.zero;
+        public Vector2 Offset => _offset;
 
         [Space]
 
@@ -62,5 +70,9 @@ namespace Utils.Mask
         [SerializeField]
         private WarpProfile _warpProfile;
         public WarpProfile WarpProfile => _warpProfile;
+
+        [SerializeField]
+        private bool _previewNoise = false;
+        public bool PreviewNoise => _previewNoise;
     }
 }

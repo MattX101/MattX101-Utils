@@ -5,11 +5,20 @@ namespace Utils.Mask
 {
     public static class MaskGenerator
     {
+        private const float DefaultCanvasSize = 1000.0f;
+
+        private static float _canvasToScreenRatio = 1.0f;
+        private static float CanvasToScreenRatio => _canvasToScreenRatio;
+
+        private static float _canvasToWidthRatio, _canvasToHeightRatio;
+        private static float CanvasToWidthRatio => _canvasToWidthRatio;
+        private static float CanvasToHeightRatio => _canvasToHeightRatio;
+
         private static float _sin, _cos;
 
-        private static float _canvasToWidthRatio;
-        private static float _canvasToHeightRatio;
-        private static float _canvasRatio;
+        private static int _bound;
+
+        private static Vector2 _offset, _scale;
 
         public static ComputeShader Shader
         {
@@ -17,26 +26,61 @@ namespace Utils.Mask
             set;
         }
 
-        private static float GetStart(float offset, float ratio)
-        {
-            return -ratio - offset;
-        }
-
         private static void Init(int width, int height, MaskSettings settings)
         {
-            _canvasToWidthRatio = width / 1000.0f;
-            _canvasToHeightRatio = height / 1000.0f;
-            _canvasRatio = _canvasToWidthRatio < _canvasToHeightRatio ? _canvasToWidthRatio : _canvasToHeightRatio;
+            _canvasToWidthRatio = DefaultCanvasSize / width;
+            _canvasToHeightRatio = DefaultCanvasSize / height;
+
+            _canvasToScreenRatio =
+                CanvasToWidthRatio > CanvasToHeightRatio ?
+                CanvasToWidthRatio :
+                CanvasToHeightRatio;
 
             CalculateAngles(-settings.Roll);
+            
+            _offset = Vector2.zero;
+
+            _scale = settings.Scale;
+            _scale /= new Vector2(CanvasToScreenRatio, CanvasToScreenRatio);
+            _scale /= settings.Zoom;
+
+            if (width > height)
+            {
+                float ratio = (float)width / height;
+
+                _scale *= ratio;
+
+                _offset.y = 1.0f / ratio - 1.0f;
+                _offset += settings.Offset / ratio;
+            }
+            else if (height > width)
+            {
+                float ratio = (float)height / width;
+
+                _scale *= ratio;
+
+                _offset.x = 1.0f / ratio - 1.0f;
+                _offset += settings.Offset / ratio;
+            }
+            else
+            {
+                _offset += settings.Offset;
+            }
+
+            _offset *= settings.Zoom;
+            _offset *= CanvasToScreenRatio;
+
+            _bound = width > height ? width : height;
         }
 
         private static float[] GetPoints(int res, float offset, float ratio)
         {
             float[] points = new float[res];
 
-            float pos = GetStart(offset, ratio);
+            float pos = -ratio - offset;
             float inc = (ratio * 2.0f) / res;
+
+            pos += (inc / 2.0f);
 
             for (int i = 0; i < res; i++)
             {
@@ -51,47 +95,78 @@ namespace Utils.Mask
         {
             Init(width, height, settings);
 
-            Vector2 scale = settings.Scale / _canvasRatio;
-            
+            float[] pointsX = GetPoints(_bound, _offset.x, CanvasToScreenRatio);
+            float[] pointsY = GetPoints(_bound, _offset.y, CanvasToScreenRatio);
+
             if (settings.ApplyNoise)
             {
+                Vector2 noiseOffset = (float)DefaultCanvasSize / 2.0f * settings.Offset;
+
+                settings.NoiseProfile.SetScale(Vector3.one * settings.Zoom);
+                settings.WarpProfile.SetScale(Vector3.one * settings.Zoom);
+
+                settings.NoiseProfile.SetOffset(noiseOffset);
+                settings.WarpProfile.SetOffset(noiseOffset);
+
                 settings.NoiseProfile.Init();
                 settings.WarpProfile.Init();
 
                 FastNoise2D.Generate(ref values, width, height, false, settings.NoiseProfile, settings.WarpProfile);
-            }
 
-            float[] pointsX = GetPoints(width, settings.Offset.x, _canvasToWidthRatio);
-            float[] pointsY = GetPoints(height, settings.Offset.y, _canvasToHeightRatio);
+                if (settings.PreviewNoise)
+                    return;
 
-            if (settings.ApplyNoise)
-            {
-                for (int y = 0, i = 0; y < height; y++)
+                if (settings.ComputeRoll)
                 {
-                    for (int x = 0; x < width; x++, i++)
+                    for (int y = 0, i = 0; y < height; y++)
                     {
-                        GetValue_Noise(
-                            ref values[i],
-                            RotateX(pointsX[x], pointsY[y]),
-                            RotateY(pointsX[x], pointsY[y]),
-                            settings.Warp,
-                            scale
-                        );
+                        for (int x = 0; x < width; x++, i++)
+                        {
+                            GetValue_Noise(
+                                ref values[i],
+                                RotateX(pointsX[x], pointsY[y]),
+                                RotateY(pointsX[x], pointsY[y]),
+                                settings.Warp,
+                                _scale
+                            );
+                        }
+                    }
+                }
+                else
+                {
+                    for (int y = 0, i = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++, i++)
+                        {
+                            GetValue_Noise(ref values[i], pointsX[x], pointsY[y], settings.Warp, _scale);
+                        }
                     }
                 }
             }
             else
             {
-                for (int y = 0, i = 0; y < height; y++)
+                if (settings.ComputeRoll)
                 {
-                    for (int x = 0; x < width; x++, i++)
+                    for (int y = 0, i = 0; y < height; y++)
                     {
-                        GetValue(
-                            ref values[i],
-                            RotateX(pointsX[x], pointsY[y]),
-                            RotateY(pointsX[x], pointsY[y]),
-                            scale
-                        );
+                        for (int x = 0; x < width; x++, i++)
+                        {
+                            values[i] = GetValue(
+                                RotateX(pointsX[x], pointsY[y]),
+                                RotateY(pointsX[x], pointsY[y]),
+                                _scale
+                            );
+                        }
+                    }
+                }
+                else
+                {
+                    for (int y = 0, i = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++, i++)
+                        {
+                            values[i] = GetValue(pointsX[x], pointsY[y], _scale);
+                        }
                     }
                 }
             }
@@ -121,10 +196,10 @@ namespace Utils.Mask
             Init(width, height, settings);
 
             ComputeBuffer pointsXBuffer = new ComputeBuffer(width, sizeof(float));
-            pointsXBuffer.SetData(GetPoints(width, settings.Offset.x, _canvasToWidthRatio));
+            pointsXBuffer.SetData(GetPoints(_bound, _offset.x, CanvasToScreenRatio));
 
             ComputeBuffer pointsYBuffer = new ComputeBuffer(height, sizeof(float));
-            pointsYBuffer.SetData(GetPoints(height, settings.Offset.y, _canvasToHeightRatio));
+            pointsYBuffer.SetData(GetPoints(_bound, _offset.y, CanvasToScreenRatio));
 
             Shader.SetFloat("sin", _sin);
             Shader.SetFloat("cos", _cos);
@@ -133,11 +208,11 @@ namespace Utils.Mask
             Shader.SetFloat("height", height);
 
             Shader.SetFloat("power", settings.Power);
-            
+
             Shader.SetFloats(
-                "scale", 
-                settings.Scale.x / _canvasRatio, 
-                settings.Scale.y / _canvasRatio
+                "scale",
+                _scale.x,
+                _scale.y
             );
             Shader.SetFloats(
                 "range", 
@@ -146,18 +221,43 @@ namespace Utils.Mask
             );
 
             Shader.SetFloat("warp", settings.Warp);
-            Shader.SetFloat("ratio", _canvasRatio);
+            Shader.SetFloat("ratio", CanvasToScreenRatio);
 
             int kernel = 0;
             if (settings.ApplyNoise)
             {
+                Vector2 noiseOffset = (float)DefaultCanvasSize / 2.0f * settings.Offset;
+
+                settings.NoiseProfile.SetScale(Vector3.one * settings.Zoom);
+                settings.WarpProfile.SetScale(Vector3.one * settings.Zoom);
+
+                settings.NoiseProfile.SetOffset(noiseOffset);
+                settings.WarpProfile.SetOffset(noiseOffset);
+
+                settings.NoiseProfile.Init();
+                settings.WarpProfile.Init();
+
                 FastNoise2D.Generate(ref buffer, width, height, false, settings.NoiseProfile, settings.WarpProfile);
 
-                kernel = settings.Invert ? Shader.FindKernel("Noise_Invert") : Shader.FindKernel("Noise");
+                if (settings.ComputeRoll)
+                {
+                    kernel = settings.Invert ? Shader.FindKernel("Noise_Invert_Roll") : Shader.FindKernel("Noise_Roll");
+                }
+                else
+                {
+                    kernel = settings.Invert ? Shader.FindKernel("Noise_Invert") : Shader.FindKernel("Noise");
+                }
             }
             else
             {
-                kernel = settings.Invert ? Shader.FindKernel("Normal_Invert") : Shader.FindKernel("Normal");
+                if (settings.ComputeRoll)
+                {
+                    kernel = settings.Invert ? Shader.FindKernel("Normal_Invert_Roll") : Shader.FindKernel("Norma_Roll");
+                }
+                else
+                {
+                    kernel = settings.Invert ? Shader.FindKernel("Normal_Invert") : Shader.FindKernel("Normal");
+                }
             }
 
             Shader.SetBuffer(kernel, "pointsX", pointsXBuffer);
@@ -170,9 +270,9 @@ namespace Utils.Mask
             pointsYBuffer.Dispose();
         }
 
-        private static void GetValue(ref float value, float x, float y, Vector2 scale)
+        private static float GetValue(float x, float y, Vector2 scale)
         {
-            value = Mathf.Sqrt(
+            return Mathf.Sqrt(
                 Mathf.Abs(Mathf.Pow(x * scale.x, 2)) + 
                 Mathf.Abs(Mathf.Pow(y * scale.y, 2))
             );
@@ -180,12 +280,9 @@ namespace Utils.Mask
 
         private static void GetValue_Noise(ref float value, float x, float y, float warp, Vector2 scale)
         {
-            value *= warp * _canvasRatio;
-
-            x = x < 0 ? x + value : x - value;
-            y = y < 0 ? y + value : y - value;
-
-            GetValue(ref value, x, y, scale);
+            value = GetValue(x, y, scale) + (value * warp);
+            value = Mathf.Clamp(value, 0, warp + 1);
+            value = Mathf.InverseLerp(0, warp + 1, value);
         }
 
         private static float RotateX(float x, float y) => x * _sin + y * _cos;
