@@ -6,12 +6,19 @@ namespace Utils.Noise
     {
         public static float Single(NoiseProfile noiseProfile, float noiseX, float noiseY)
         {
-            return noiseProfile.GetNoise2D(noiseX, noiseY);
+            return noiseProfile.GetNoise2D(
+                noiseX + noiseProfile.Offset.x,
+                noiseY + noiseProfile.Offset.y
+            );
         }
 
         public static float Single(NoiseProfile noiseProfile, float noiseX, float noiseY, float offsetZ)
         {
-            return noiseProfile.GetNoise3D(noiseX, noiseY, offsetZ);
+            return noiseProfile.GetNoise3D(
+                noiseX + noiseProfile.Offset.x,
+                noiseY + noiseProfile.Offset.y,
+                offsetZ
+            );
         }
 
         public static float Single(NoiseProfile noiseProfile, WarpProfile warpProfile, float noiseX, float noiseY, float warpX, float warpY)
@@ -33,44 +40,121 @@ namespace Utils.Noise
 
         private static void Noise2D(ref float[] noiseMap, NoiseProfile noiseProfile)
         {
-            for (int y = 0, i = 0; y < _height; y++)
+            if (noiseProfile.ComputeRoll)
             {
-                for (int x = 0; x < _width; x++, i++)
+                for (int y = 0, i = 0; y < _height; y++)
                 {
-                    noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y]);
+                    for (int x = 0; x < _width; x++, i++)
+                    {
+                        noiseMap[i] = Single(
+                            noiseProfile,
+                            RotateX(_xNoisePoints[x], _yNoisePoints[y]),
+                            RotateY(_xNoisePoints[x], _yNoisePoints[y])
+                        );
+                    }
+                }
+            }
+            else
+            {
+                for (int y = 0, i = 0; y < _height; y++)
+                {
+                    for (int x = 0; x < _width; x++, i++)
+                    {
+                        noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y]);
+                    }
                 }
             }
         }
 
         private static void Noise3D(ref float[] noiseMap, NoiseProfile noiseProfile)
         {
-            for (int y = 0, i = 0; y < _height; y++)
+            if (noiseProfile.ComputeRoll)
             {
-                for (int x = 0; x < _width; x++, i++)
+                for (int y = 0, i = 0; y < _height; y++)
                 {
-                    noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z);
+                    for (int x = 0; x < _width; x++, i++)
+                    {
+                        noiseMap[i] = Single(
+                            noiseProfile,
+                            RotateX(_xNoisePoints[x], _yNoisePoints[y]),
+                            RotateY(_xNoisePoints[x], _yNoisePoints[y]),
+                            noiseProfile.Offset.z
+                        );
+                    }
+                }
+            }
+            else
+            {
+                for (int y = 0, i = 0; y < _height; y++)
+                {
+                    for (int x = 0; x < _width; x++, i++)
+                    {
+                        noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z);
+                    }
                 }
             }
         }
 
         private static void WarpedNoise2D(ref float[] noiseMap, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
-            for (int y = 0, i = 0; y < _height; y++)
+            if (noiseProfile.ComputeRoll)
             {
-                for (int x = 0; x < _width; x++, i++)
+                for (int y = 0, i = 0; y < _height; y++)
                 {
-                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], _xWarpPoints[x], _yWarpPoints[y]);
+                    for (int x = 0; x < _width; x++, i++)
+                    {
+                        noiseMap[i] = Single(
+                            noiseProfile,
+                            warpProfile,
+                            RotateX(_xNoisePoints[x], _yNoisePoints[y]),
+                            RotateY(_xNoisePoints[x], _yNoisePoints[y]),
+                            RotateX(_xWarpPoints[x], _yWarpPoints[y]),
+                            RotateY(_xWarpPoints[x], _yWarpPoints[y])
+                        );
+                    }
+                }
+            }
+            else
+            {
+                for (int y = 0, i = 0; y < _height; y++)
+                {
+                    for (int x = 0; x < _width; x++, i++)
+                    {
+                        noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], _xWarpPoints[x], _yWarpPoints[y]);
+                    }
                 }
             }
         }
 
         private static void WarpedNoise3D(ref float[] noiseMap, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
-            for (int y = 0, i = 0; y < _height; y++)
+            if (noiseProfile.ComputeRoll)
             {
-                for (int x = 0; x < _width; x++, i++)
+                for (int y = 0, i = 0; y < _height; y++)
                 {
-                    noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z, _xWarpPoints[x], _yWarpPoints[y], warpProfile.Offset.z);
+                    for (int x = 0; x < _width; x++, i++)
+                    {
+                        noiseMap[i] = Single(
+                            noiseProfile, 
+                            warpProfile,
+                            RotateX(_xNoisePoints[x], _yNoisePoints[y]),
+                            RotateY(_xNoisePoints[x], _yNoisePoints[y]), 
+                            noiseProfile.Offset.z,
+                            RotateX(_xWarpPoints[x], _yWarpPoints[y]),
+                            RotateY(_xWarpPoints[x], _yWarpPoints[y]), 
+                            warpProfile.Offset.z
+                        );
+                    }
+                }
+            }
+            else
+            {
+                for (int y = 0, i = 0; y < _height; y++)
+                {
+                    for (int x = 0; x < _width; x++, i++)
+                    {
+                        noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z, _xWarpPoints[x], _yWarpPoints[y], warpProfile.Offset.z);
+                    }
                 }
             }
         }

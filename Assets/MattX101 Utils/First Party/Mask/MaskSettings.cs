@@ -24,7 +24,7 @@ namespace Utils.Mask
         public bool ComputeRoll => _computeRoll;
 
         [SerializeField, Range(0, 360)]
-        private float _roll = 1.0f;
+        private float _roll = 0.0f;
         public float Roll => _roll;
 
         [Space]

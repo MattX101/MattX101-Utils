@@ -290,8 +290,8 @@ namespace Utils.Mask
 
         private static void CalculateAngles(float roll)
         {
-            _sin = Mathf.Cos(roll * Mathf.Deg2Rad);
-            _cos = Mathf.Sin(roll * Mathf.Deg2Rad);
+            _sin = Mathf.Sin(roll * Mathf.Deg2Rad);
+            _cos = Mathf.Cos(roll * Mathf.Deg2Rad);
         }
     }
 }

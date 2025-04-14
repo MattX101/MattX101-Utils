@@ -12,6 +12,18 @@ namespace Utils.Noise.Profiles
         private bool _normalized = false;
         public bool Normalized => _normalized;
 
+        [Space]
+
+        [Header("Roll")]
+
+        [SerializeField]
+        private bool _computeRoll = false;
+        public bool ComputeRoll => _computeRoll;
+
+        [SerializeField, Range(0, 360)]
+        private float _roll = 0.0f;
+        public float Roll => _roll;
+
         [Header("Warp")]
 
         [SerializeField]

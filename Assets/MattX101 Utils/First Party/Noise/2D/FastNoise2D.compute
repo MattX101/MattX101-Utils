@@ -1,13 +1,24 @@
 #pragma kernel Noise2D
+#pragma kernel Noise2D_Roll
 #pragma kernel Noise3D
+#pragma kernel Noise3D_Roll
 #pragma kernel WarpNoise2D
+#pragma kernel WarpNoise2D_Roll
 #pragma kernel WarpNoise3D
+#pragma kernel WarpNoise3D_Roll
 #pragma kernel Noise2D_Linear
+#pragma kernel Noise2D_Linear_Roll
 #pragma kernel Noise3D_Linear
+#pragma kernel Noise3D_Linear_Roll
 #pragma kernel WarpNoise2D_Linear
+#pragma kernel WarpNoise2D_Linear_Roll
 #pragma kernel WarpNoise3D_Linear
+#pragma kernel WarpNoise3D_Linear_Roll
 
-#include "./NoiseGenerator.hlsl"
+//#include "./NoiseGenerator.hlsl"
+#include "../Libraries/FastNoiseLite.hlsl"
+
+float sin, cos;
 
 int width, height;
 float halfWidth, halfHeight;
@@ -103,9 +114,89 @@ void WarpInit()
     warpState.cellular_jitter_mod = warpJitter;
 }
 
+
+// Noise Generation Function
+
+// Non-Linear
+
+float Single(float2 coord)
+{
+    return fnlGetNoise2D(noiseState, coord.x + offset.x, coord.y + offset.y);
+}
+
+float Single(float3 coord)
+{
+    return fnlGetNoise3D(noiseState, coord.x + offset.x, coord.y + offset.y, coord.z + offset.z);
+}
+
+float Single(float2 coord, float2 warp, float amp)
+{
+    return Single(
+        float2(
+            coord.x + fnlGetNoise2D(warpState, warp.x, warp.y) * amp,
+            coord.y + fnlGetNoise2D(warpState, warp.y, warp.x) * amp
+        )
+    );
+}
+
+float Single(float3 coord, float3 warp, float amp)
+{
+    return Single(
+        float3(
+            coord.x + fnlGetNoise3D(warpState, warp.x, warp.y, warp.z) * amp,
+            coord.y + fnlGetNoise3D(warpState, warp.y, warp.x, warp.z) * amp,
+            coord.z
+        )
+    );
+}
+
+// Linear
+
+float Single_Linear(float2 coord)
+{
+    return (Single(coord) + 1) / 2;
+}
+
+float Single_Linear(float3 coord)
+{
+    return (Single(coord) + 1) / 2;
+}
+
+float Single_Linear(float2 coord, float2 warp, float amp)
+{
+    return Single_Linear(
+        float2(
+            coord.x + fnlGetNoise2D(warpState, warp.x, warp.y) * amp,
+            coord.y + fnlGetNoise2D(warpState, warp.y, warp.x) * amp
+        )
+    );
+}
+
+float Single_Linear(float3 coord, float3 warp, float amp)
+{
+    return Single_Linear(
+        float3(
+            coord.x + fnlGetNoise3D(warpState, warp.x, warp.y, warp.z) * amp,
+            coord.y + fnlGetNoise3D(warpState, warp.y, warp.x, warp.z) * amp,
+            coord.z
+        )
+    );
+}
+
+//----
+
+float RotateX(float x, float y)
+{
+    return x * sin + y * cos;
+}
+float RotateY(float x, float y)
+{
+    return x * cos - y * sin;
+}
+
 int Index(int x, int y)
 {
-    if (x >= width ||y >= height)
+    if (x >= width || y >= height)
     {
         return -1;
     }
@@ -115,11 +206,11 @@ int Index(int x, int y)
 
 float NoisePosX(float x)
 {
-    return ((x - halfWidth) / scale.x) + offset.x;
+    return ((x - halfWidth) / scale.x);// + offset.x;
 }
 float NoisePosY(float y)
 {
-    return ((y - halfHeight) / scale.y) + offset.y;
+    return ((y - halfHeight) / scale.y); // + offset.y;
 }
 
 float WarpPosX(float x)
@@ -142,7 +233,32 @@ void Noise2D(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    noise[index] = Single(noiseState, NoisePosX(id.x), NoisePosY(id.y));
+    noise[index] = Single(
+        float2(
+            NoisePosX(id.x), 
+            NoisePosY(id.y)
+        )
+    );
+}
+
+[numthreads(32, 32, 1)]
+void Noise2D_Roll(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    
+    float x = NoisePosX(id.x);
+    float y = NoisePosY(id.y);
+    
+    noise[index] = Single(
+        float2(
+            RotateX(x, y), 
+            RotateY(x, y)
+        )
+    );
 }
 
 [numthreads(32, 32, 1)]
@@ -154,7 +270,34 @@ void Noise3D(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    noise[index] = Single(noiseState, NoisePosX(id.x), NoisePosY(id.y), offset.z);
+    noise[index] = Single(
+        float3(
+            NoisePosX(id.x), 
+            NoisePosY(id.y), 
+            offset.z
+        )
+    );
+}
+
+[numthreads(32, 32, 1)]
+void Noise3D_Roll(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    
+    float x = NoisePosX(id.x);
+    float y = NoisePosY(id.y);
+    
+    noise[index] = Single(
+        float3(
+            RotateX(x, y), 
+            RotateY(x, y), 
+            offset.z
+        )
+    );
 }
 
 [numthreads(32, 32, 1)]
@@ -163,13 +306,52 @@ void WarpNoise2D(uint3 id : SV_DispatchThreadID)
     int index = Index(id.x, id.y);
     if (index == -1)
         return;
+    
     NoiseInit();
     WarpInit();
     
     float xNoise = NoisePosX(id.x);
     float yNoise = NoisePosY(id.y);
     
-    noise[index] = Single(noiseState, xNoise, yNoise, warpState, WarpPosX(xNoise), WarpPosY(yNoise), warpAmp);
+    noise[index] = Single(
+        float2(
+            xNoise, 
+            yNoise
+        ), 
+        float2(
+            WarpPosX(xNoise), 
+            WarpPosY(yNoise)
+        ), 
+        warpAmp
+    );
+}
+
+[numthreads(32, 32, 1)]
+void WarpNoise2D_Roll(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    WarpInit();
+    
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
+    float warpX = WarpPosX(noiseX);
+    float warpY = WarpPosY(noiseY);
+    
+    noise[index] = Single(
+        float2(
+            RotateX(noiseX, noiseY), 
+            RotateY(noiseX, noiseY)
+        ),
+        float2(
+            RotateX(warpX, warpY), 
+            RotateY(warpX, warpY)
+        ),
+        warpAmp
+    );
 }
 
 [numthreads(32, 32, 1)]
@@ -185,7 +367,49 @@ void WarpNoise3D(uint3 id : SV_DispatchThreadID)
     float xNoise = NoisePosX(id.x);
     float yNoise = NoisePosY(id.y);
             
-    noise[index] = Single(noiseState, xNoise, yNoise, offset.z, warpState, WarpPosX(xNoise), WarpPosY(yNoise), warpOffset.z, warpAmp);
+    noise[index] = Single(
+        float3(
+            xNoise, 
+            yNoise, 
+            offset.z
+        ),
+        float3(
+            WarpPosX(xNoise), 
+            WarpPosY(yNoise), 
+            warpOffset.z
+        ),
+        warpAmp
+    );
+}
+
+[numthreads(32, 32, 1)]
+void WarpNoise3D_Roll(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    WarpInit();
+    
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
+    float warpX = WarpPosX(noiseX);
+    float warpY = WarpPosY(noiseY);
+    
+    noise[index] = Single(
+        float3(
+            RotateX(noiseX, noiseY), 
+            RotateY(noiseX, noiseY), 
+            offset.z
+        ),
+        float3(
+            RotateX(warpX, warpY), 
+            RotateY(warpX, warpY), 
+            warpOffset.z
+        ),
+        warpAmp
+    );
 }
 
 // Linear
@@ -199,7 +423,32 @@ void Noise2D_Linear(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    noise[index] = Single_Linear(noiseState, NoisePosX(id.x), NoisePosY(id.y));
+    noise[index] = Single_Linear(
+        float2(
+            NoisePosX(id.x), 
+            NoisePosY(id.y)
+        )
+    );
+}
+
+[numthreads(32, 32, 1)]
+void Noise2D_Linear_Roll(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    
+    float x = NoisePosX(id.x);
+    float y = NoisePosY(id.y);
+    
+    noise[index] = Single_Linear(
+        float2(
+            RotateX(x, y), 
+            RotateY(x, y)
+        )
+    );
 }
 
 [numthreads(32, 32, 1)]
@@ -211,7 +460,34 @@ void Noise3D_Linear(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    noise[index] = Single_Linear(noiseState, NoisePosX(id.x), NoisePosY(id.y), offset.z);
+    noise[index] = Single_Linear(
+        float3(
+            NoisePosX(id.x), 
+            NoisePosY(id.y), 
+            offset.z
+        )
+    );
+}
+
+[numthreads(32, 32, 1)]
+void Noise3D_Linear_Roll(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    
+    float x = NoisePosX(id.x);
+    float y = NoisePosY(id.y);
+    
+    noise[index] = Single_Linear(
+        float3(
+            RotateX(x, y), 
+            RotateY(x, y), 
+            offset.z
+        )
+    );
 }
 
 [numthreads(32, 32, 1)]
@@ -227,7 +503,45 @@ void WarpNoise2D_Linear(uint3 id : SV_DispatchThreadID)
     float xNoise = NoisePosX(id.x);
     float yNoise = NoisePosY(id.y);
     
-    noise[index] = Single_Linear(noiseState, xNoise, yNoise, warpState, WarpPosX(xNoise), WarpPosY(yNoise), warpAmp);
+    noise[index] = Single_Linear(
+        float2(
+            xNoise, 
+            yNoise
+        ),
+        float2(
+            WarpPosX(xNoise), 
+            WarpPosY(yNoise)
+        ),
+        warpAmp
+    );
+}
+
+[numthreads(32, 32, 1)]
+void WarpNoise2D_Linear_Roll(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    WarpInit();
+    
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
+    float warpX = WarpPosX(noiseX);
+    float warpY = WarpPosY(noiseY);
+    
+    noise[index] = Single_Linear(
+        float2(
+            RotateX(noiseX, noiseY), 
+            RotateY(noiseX, noiseY)
+        ),
+        float2(
+            RotateX(warpX, warpY), 
+            RotateY(warpX, warpY)
+        ),
+        warpAmp
+    );
 }
 
 [numthreads(32, 32, 1)]
@@ -243,5 +557,47 @@ void WarpNoise3D_Linear(uint3 id : SV_DispatchThreadID)
     float xNoise = NoisePosX(id.x);
     float yNoise = NoisePosY(id.y);
             
-    noise[index] = Single_Linear(noiseState, xNoise, yNoise, offset.z, warpState, WarpPosX(xNoise), WarpPosY(yNoise), warpOffset.z, warpAmp);
+    noise[index] = Single_Linear(
+        float3(
+            xNoise, 
+            yNoise, 
+            offset.z
+        ),
+        float3(
+            WarpPosX(xNoise), 
+            WarpPosY(yNoise), 
+            warpOffset.z
+        ),
+        warpAmp
+    );
+}
+
+[numthreads(32, 32, 1)]
+void WarpNoise3D_Linear_Roll(uint3 id : SV_DispatchThreadID)
+{
+    int index = Index(id.x, id.y);
+    if (index == -1)
+        return;
+    
+    NoiseInit();
+    WarpInit();
+    
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
+    float warpX = WarpPosX(noiseX);
+    float warpY = WarpPosY(noiseY);
+            
+    noise[index] = Single_Linear(
+        float3(
+            RotateX(noiseX, noiseY), 
+            RotateY(noiseX, noiseY), 
+            offset.z
+        ),
+        float3(
+            RotateX(warpX, warpY), 
+            RotateY(warpX, warpY), 
+            warpOffset.z
+        ),
+        warpAmp
+    );
 }

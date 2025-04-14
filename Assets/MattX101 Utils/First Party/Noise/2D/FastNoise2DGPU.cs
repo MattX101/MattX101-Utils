@@ -13,7 +13,12 @@ namespace Utils.Noise
 
         public static void Generate(ref ComputeBuffer noiseBuffer, int width, int height, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
+            CalculateAngles(noiseProfile.Roll);
+
             Init(width, height);
+
+            Shader.SetFloat("sin", _sin);
+            Shader.SetFloat("cos", _cos);
 
             Shader.SetInt("width", _width);
             Shader.SetInt("height", _height);
@@ -29,11 +34,25 @@ namespace Utils.Noise
 
                 if (noiseProfile.Normalized)
                 {
-                    kernel = is3D ? Shader.FindKernel("WarpNoise3D_Linear") : Shader.FindKernel("WarpNoise2D_Linear");
+                    if (noiseProfile.ComputeRoll)
+                    {
+                        kernel = is3D ? Shader.FindKernel("WarpNoise3D_Linear_Roll") : Shader.FindKernel("WarpNoise2D_Linear_Roll");
+                    }
+                    else
+                    {
+                        kernel = is3D ? Shader.FindKernel("WarpNoise3D_Linear") : Shader.FindKernel("WarpNoise2D_Linear");
+                    }
                 }
                 else
                 {
-                    kernel = is3D ? Shader.FindKernel("WarpNoise3D") : Shader.FindKernel("WarpNoise2D");
+                    if (noiseProfile.ComputeRoll)
+                    {
+                        kernel = is3D ? Shader.FindKernel("WarpNoise3D_Roll") : Shader.FindKernel("WarpNoise2D_Roll");
+                    }
+                    else
+                    {
+                        kernel = is3D ? Shader.FindKernel("WarpNoise3D") : Shader.FindKernel("WarpNoise2D");
+                    }
                 }
             }
             else
@@ -42,11 +61,25 @@ namespace Utils.Noise
 
                 if (noiseProfile.Normalized)
                 {
-                    kernel = is3D ? Shader.FindKernel("Noise3D_Linear") : Shader.FindKernel("Noise2D_Linear");
+                    if (noiseProfile.ComputeRoll)
+                    {
+                        kernel = is3D ? Shader.FindKernel("Noise3D_Linear_Roll") : Shader.FindKernel("Noise2D_Linear_Roll");
+                    }
+                    else
+                    {
+                        kernel = is3D ? Shader.FindKernel("Noise3D_Linear") : Shader.FindKernel("Noise2D_Linear");
+                    }
                 }
                 else
                 {
-                    kernel = is3D ? Shader.FindKernel("Noise3D") : Shader.FindKernel("Noise2D");
+                    if (noiseProfile.ComputeRoll)
+                    {
+                        kernel = is3D ? Shader.FindKernel("Noise3D_Roll") : Shader.FindKernel("Noise2D_Roll");
+                    }
+                    else
+                    {
+                        kernel = is3D ? Shader.FindKernel("Noise3D") : Shader.FindKernel("Noise2D");
+                    }
                 }
             }
 

@@ -172,7 +172,7 @@ MonoBehaviour:
     _seed: 0
     _universalScale: 0.2
     _scale: {x: 1, y: 1, z: 1}
-    _offset: {x: 0, y: 0, z: 0}
+    _offset: {x: 1000, y: -400, z: 0}
     _type: 1
     _fractal: 0
     _octaves: 5
@@ -184,7 +184,9 @@ MonoBehaviour:
     _cellularDistance: 0
     _jitter: 1
     _normalized: 1
-    _warp: 1
+    _computeRoll: 0
+    _roll: 0
+    _warp: 0
   _warpProfile:
     _seed: 1
     _universalScale: 1
@@ -201,12 +203,12 @@ MonoBehaviour:
     _cellularDistance: 0
     _jitter: 1
     _warpAmp: 50
-  _useGPU: 1
+  _useGPU: 0
   _toggle3D: 0
   _puase: 0
   _noiseShift: {x: 0, y: 0, z: 0}
   _warpShift: {x: 0, y: 0, z: 0}
-  _downScaler: 1
+  _downScaler: 16
   _colorPalette:
     serializedVersion: 2
     key0: {r: 0, g: 0.2390244, b: 1, a: 1}
@@ -258,6 +260,7 @@ MonoBehaviour:
   _invert: {fileID: 7200000, guid: 976934f1c21554949a7fb808eef0e7cd, type: 3}
   _coloring: {fileID: 7200000, guid: 02cc1dc8eb7d93041aad509ba2f1aca3, type: 3}
   _colorMixer: {fileID: 7200000, guid: 0bb37478f3f2b254f85f8f1670abb3fb, type: 3}
+  _maskGenerator: {fileID: 0}
 --- !u!1 &863358004
 GameObject:
   m_ObjectHideFlags: 0

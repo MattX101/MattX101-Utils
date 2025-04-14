@@ -1,4 +1,5 @@
 using Utils.Noise.Profiles;
+using UnityEngine;
 
 namespace Utils.Noise
 {
@@ -19,6 +20,8 @@ namespace Utils.Noise
         private static float _noiseScaleX = 1.0f, _noiseScaleY = 1.0f, _warpScaleX = 1.0f, _warpScaleY = 1.0f;
 
         private static float[] _xNoisePoints, _yNoisePoints, _xWarpPoints, _yWarpPoints;
+
+        private static float _sin, _cos;
 
         private static void Init(int width, int height)
         {
@@ -57,20 +60,20 @@ namespace Utils.Noise
 
             if (setPoints)
             {
-                SetPoints(noiseProfile, warpProfile);
+                SetPoints(warpProfile);
             }
         }
 
-        private static void SetPoints(NoiseProfile noiseProfile, WarpProfile warpProfile = null)
+        private static void SetPoints(WarpProfile warpProfile = null)
         {
             for (int x = 0; x < _width; x++)
             {
-                _xNoisePoints[x] = ((x - _halfWidth) / _noiseScaleX) + noiseProfile.Offset.x;
+                _xNoisePoints[x] = (x - _halfWidth) / _noiseScaleX;
             }
 
             for (int y = 0; y < _height; y++)
             {
-                _yNoisePoints[y] = ((y - _halfHeight) / _noiseScaleY) + noiseProfile.Offset.y;
+                _yNoisePoints[y] = (y - _halfHeight) / _noiseScaleY;
             }
 
             if (warpProfile != null)
@@ -91,6 +94,8 @@ namespace Utils.Noise
 
         public static void Generate(ref float[] noiseMap, int width, int height, bool is3D, NoiseProfile noiseProfile, WarpProfile warpProfile = null)
         {
+            CalculateAngles(noiseProfile.Roll);
+
             Init(width, height, noiseProfile, warpProfile);
 
             if (noiseProfile.Normalized)
@@ -160,5 +165,14 @@ namespace Utils.Noise
 
         private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToScreenRatio;
         private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToScreenRatio;
+
+        internal static float RotateX(float x, float y) => x * _sin + y * _cos;
+        internal static float RotateY(float x, float y) => x * _cos - y * _sin;
+
+        private static void CalculateAngles(float roll)
+        {
+            _sin = Mathf.Sin(roll * Mathf.Deg2Rad);
+            _cos = Mathf.Cos(roll * Mathf.Deg2Rad);
+        }
     }
 }
