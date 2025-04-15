@@ -31,7 +31,7 @@ namespace Utils.Mask
 
         private Texture2D _texture;
 
-        void Update()
+        private void Update()
         {
             int width = _camera.pixelWidth / _downScaler;
             int height = _camera.pixelHeight / _downScaler;
@@ -60,9 +60,11 @@ namespace Utils.Mask
                 _colors[i].a = 1;
             }
 
-            _texture = new Texture2D(width, height);
-            _texture.wrapMode = TextureWrapMode.Clamp;
-            _texture.filterMode = FilterMode.Point;
+            _texture = new Texture2D(width, height)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point
+            };
             _texture.SetPixels(_colors);
             _texture.Apply();
 

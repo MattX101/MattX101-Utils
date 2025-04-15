@@ -37,7 +37,7 @@ namespace Utils.Noise.Preview
 
         private Texture2D _texture;
 
-        void Awake()
+        private void Awake()
         {
             _camera = FindObjectOfType<Camera>();
         }
@@ -83,9 +83,11 @@ namespace Utils.Noise.Preview
                 _colorMap[i] = _colorPalette.Evaluate(_noiseMap[i]);
             }
 
-            _texture = new Texture2D(_cameraWidth, _cameraHeight);
-            _texture.wrapMode = TextureWrapMode.Clamp;
-            _texture.filterMode = FilterMode.Point;
+            _texture = new Texture2D(_cameraWidth, _cameraHeight)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point
+            };
             _texture.SetPixels(_colorMap);
             _texture.Apply();
 
