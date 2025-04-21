@@ -17,38 +17,29 @@ namespace Utils.Noise.Profiles
 
         [SerializeField]
         private float _universalScale = 1.0f;
-        public float UniversalScale => _universalScale * _externalUniversalScale;
+        public float UniversalScale => _universalScale * ExternalUniversalScale;
 
-        private float _externalUniversalScale = 1.0f;
-        public float ExternalUniversalScale
-        {
-            set => _externalUniversalScale = value;
-        }
+        [NonSerialized] 
+        public float ExternalUniversalScale = 1.0f;
         
         [SerializeField]
         private Vector3 _scale = Vector3.one;
         public Vector3 Scale =>
             new(
-                _scale.x * _externalScale.x,
-                _scale.y * _externalScale.y,
-                _scale.z * _externalScale.z
+                _scale.x * ExternalScale.x,
+                _scale.y * ExternalScale.y,
+                _scale.z * ExternalScale.z
             );
         
-        private Vector3 _externalScale = Vector3.one;
-        public Vector3 ExternalScale
-        {
-            set => _externalScale = value;
-        }
+        [NonSerialized]
+        public Vector3 ExternalScale = Vector3.one;
 
         [SerializeField]
         private Vector3 _offset = Vector3.zero;
-        public Vector3 Offset => _offset - _externalOffset;
+        public Vector3 Offset => _offset - ExternalOffset;
         
-        private Vector3 _externalOffset = Vector3.zero;
-        public Vector3 ExternalOffset
-        {
-            set => _externalOffset = value;
-        }
+        [NonSerialized]
+        public Vector3 ExternalOffset = Vector3.zero;
         
         [Header("Fractal")]
 

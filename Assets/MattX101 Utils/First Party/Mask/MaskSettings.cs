@@ -25,13 +25,10 @@ namespace Utils.Mask
 
         [SerializeField, Range(0, 360)]
         private float _roll;
-        public float Roll => (_roll + _externalRoll) % 360.0f;
+        public float Roll => (_roll + ExternalRoll) % 360.0f;
 
-        private float _externalRoll;
-        public float ExternalRoll
-        {
-            set => _externalRoll = value;
-        }
+        [NonSerialized]
+        public float ExternalRoll;
         
         [Space]
 
@@ -47,33 +44,24 @@ namespace Utils.Mask
 
         [SerializeField]
         private float _zoom = 1.0f;
-        public float Zoom => MathF.Abs(_zoom * _externalZoom);
+        public float Zoom => MathF.Abs(_zoom * ExternalZoom);
 
-        private float _externalZoom = 1.0f;
-        public float ExternalZoom
-        {
-            set => _externalZoom = value;
-        }
+        [NonSerialized]
+        public float ExternalZoom = 1.0f;
         
         [SerializeField]
         private Vector2 _scale = Vector2.one;
-        public Vector2 Scale => _scale * _externalScale;
+        public Vector2 Scale => _scale * ExternalScale;
 
-        private Vector2 _externalScale = Vector2.one;
-        public Vector2 ExternalScale
-        {
-            set => _externalScale = value;
-        }
+        [NonSerialized]
+        public Vector2 ExternalScale = Vector2.one;
         
         [SerializeField]
         private Vector2 _offset = Vector2.zero;
-        public Vector2 Offset => _offset - _externalOffset;
+        public Vector2 Offset => _offset - ExternalOffset;
         
-        private Vector2 _externalOffset = Vector2.zero;
-        public Vector2 ExternalOffset
-        {
-            set => _externalOffset = value;
-        }
+        [NonSerialized]
+        public Vector2 ExternalOffset = Vector2.zero;
 
         [Space]
 

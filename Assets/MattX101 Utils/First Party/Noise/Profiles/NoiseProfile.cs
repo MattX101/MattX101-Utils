@@ -22,13 +22,10 @@ namespace Utils.Noise.Profiles
 
         [SerializeField, Range(0, 360)]
         private float _roll;
-        public float Roll => (_roll + _externalRoll) % 360.0f;
+        public float Roll => (_roll + ExternalRoll) % 360.0f;
 
-        private float _externalRoll;
-        public float ExternalRoll
-        {
-            set => _externalRoll = value;
-        }
+        [NonSerialized]
+        public float ExternalRoll;
 
         [Header("Warp")]
 
