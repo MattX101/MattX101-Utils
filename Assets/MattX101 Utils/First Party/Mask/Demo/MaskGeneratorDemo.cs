@@ -19,7 +19,7 @@ namespace Utils.Mask
         [Space]
 
         [SerializeField]
-        private bool _useGPU = false;
+        private bool _useGPU;
 
         [Space]
 

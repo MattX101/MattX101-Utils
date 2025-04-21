@@ -25,9 +25,11 @@ namespace Utils.Filters.Blur
 
         private void Awake()
         {
-            _previewTexture = new Texture2D(_texture.width, _texture.height);
-            _previewTexture.wrapMode = TextureWrapMode.Clamp;
-            _previewTexture.filterMode = FilterMode.Point;
+            _previewTexture = new Texture2D(_texture.width, _texture.height)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point
+            };
 
             _filter = new Color[_texture.width * _texture.height];
             _source = new Color[_texture.width * _texture.height];

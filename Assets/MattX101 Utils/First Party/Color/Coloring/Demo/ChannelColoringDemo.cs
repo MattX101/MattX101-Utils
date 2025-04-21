@@ -6,9 +6,9 @@ namespace Utils.Colors.Coloring
     public sealed class ChannelColoringDemo : MonoBehaviour
     {
         [SerializeField]
-        private bool _useGPU = false;
+        private bool _useGPU;
         [SerializeField]
-        private bool _enableColoring = false;
+        private bool _enableColoring;
 
         [Space]
 
@@ -32,9 +32,11 @@ namespace Utils.Colors.Coloring
         {
             Color[] colors = _texture.GetPixels();
 
-            Texture2D texture = new Texture2D(_texture.width, _texture.height);
-            texture.wrapMode = TextureWrapMode.Clamp;
-            texture.filterMode = FilterMode.Point;
+            Texture2D texture = new Texture2D(_texture.width, _texture.height)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point
+            };
 
             if (_enableColoring)
             {
@@ -43,14 +45,14 @@ namespace Utils.Colors.Coloring
                     ComputeBuffer colorsBuffer = new ComputeBuffer(colors.Length, sizeof(float) * 4);
                     colorsBuffer.SetData(colors);
 
-                    Coloring.ChannelColorig(ref colorsBuffer, _channel, _color);
+                    Coloring.ChannelColoring(ref colorsBuffer, _channel, _color);
 
                     colorsBuffer.GetData(colors);
                     colorsBuffer.Release();
                 }
                 else
                 {
-                    Coloring.ChannelColorig(ref colors, _channel, _color);
+                    Coloring.ChannelColoring(ref colors, _channel, _color);
                 }
             }
 

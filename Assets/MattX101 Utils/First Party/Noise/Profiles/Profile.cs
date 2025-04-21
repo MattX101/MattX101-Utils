@@ -7,63 +7,49 @@ namespace Utils.Noise.Profiles
     [Serializable]
     public class Profile
     {
-        private readonly FastNoiseLite _fastNoise = new FastNoiseLite();
-        internal FastNoiseLite FastNoise => _fastNoise;
+        internal FastNoiseLite FastNoise { get; } = new();
 
         [SerializeField]
-        private int _seed = 0;
+        private int _seed;
         public int Seed => _seed;
 
         public float Frequency => 0.01f;
 
         [SerializeField]
         private float _universalScale = 1.0f;
-        public float UniversalScale => _universalScale;
+        public float UniversalScale => _universalScale * _externalUniversalScale;
 
+        private float _externalUniversalScale = 1.0f;
+        public float ExternalUniversalScale
+        {
+            set => _externalUniversalScale = value;
+        }
+        
         [SerializeField]
         private Vector3 _scale = Vector3.one;
-        private Vector3 _scaleAddition = Vector3.one;
-        public Vector3 Scale
+        public Vector3 Scale =>
+            new(
+                _scale.x * _externalScale.x,
+                _scale.y * _externalScale.y,
+                _scale.z * _externalScale.z
+            );
+        
+        private Vector3 _externalScale = Vector3.one;
+        public Vector3 ExternalScale
         {
-            get
-            {
-                return new Vector3(
-                    _scale.x * _scaleAddition.x,
-                    _scale.y * _scaleAddition.y,
-                    _scale.z * _scaleAddition.z
-                    );
-            }
-            private set
-            {
-                Scale = value;
-            }
-        }
-
-        public void SetScale(Vector3 scale)
-        {
-            _scaleAddition = scale;
+            set => _externalScale = value;
         }
 
         [SerializeField]
         private Vector3 _offset = Vector3.zero;
-        private Vector3 _offsetAddition = Vector3.zero;
-        public Vector3 Offset
+        public Vector3 Offset => _offset - _externalOffset;
+        
+        private Vector3 _externalOffset = Vector3.zero;
+        public Vector3 ExternalOffset
         {
-            get
-            {
-                return _offset + _offsetAddition;
-            }
-            private set
-            {
-                Offset = value;
-            }
+            set => _externalOffset = value;
         }
-
-        public void SetOffset(Vector3 offset)
-        {
-            _offsetAddition = _offset - offset;
-        }
-
+        
         [Header("Fractal")]
 
         [SerializeField]
@@ -100,7 +86,7 @@ namespace Utils.Noise.Profiles
         public float Gain => _gain;
 
         [SerializeField, Range(0, 1)]
-        private float _weightedStrength = 0.0f;
+        private float _weightedStrength;
         public float WeightedStrength => _weightedStrength;
 
         [SerializeField, Range(0.5f, 5)]
@@ -121,6 +107,11 @@ namespace Utils.Noise.Profiles
         private float _jitter = 1.0f;
         public float Jitter => _jitter;
 
+        public void SetSeed(int seed)
+        {
+            _seed = seed;
+        }
+        
         // Noise Types
         internal FastNoiseLite.NoiseType GetNoiseType(NoiseType type)
         {

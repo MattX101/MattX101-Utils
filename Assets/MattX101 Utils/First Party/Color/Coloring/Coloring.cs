@@ -4,11 +4,7 @@ namespace Utils.Colors.Coloring
 {
     public static class Coloring
     {
-        public static ComputeShader Shader
-        {
-            get;
-            set;
-        }
+        public static ComputeShader Shader { get; set; }
 
         private const int InterpolationGradientPoints = 128;
 
@@ -34,15 +30,15 @@ namespace Utils.Colors.Coloring
         public static void Color(ref ComputeBuffer colorsBuffer, ComputeBuffer valuesBuffer, Color source)
         {
             int kernel = Shader.FindKernel("Coloring");
-            Shader.SetBuffer(kernel, "values", valuesBuffer);
-            Shader.SetBuffer(kernel, "colors", colorsBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("values"), valuesBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("colors"), colorsBuffer);
 
-            Shader.SetFloats("source", source.r, source.g, source.b, 1);
+            Shader.SetFloats(UnityEngine.Shader.PropertyToID("source"), source.r, source.g, source.b, 1);
 
             Shader.Dispatch(kernel, Mathf.CeilToInt(colorsBuffer.count / 1024.0f), 1, 1);
         }
 
-        public static void ChannelColorig(ref Color[] colors, Channel channel, Color source)
+        public static void ChannelColoring(ref Color[] colors, Channel channel, Color source)
         {
             if (channel == Channel.Red)
             {
@@ -67,27 +63,18 @@ namespace Utils.Colors.Coloring
             }
         }
 
-        public static void ChannelColorig(ref ComputeBuffer colorsBuffer, Channel channel, Color source)
+        public static void ChannelColoring(ref ComputeBuffer colorsBuffer, Channel channel, Color source)
         {
-            int kernel = 0;
-            switch (channel)
+            int kernel = channel switch
             {
-                case Channel.Red:
-                    kernel = Shader.FindKernel("RedChannelColoring");
-                    break;
-                case Channel.Green:
-                    kernel = Shader.FindKernel("GreenChannelColoring");
-                    break;
-                case Channel.Blue:
-                    kernel = Shader.FindKernel("BlueChannelColoring");
-                    break;
-                default:
-                    kernel = Shader.FindKernel("RedChannelColoring");
-                    break;
-            }
+                Channel.Red => Shader.FindKernel("RedChannelColoring"),
+                Channel.Green => Shader.FindKernel("GreenChannelColoring"),
+                Channel.Blue => Shader.FindKernel("BlueChannelColoring"),
+                _ => Shader.FindKernel("RedChannelColoring")
+            };
 
-            Shader.SetBuffer(kernel, "colors", colorsBuffer);
-            Shader.SetFloats("source", source.r, source.g, source.b, 1);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("colors"), colorsBuffer);
+            Shader.SetFloats(UnityEngine.Shader.PropertyToID("source"), source.r, source.g, source.b, 1);
 
             Shader.Dispatch(kernel, Mathf.CeilToInt(colorsBuffer.count / 1024.0f), 1, 1);
         }
@@ -106,13 +93,13 @@ namespace Utils.Colors.Coloring
             gradientBuffer.SetData(InterpolateGradient(gradient));
 
             int kernel = Shader.FindKernel("GradientColoring");
-            Shader.SetBuffer(kernel, "gradient", gradientBuffer);
-            Shader.SetBuffer(kernel, "values", valuesBuffer);
-            Shader.SetBuffer(kernel, "colors", colorsBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("gradient"), gradientBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("values"), valuesBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("colors"), colorsBuffer);
 
-            Shader.SetInt("gradientLength", InterpolationGradientPoints - 1);
+            Shader.SetInt(UnityEngine.Shader.PropertyToID("gradientLength"), InterpolationGradientPoints - 1);
 
-            Shader.Dispatch(kernel, Mathf.CeilToInt((float)colorsBuffer.count / 1024.0f), 1, 1);
+            Shader.Dispatch(kernel, Mathf.CeilToInt(colorsBuffer.count / 1024.0f), 1, 1);
 
             gradientBuffer.Release();
         }

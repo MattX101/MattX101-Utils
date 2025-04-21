@@ -15,10 +15,10 @@ namespace Utils.Colors.Blend
         private static float Power(float v, float p = 2.0f) => Mathf.Pow(v, p);
 
         /// Arithmetic
-        internal static float Add(float a, float b) => a += b;
-        internal static float Subtract(float a, float b) => a -= b;
-        internal static float Multiply(float a, float b) => a *= b;
-        internal static float Divide(float a, float b) => a /= b;
+        internal static float Add(float a, float b) => a + b;
+        internal static float Subtract(float a, float b) => a - b;
+        internal static float Multiply(float a, float b) => a * b;
+        internal static float Divide(float a, float b) => a / b;
         internal static float Average(float a, float b) => Divide(Add(a, b), 2.0f);
 
         /// Darken

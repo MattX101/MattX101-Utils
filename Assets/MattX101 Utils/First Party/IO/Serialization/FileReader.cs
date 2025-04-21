@@ -7,23 +7,23 @@ namespace Utils.IO.Serialization
     {
         private readonly BinaryReader _reader;
 
-        private readonly bool _validFile = false;
+        private readonly bool _validFile;
 
         public FileReader(string path)
         {
-            if (File.Exists(path))
-            {
-                _validFile = true;
+            if (!File.Exists(path))
+                return;
 
-                _reader = new BinaryReader(
-                    new FileStream(
-                        path,
-                        FileMode.Open,
-                        FileAccess.Read,
-                        FileShare.Read),
-                    System.Text.Encoding.UTF8
-                );
-            }
+            _validFile = true;
+
+            _reader = new BinaryReader(
+                new FileStream(
+                    path,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read),
+                System.Text.Encoding.UTF8
+            );
         }
 
         public void Close()
@@ -50,8 +50,8 @@ namespace Utils.IO.Serialization
         public double ReadDouble() => _validFile ? _reader.ReadDouble() : 0.0d;
 
         // Color
-        public Color ReadRGB() => _validFile ? new(_reader.ReadSingle(), _reader.ReadSingle(), _reader.ReadSingle(), 1) : Color.black;
-        public Color ReadRGBA() => _validFile ? new(_reader.ReadSingle(), _reader.ReadSingle(), _reader.ReadSingle(), _reader.ReadSingle()) : Color.black;
+        public Color ReadRGB() => _validFile ? new Color(_reader.ReadSingle(), _reader.ReadSingle(), _reader.ReadSingle(), 1) : Color.black;
+        public Color ReadRGBA() => _validFile ? new Color(_reader.ReadSingle(), _reader.ReadSingle(), _reader.ReadSingle(), _reader.ReadSingle()) : Color.black;
 
         // Bool
         public bool ReadBool() => _validFile ? _reader.ReadBoolean() : false;

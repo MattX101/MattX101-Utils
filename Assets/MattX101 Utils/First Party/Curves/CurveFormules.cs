@@ -2,7 +2,7 @@
 
 namespace Utils.Curves
 {
-    internal static class CurveFormules
+    internal static class CurveFormulas
     {
         private const float PI = 3.1415f;
         private const float Radian = 0.841471f;

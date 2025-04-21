@@ -15,7 +15,6 @@
 #pragma kernel WarpNoise3D_Linear
 #pragma kernel WarpNoise3D_Linear_Roll
 
-//#include "./NoiseGenerator.hlsl"
 #include "../Libraries/FastNoiseLite.hlsl"
 
 float sin, cos;
@@ -121,12 +120,12 @@ void WarpInit()
 
 float Single(float2 coord)
 {
-    return fnlGetNoise2D(noiseState, coord.x + offset.x, coord.y + offset.y);
+    return fnlGetNoise2D(noiseState, coord.x - offset.x, coord.y - offset.y);
 }
 
 float Single(float3 coord)
 {
-    return fnlGetNoise3D(noiseState, coord.x + offset.x, coord.y + offset.y, coord.z + offset.z);
+    return fnlGetNoise3D(noiseState, coord.x - offset.x, coord.y - offset.y, coord.z - offset.z);
 }
 
 float Single(float2 coord, float2 warp, float amp)
@@ -206,11 +205,11 @@ int Index(int x, int y)
 
 float NoisePosX(float x)
 {
-    return ((x - halfWidth) / scale.x);// + offset.x;
+    return ((x - halfWidth) / scale.x);
 }
 float NoisePosY(float y)
 {
-    return ((y - halfHeight) / scale.y); // + offset.y;
+    return ((y - halfHeight) / scale.y); 
 }
 
 float WarpPosX(float x)
@@ -250,13 +249,13 @@ void Noise2D_Roll(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    float x = NoisePosX(id.x);
-    float y = NoisePosY(id.y);
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
     
     noise[index] = Single(
         float2(
-            RotateX(x, y), 
-            RotateY(x, y)
+            RotateX(noiseX, noiseY), 
+            RotateY(noiseX, noiseY)
         )
     );
 }
@@ -288,13 +287,13 @@ void Noise3D_Roll(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    float x = NoisePosX(id.x);
-    float y = NoisePosY(id.y);
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
     
     noise[index] = Single(
         float3(
-            RotateX(x, y), 
-            RotateY(x, y), 
+            RotateX(noiseX, noiseY), 
+            RotateY(noiseX, noiseY), 
             offset.z
         )
     );
@@ -310,17 +309,17 @@ void WarpNoise2D(uint3 id : SV_DispatchThreadID)
     NoiseInit();
     WarpInit();
     
-    float xNoise = NoisePosX(id.x);
-    float yNoise = NoisePosY(id.y);
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
     
     noise[index] = Single(
         float2(
-            xNoise, 
-            yNoise
+            noiseX, 
+            noiseY
         ), 
         float2(
-            WarpPosX(xNoise), 
-            WarpPosY(yNoise)
+            WarpPosX(noiseX), 
+            WarpPosY(noiseY)
         ), 
         warpAmp
     );
@@ -364,18 +363,18 @@ void WarpNoise3D(uint3 id : SV_DispatchThreadID)
     NoiseInit();
     WarpInit();
     
-    float xNoise = NoisePosX(id.x);
-    float yNoise = NoisePosY(id.y);
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
             
     noise[index] = Single(
         float3(
-            xNoise, 
-            yNoise, 
+            noiseX, 
+            noiseY, 
             offset.z
         ),
         float3(
-            WarpPosX(xNoise), 
-            WarpPosY(yNoise), 
+            WarpPosX(noiseX), 
+            WarpPosY(noiseY), 
             warpOffset.z
         ),
         warpAmp
@@ -440,13 +439,13 @@ void Noise2D_Linear_Roll(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    float x = NoisePosX(id.x);
-    float y = NoisePosY(id.y);
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
     
     noise[index] = Single_Linear(
         float2(
-            RotateX(x, y), 
-            RotateY(x, y)
+            RotateX(noiseX, noiseY), 
+            RotateY(noiseX, noiseY)
         )
     );
 }
@@ -478,13 +477,13 @@ void Noise3D_Linear_Roll(uint3 id : SV_DispatchThreadID)
     
     NoiseInit();
     
-    float x = NoisePosX(id.x);
-    float y = NoisePosY(id.y);
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
     
     noise[index] = Single_Linear(
         float3(
-            RotateX(x, y), 
-            RotateY(x, y), 
+            RotateX(noiseX, noiseY), 
+            RotateY(noiseX, noiseY), 
             offset.z
         )
     );
@@ -500,17 +499,17 @@ void WarpNoise2D_Linear(uint3 id : SV_DispatchThreadID)
     NoiseInit();
     WarpInit();
     
-    float xNoise = NoisePosX(id.x);
-    float yNoise = NoisePosY(id.y);
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
     
     noise[index] = Single_Linear(
         float2(
-            xNoise, 
-            yNoise
+            noiseX, 
+            noiseY
         ),
         float2(
-            WarpPosX(xNoise), 
-            WarpPosY(yNoise)
+            WarpPosX(noiseX), 
+            WarpPosY(noiseY)
         ),
         warpAmp
     );
@@ -554,18 +553,18 @@ void WarpNoise3D_Linear(uint3 id : SV_DispatchThreadID)
     NoiseInit();
     WarpInit();
     
-    float xNoise = NoisePosX(id.x);
-    float yNoise = NoisePosY(id.y);
+    float noiseX = NoisePosX(id.x);
+    float noiseY = NoisePosY(id.y);
             
     noise[index] = Single_Linear(
         float3(
-            xNoise, 
-            yNoise, 
+            noiseX, 
+            noiseY, 
             offset.z
         ),
         float3(
-            WarpPosX(xNoise), 
-            WarpPosY(yNoise), 
+            WarpPosX(noiseX), 
+            WarpPosY(noiseY), 
             warpOffset.z
         ),
         warpAmp

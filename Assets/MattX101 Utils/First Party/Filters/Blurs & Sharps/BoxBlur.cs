@@ -4,11 +4,7 @@ namespace Utils.Filters.Blur
 {
     public static class BoxBlur
     {
-        public static ComputeShader Shader
-        {
-            get;
-            set;
-        }
+        public static ComputeShader Shader { get; set; }
 
         private static void Blur(ref float a, float n1, float n2, float n3, float n4, float n5, float n6, float n7, float n8, float n9)
         {
@@ -25,192 +21,190 @@ namespace Utils.Filters.Blur
 
         public static void Compute(ref float[] filter, float[] source, int width, int height)
         {
-            int l, r, b, t;
+            int coordLeft, coordRight, coordBottom, coordTop;
 
-            int lI, rI, bI, tI;
-            int bLI, bRI, tLI, tRI;
+            int index, indexSecondth;
+            int indexLeft, indexRight, indexBottom, indexTop;
+            int indexBottomLeft, indexBottomRight, indexTopLeft, indexTopRight;
+            
+            int widthMinus1 = width - 1;
+            int widthMinus2 = width - 2;
+            int heightMinus1 = height - 1;
 
-            int i, xx, yy;
-
-            int widthM1 = width - 1;
-            int widthM2 = width - 2;
-            int heightM1 = height - 1;
-
-            for (int x = 1; x < widthM1; x++)
+            for (int x = 1; x < widthMinus1; x++)
             {
-                l = x - 1;
-                r = x + 1;
+                coordLeft = x - 1;
+                coordRight = x + 1;
 
-                bI = width + x;
-                bLI = width + l;
-                bRI = width + r;
+                indexBottom = width + x;
+                indexBottomLeft = width + coordLeft;
+                indexBottomRight = width + coordRight;
 
-                Blur(ref filter[x], source[x], source[l], source[r], source[bI], source[bI], source[bLI], source[bRI], source[bLI], source[bRI]);
+                Blur(ref filter[x], source[x], source[coordLeft], source[coordRight], source[indexBottom], source[indexBottom], source[indexBottomLeft], source[indexBottomRight], source[indexBottomLeft], source[indexBottomRight]);
 
-                xx = Index(x, height - 1, width);
-                l = xx - 1;
-                r = xx + 1;
+                indexSecondth = Index(x, height - 1, width);
+                coordLeft = indexSecondth - 1;
+                coordRight = indexSecondth + 1;
 
-                bI = xx - width;
-                bLI = l - width;
-                bRI = r - width;
+                indexBottom = indexSecondth - width;
+                indexBottomLeft = coordLeft - width;
+                indexBottomRight = coordRight - width;
 
-                Blur(ref filter[xx], source[xx], source[l], source[r], source[bI], source[bI], source[bLI], source[bRI], source[bLI], source[bRI]);
+                Blur(ref filter[indexSecondth], source[indexSecondth], source[coordLeft], source[coordRight], source[indexBottom], source[indexBottom], source[indexBottomLeft], source[indexBottomRight], source[indexBottomLeft], source[indexBottomRight]);
+            }
+            
+            for (int y = 1; y < heightMinus1; y++)
+            {
+                index = Index(0, y, width);
+                coordBottom = y - 1;
+                coordTop = y + 1;
+
+                indexRight = Index(1, y, width);
+                indexBottom = Index(0, coordBottom, width);
+                indexTop = Index(0, coordTop, width);
+                indexBottomRight = Index(1, coordBottom, width);
+                indexTopRight = Index(1, coordTop, width); 
+                
+                Blur(ref filter[index], source[index], source[indexRight], source[indexRight], source[indexBottom], source[indexTop], source[indexBottomRight], source[indexBottomRight], source[indexTopRight], source[indexTopRight]);
+
+                indexSecondth = Index(widthMinus1, y, width);
+                coordBottom = y - 1;
+                coordTop = y + 1;
+
+                indexRight = Index(widthMinus2, y, width);
+                indexBottom = Index(widthMinus1, coordBottom, width);
+                indexTop = Index(widthMinus1, coordTop, width);
+                indexBottomRight = Index(widthMinus2, coordBottom, width);
+                indexTopRight = Index(widthMinus2, coordTop, width);
+
+                Blur(ref filter[indexSecondth], source[indexSecondth], source[indexRight], source[indexRight], source[indexBottom], source[indexTop], source[indexBottomRight], source[indexBottomRight], source[indexTopRight], source[indexTopRight]);
             }
 
-            for (int y = 1; y < heightM1; y++)
+            for (int y = 1; y < heightMinus1; y++)
             {
-                i = Index(0, y, width);
-                b = y - 1;
-                t = y + 1;
-
-                rI = Index(1, y, width);
-                bI = Index(0, b, width);
-                tI = Index(0, t, width);
-                bRI = Index(1, b, width);
-                tRI = Index(1, t, width);
-
-                Blur(ref filter[i], source[i], source[rI], source[rI], source[bI], source[tI], source[bRI], source[bRI], source[tRI], source[tRI]);
-
-                yy = Index(widthM1, y, width);
-                b = y - 1;
-                t = y + 1;
-
-                rI = Index(widthM2, y, width);
-                bI = Index(widthM1, b, width);
-                tI = Index(widthM1, t, width);
-                bRI = Index(widthM2, b, width);
-                tRI = Index(widthM2, t, width);
-
-                Blur(ref filter[yy], source[yy], source[rI], source[rI], source[bI], source[tI], source[bRI], source[bRI], source[tRI], source[tRI]);
-            }
-
-            for (int y = 1; y < heightM1; y++)
-            {
-                for (int x = 1; x < widthM1; x++)
+                for (int x = 1; x < widthMinus1; x++)
                 {
-                    i = Index(x, y, width);
-                    l = x - 1;
-                    r = x + 1;
-                    b = y - 1;
-                    t = y + 1;
+                    index = Index(x, y, width);
+                    coordLeft = x - 1;
+                    coordRight = x + 1;
+                    coordBottom = y - 1;
+                    coordTop = y + 1;
 
-                    lI = Index(l, y, width);
-                    rI = Index(r, y, width);
-                    bI = Index(x, b, width);
-                    tI = Index(x, t, width);
-                    bLI = Index(l, b, width);
-                    bRI = Index(r, b, width);
-                    tLI = Index(l, t, width);
-                    tRI = Index(r, t, width);
+                    indexLeft = Index(coordLeft, y, width);
+                    indexRight = Index(coordRight, y, width);
+                    indexBottom = Index(x, coordBottom, width);
+                    indexTop = Index(x, coordTop, width);
+                    indexBottomLeft = Index(coordLeft, coordBottom, width);
+                    indexBottomRight = Index(coordRight, coordBottom, width);
+                    indexTopLeft = Index(coordLeft, coordTop, width);
+                    indexTopRight = Index(coordRight, coordTop, width);
 
-                    Blur(ref filter[i], source[i], source[lI], source[rI], source[bI], source[tI], source[bLI], source[bRI], source[tLI], source[tRI]);
+                    Blur(ref filter[index], source[index], source[indexLeft], source[indexRight], source[indexBottom], source[indexTop], source[indexBottomLeft], source[indexBottomRight], source[indexTopLeft], source[indexTopRight]);
                 }
             }
         }
 
         public static void Compute(ref Color[] filter, Color[] source, int width, int height)
         {
-            int l, r, b, t;
+            int coordLeft, coordRight, coordBottom, coordTop;
 
-            int lI, rI, bI, tI;
-            int bLI, bRI, tLI, tRI;
+            int index, indexSecondth;
+            int indexLeft, indexRight, indexBottom, indexTop;
+            int indexBottomLeft, indexBottomRight, indexTopLeft, indexTopRight;
 
-            int i, xx, yy;
+            int widthMinus1 = width - 1;
+            int widthMinus2 = width - 2;
+            int heightMinus1 = height - 1;
 
-            int widthM1 = width - 1;
-            int widthM2 = width - 2;
-            int heightM1 = height - 1;
-
-            for (int x = 1; x < widthM1; x++)
+            for (int x = 1; x < widthMinus1; x++)
             {
-                l = x - 1;
-                r = x + 1;
+                coordLeft = x - 1;
+                coordRight = x + 1;
 
-                bI = width + x;
-                bLI = width + l;
-                bRI = width + r;
+                indexBottom = width + x;
+                indexBottomLeft = width + coordLeft;
+                indexBottomRight = width + coordRight;
+                
+                Blur(ref filter[x], source[x], source[coordLeft], source[coordRight], source[indexBottom], source[indexBottom], source[indexBottomLeft], source[indexBottomRight], source[indexBottomLeft], source[indexBottomRight]);
 
-                Blur(ref filter[x], source[x], source[l], source[r], source[bI], source[bI], source[bLI], source[bRI], source[bLI], source[bRI]);
+                indexSecondth = Index(x, height - 1, width);
+                coordLeft = indexSecondth - 1;
+                coordRight = indexSecondth + 1;
 
-                xx = Index(x, height - 1, width);
-                l = xx - 1;
-                r = xx + 1;
-
-                bI = xx - width;
-                bLI = l - width;
-                bRI = r - width;
-
-                Blur(ref filter[xx], source[xx], source[l], source[r], source[bI], source[bI], source[bLI], source[bRI], source[bLI], source[bRI]);
+                indexBottom = indexSecondth - width;
+                indexBottomLeft = coordLeft - width;
+                indexBottomRight = coordRight - width;
+                
+                Blur(ref filter[indexSecondth], source[indexSecondth], source[coordLeft], source[coordRight], source[indexBottom], source[indexBottom], source[indexBottomLeft], source[indexBottomRight], source[indexBottomLeft], source[indexBottomRight]);
             }
 
-            for (int y = 1; y < heightM1; y++)
+            for (int y = 1; y < heightMinus1; y++)
             {
-                i = Index(0, y, width);
-                b = y - 1;
-                t = y + 1;
+                index = Index(0, y, width);
+                coordBottom = y - 1;
+                coordTop = y + 1;
 
-                rI = Index(1, y, width);
-                bI = Index(0, b, width);
-                tI = Index(0, t, width);
-                bRI = Index(1, b, width);
-                tRI = Index(1, t, width);
+                indexRight = Index(1, y, width);
+                indexBottom = Index(0, coordBottom, width);
+                indexTop = Index(0, coordTop, width);
+                indexBottomRight = Index(1, coordBottom, width);
+                indexTopRight = Index(1, coordTop, width);
+                
+                Blur(ref filter[index], source[index], source[indexRight], source[indexRight], source[indexBottom], source[indexTop], source[indexBottomRight], source[indexBottomRight], source[indexTopRight], source[indexTopRight]);
 
-                Blur(ref filter[i], source[i], source[rI], source[rI], source[bI], source[tI], source[bRI], source[bRI], source[tRI], source[tRI]);
+                indexSecondth = Index(widthMinus1, y, width);
+                coordBottom = y - 1;
+                coordTop = y + 1;
 
-                yy = Index(widthM1, y, width);
-                b = y - 1;
-                t = y + 1;
+                indexRight = Index(widthMinus2, y, width);
+                indexBottom = Index(widthMinus1, coordBottom, width);
+                indexTop = Index(widthMinus1, coordTop, width);
+                indexBottomRight = Index(widthMinus2, coordBottom, width);
+                indexTopRight = Index(widthMinus2, coordTop, width);
 
-                rI = Index(widthM2, y, width);
-                bI = Index(widthM1, b, width);
-                tI = Index(widthM1, t, width);
-                bRI = Index(widthM2, b, width);
-                tRI = Index(widthM2, t, width);
-
-                Blur(ref filter[yy], source[yy], source[rI], source[rI], source[bI], source[tI], source[bRI], source[bRI], source[tRI], source[tRI]);
+                Blur(ref filter[indexSecondth], source[indexSecondth], source[indexRight], source[indexRight], source[indexBottom], source[indexTop], source[indexBottomRight], source[indexBottomRight], source[indexTopRight], source[indexTopRight]);
             }
 
-            for (int y = 1; y < heightM1; y++)
+            for (int y = 1; y < heightMinus1; y++)
             {
-                for (int x = 1; x < widthM1; x++)
+                for (int x = 1; x < widthMinus1; x++)
                 {
-                    i = Index(x, y, width);
-                    l = x - 1;
-                    r = x + 1;
-                    b = y - 1;
-                    t = y + 1;
+                    index = Index(x, y, width);
+                    coordLeft = x - 1;
+                    coordRight = x + 1;
+                    coordBottom = y - 1;
+                    coordTop = y + 1;
 
-                    lI = Index(l, y, width);
-                    rI = Index(r, y, width);
-                    bI = Index(x, b, width);
-                    tI = Index(x, t, width);
-                    bLI = Index(l, b, width);
-                    bRI = Index(r, b, width);
-                    tLI = Index(l, t, width);
-                    tRI = Index(r, t, width);
+                    indexLeft = Index(coordLeft, y, width);
+                    indexRight = Index(coordRight, y, width);
+                    indexBottom = Index(x, coordBottom, width);
+                    indexTop = Index(x, coordTop, width);
+                    indexBottomLeft = Index(coordLeft, coordBottom, width);
+                    indexBottomRight = Index(coordRight, coordBottom, width);
+                    indexTopLeft = Index(coordLeft, coordTop, width);
+                    indexTopRight = Index(coordRight, coordTop, width);
 
-                    Blur(ref filter[i], source[i], source[lI], source[rI], source[bI], source[tI], source[bLI], source[bRI], source[tLI], source[tRI]);
+                    Blur(ref filter[index], source[index], source[indexLeft], source[indexRight], source[indexBottom], source[indexTop], source[indexBottomLeft], source[indexBottomRight], source[indexTopLeft], source[indexTopRight]);
                 }
             }
         }
 
         public static void Compute(ref ComputeBuffer filter, ComputeBuffer source, int width, int height, bool isFloat)
         {
-            Shader.SetInt("width", width);
-            Shader.SetInt("height", height);
+            Shader.SetInt(UnityEngine.Shader.PropertyToID("width"), width);
+            Shader.SetInt(UnityEngine.Shader.PropertyToID("height"), height);
 
             int kernel = Shader.FindKernel(isFloat ? "BlurFloat" : "BlurColor");
 
             if (isFloat)
             {
-                Shader.SetBuffer(kernel, "sourceFloat", source);
-                Shader.SetBuffer(kernel, "filterFloat", filter);
+                Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("sourceFloat"), source);
+                Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("filterFloat"), filter);
             }
             else
             {
-                Shader.SetBuffer(kernel, "sourceColor", source);
-                Shader.SetBuffer(kernel, "filterColor", filter);
+                Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("sourceColor"), source);
+                Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("filterColor"), filter);
             }
 
             Shader.Dispatch(kernel, Mathf.CeilToInt(width / 32.0f), Mathf.CeilToInt(height / 32.0f), 1);

@@ -4,11 +4,7 @@ namespace Utils.Filters
 {
     public static class Invert
     {
-        public static ComputeShader Shader
-        {
-            get;
-            set;
-        }
+        public static ComputeShader Shader { get; set; }
 
         private static void Calculate(ref float v)
         {
@@ -41,17 +37,17 @@ namespace Utils.Filters
 
         public static void Compute(ref ComputeBuffer buffer, bool isFloat)
         {
-            int kernel = 0;
+            int kernel;
 
             switch (isFloat)
             {
                 case false:
                     kernel = Shader.FindKernel("InvertColor");
-                    Shader.SetBuffer(kernel, "sourceColor", buffer);
+                    Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID(("sourceColor")), buffer);
                     break;
                 case true:
                     kernel = Shader.FindKernel("InvertFloat");
-                    Shader.SetBuffer(kernel, "sourceFloat", buffer);
+                    Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID(("sourceFloat")), buffer);
                     break;
             }
 

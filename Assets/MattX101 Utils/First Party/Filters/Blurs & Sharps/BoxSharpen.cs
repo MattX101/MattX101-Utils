@@ -39,20 +39,20 @@ namespace Utils.Filters.Sharpen
 
         public static void Compute(ref ComputeBuffer filter, ComputeBuffer source, int width, int height, bool isFloat)
         {
-            BoxBlur.Shader.SetInt("width", width);
-            BoxBlur.Shader.SetInt("height", height);
+            BoxBlur.Shader.SetInt(Shader.PropertyToID("width"), width);
+            BoxBlur.Shader.SetInt(Shader.PropertyToID("height"), height);
 
             int kernel = BoxBlur.Shader.FindKernel(isFloat ? "SharpFloat" : "SharpColor");
 
             if (isFloat)
             {
-                BoxBlur.Shader.SetBuffer(kernel, "sourceFloat", source);
-                BoxBlur.Shader.SetBuffer(kernel, "filterFloat", filter);
+                BoxBlur.Shader.SetBuffer(kernel, Shader.PropertyToID("sourceFloat"), source);
+                BoxBlur.Shader.SetBuffer(kernel, Shader.PropertyToID("filterFloat"), filter);
             }
             else
             {
-                BoxBlur.Shader.SetBuffer(kernel, "sourceColor", source);
-                BoxBlur.Shader.SetBuffer(kernel, "filterColor", filter);
+                BoxBlur.Shader.SetBuffer(kernel, Shader.PropertyToID("sourceColor"), source);
+                BoxBlur.Shader.SetBuffer(kernel, Shader.PropertyToID("filterColor"), filter);
             }
 
             BoxBlur.Shader.Dispatch(kernel, Mathf.CeilToInt(width / 32.0f), Mathf.CeilToInt(height / 32.0f), 1);

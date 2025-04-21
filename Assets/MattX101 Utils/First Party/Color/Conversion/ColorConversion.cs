@@ -18,9 +18,9 @@ namespace Utils.Colors
             int g = (int)(color.g * 255);
             int b = (int)(color.b * 255);
 
-            int rA = Mathf.FloorToInt(r / 16);
-            int gA = Mathf.FloorToInt(g / 16);
-            int bA = Mathf.FloorToInt(b / 16);
+            int rA = Mathf.FloorToInt(r / 16.0f);
+            int gA = Mathf.FloorToInt(g / 16.0f);
+            int bA = Mathf.FloorToInt(b / 16.0f);
 
             int rB = r - (16 * rA);
             int gB = g - (16 * gA);
@@ -37,7 +37,7 @@ namespace Utils.Colors
             return new HEX(hex);
         }
 
-        public static Color HEXToRGB(HEX hex)
+        public static Color HexToRGB(HEX hex)
         {
             int rA = GetHexValue(hex.Hex[0]) * 16;
             int rB = GetHexValue(hex.Hex[1]);
@@ -107,21 +107,21 @@ namespace Utils.Colors
         private static float Hue(Color color, float min, float max, float diff)
         {
             float h = 0.0f;
-            if (diff > 0.0f)
+            if (!(diff > 0.0f))
+                return h;
+
+            if (max == color.r)
             {
-                if (max == color.r)
-                {
-                    h = 60.0f * ((color.g - color.b) / diff);
-                    h = h < 0 ? h + 360 : h;
-                }
-                else if (max == color.g)
-                {
-                    h = 60.0f * (((color.b - color.r) / diff) + 2);
-                }
-                else if (max == color.b)
-                {
-                    h = 60.0f * (((color.r - color.g) / diff) + 4);
-                }
+                h = 60.0f * ((color.g - color.b) / diff);
+                h = h < 0 ? h + 360 : h;
+            }
+            else if (max == color.g)
+            {
+                h = 60.0f * (((color.b - color.r) / diff) + 2);
+            }
+            else if (max == color.b)
+            {
+                h = 60.0f * (((color.r - color.g) / diff) + 4);
             }
 
             return h;

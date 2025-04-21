@@ -4,37 +4,37 @@ namespace Utils.Noise
 {
     public static partial class FastNoise2D
     {
-        public static float Single_Linear(NoiseProfile noiseProfile, float noiseX, float noiseY)
+        private static float Single_Linear(NoiseProfile noiseProfile, float noiseX, float noiseY)
         {
             return noiseProfile.GetNoise2D_Linear(
-                noiseX + noiseProfile.Offset.x, 
-                noiseY + noiseProfile.Offset.y
+                noiseX - noiseProfile.Offset.x, 
+                noiseY - noiseProfile.Offset.y
             );
         }
 
-        public static float Single_Linear(NoiseProfile noiseProfile, float noiseX, float noiseY, float offsetZ)
+        private static float Single_Linear(NoiseProfile noiseProfile, float noiseX, float noiseY, float offsetZ)
         {
             return noiseProfile.GetNoise3D_Linear(
-                noiseX + noiseProfile.Offset.x,
-                noiseY + noiseProfile.Offset.y,
+                noiseX - noiseProfile.Offset.x,
+                noiseY - noiseProfile.Offset.y,
                 offsetZ
             );
         }
 
-        public static float Single_Linear(NoiseProfile noiseProfile, WarpProfile warpProfile, float noiseX, float noiseY, float warpX, float warpY)
+        private static float Single_Linear(NoiseProfile noiseProfile, WarpProfile warpProfile, float noiseX, float noiseY, float warpX, float warpY)
         {
             return Single_Linear(
                 noiseProfile,
-                noiseX + warpProfile.GetWarp2D(warpX, warpY),
-                noiseY + warpProfile.GetWarp2D(warpY, warpX));
+                noiseX - warpProfile.GetWarp2D(warpX, warpY),
+                noiseY - warpProfile.GetWarp2D(warpY, warpX));
         }
 
-        public static float Single_Linear(NoiseProfile noiseProfile, WarpProfile warpProfile, float noiseX, float noiseY, float offsetZ, float warpX, float warpY, float warpOffsetZ)
+        private static float Single_Linear(NoiseProfile noiseProfile, WarpProfile warpProfile, float noiseX, float noiseY, float offsetZ, float warpX, float warpY, float warpOffsetZ)
         {
             return Single_Linear(
                 noiseProfile,
-                noiseX + warpProfile.GetWarp3D(warpX, warpY, warpOffsetZ),
-                noiseY + warpProfile.GetWarp3D(warpY, warpX, warpOffsetZ),
+                noiseX - warpProfile.GetWarp3D(warpX, warpY, warpOffsetZ),
+                noiseY - warpProfile.GetWarp3D(warpY, warpX, warpOffsetZ),
                 offsetZ);
         }
 

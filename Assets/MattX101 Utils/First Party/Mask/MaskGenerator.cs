@@ -99,21 +99,20 @@ namespace Utils.Mask
 
             if (settings.ApplyNoise)
             {
+                settings.NoiseProfile.ExternalScale = Vector3.one * settings.Zoom;
+                settings.WarpProfile.ExternalScale = Vector3.one * settings.Zoom;
+
                 Vector2 noiseOffset = DefaultCanvasSize / 2.0f * settings.Offset;
+                Vector3 noiseOffsetToScaleAdjustment = settings.NoiseProfile.Scale / settings.Zoom;
+                Vector3 warpOffsetToScaleAdjustment = settings.WarpProfile.Scale / settings.Zoom;
 
-                settings.NoiseProfile.SetScale(Vector3.one * settings.Zoom);
-                settings.WarpProfile.SetScale(Vector3.one * settings.Zoom);
-
-                settings.NoiseProfile.SetOffset(noiseOffset);
-                settings.WarpProfile.SetOffset(noiseOffset);
-
+                settings.NoiseProfile.ExternalOffset = -noiseOffset * settings.NoiseProfile.UniversalScale / noiseOffsetToScaleAdjustment;
+                settings.WarpProfile.ExternalOffset = -noiseOffset * settings.WarpProfile.UniversalScale / warpOffsetToScaleAdjustment;
+                
                 settings.NoiseProfile.Init();
                 settings.WarpProfile.Init();
 
                 FastNoise2D.Generate(ref values, width, height, false, settings.NoiseProfile, settings.WarpProfile);
-
-                if (settings.PreviewNoise)
-                    return;
 
                 if (settings.ComputeRoll)
                 {
@@ -194,8 +193,8 @@ namespace Utils.Mask
         {
             Init(width, height, settings);
 
-            ComputeBuffer pointsXBuffer = new ComputeBuffer(width, sizeof(float));
-            ComputeBuffer pointsYBuffer = new ComputeBuffer(height, sizeof(float));
+            ComputeBuffer pointsXBuffer = new ComputeBuffer(_bound, sizeof(float));
+            ComputeBuffer pointsYBuffer = new ComputeBuffer(_bound, sizeof(float));
             pointsXBuffer.SetData(GetPoints(_bound, _offset.x, CanvasToScreenRatio));
             pointsYBuffer.SetData(GetPoints(_bound, _offset.y, CanvasToScreenRatio));
 
@@ -210,17 +209,21 @@ namespace Utils.Mask
             Shader.SetFloats(UnityEngine.Shader.PropertyToID("scale"), _scale.x, _scale.y);
             Shader.SetFloats(UnityEngine.Shader.PropertyToID("range"), settings.MinValue, settings.MaxValue);
 
-            int kernel = 0;
+            int kernel;
             if (settings.ApplyNoise)
             {
-                Vector2 noiseOffset = DefaultCanvasSize / 2.0f * settings.Offset;
-
-                settings.NoiseProfile.SetScale(Vector3.one * settings.Zoom);
-                settings.NoiseProfile.SetOffset(noiseOffset);
-                settings.NoiseProfile.Init();
                 
-                settings.WarpProfile.SetScale(Vector3.one * settings.Zoom);
-                settings.WarpProfile.SetOffset(noiseOffset);
+                settings.NoiseProfile.ExternalScale = (Vector3.one * settings.Zoom);
+                settings.WarpProfile.ExternalScale = (Vector3.one * settings.Zoom);
+                
+                Vector2 noiseOffset = DefaultCanvasSize / 2.0f * settings.Offset;
+                Vector3 noiseOffsetToScaleAdjustment = settings.NoiseProfile.Scale / settings.Zoom;
+                Vector3 warpOffsetToScaleAdjustment = settings.WarpProfile.Scale / settings.Zoom;
+
+                settings.NoiseProfile.ExternalOffset = -noiseOffset * settings.NoiseProfile.UniversalScale / noiseOffsetToScaleAdjustment;
+                settings.WarpProfile.ExternalOffset = -noiseOffset * settings.WarpProfile.UniversalScale / warpOffsetToScaleAdjustment;
+                
+                settings.NoiseProfile.Init();
                 settings.WarpProfile.Init();
 
                 FastNoise2D.Generate(ref buffer, width, height, false, settings.NoiseProfile, settings.WarpProfile);

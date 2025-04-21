@@ -10,7 +10,7 @@ namespace Utils.IO
         [SerializeField]
         private TMP_Text _filePath, _folderPath, _savePath;
 
-        void Awake()
+        private void Awake()
         {
             _ioSelection = new IOSelection();
         }

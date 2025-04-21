@@ -6,7 +6,7 @@ namespace Utils.Colors.Blend
     public sealed class BlendingDemo : MonoBehaviour
     {
         [SerializeField]
-        private bool _useGPU = false;
+        private bool _useGPU;
 
         [Space]
 
@@ -57,9 +57,11 @@ namespace Utils.Colors.Blend
                 }
             }
 
-            Texture2D texture = new Texture2D(_noise1.width, _noise1.height);
-            texture.wrapMode = TextureWrapMode.Clamp;
-            texture.filterMode = FilterMode.Point;
+            Texture2D texture = new Texture2D(_noise1.width, _noise1.height)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point
+            };
             texture.SetPixels(result);
             texture.Apply();
 

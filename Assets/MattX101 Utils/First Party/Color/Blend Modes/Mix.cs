@@ -3,13 +3,9 @@ using UnityEngine;
 
 namespace Utils.Colors.Blend
 {
-    public static partial class Mix
+    public static class Mix
     {
-        public static ComputeShader Shader
-        {
-            get;
-            set;
-        }
+        public static ComputeShader Shader { get; set; }
 
         /// Arithmetic
         public static Color Add(Color a, Color b) => new (Formulas.Add(a.r, b.r), Formulas.Add(a.g, b.g), Formulas.Add(a.b, b.b), 1);
@@ -74,9 +70,9 @@ namespace Utils.Colors.Blend
         {
             int kernel = GetKernel(blendMode);
 
-            Shader.SetBuffer(kernel, "result", resultBuffer);
-            Shader.SetBuffer(kernel, "base", baseBuffer);
-            Shader.SetBuffer(kernel, "blend", blendBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("result"), resultBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("base"), baseBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("blend"), blendBuffer);
 
             Shader.Dispatch(kernel, Mathf.CeilToInt(resultBuffer.count / 1024.0f), 1, 1);
         }

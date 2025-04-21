@@ -6,9 +6,9 @@ namespace Utils.Colors.Coloring
     public sealed class ColoringDemo : MonoBehaviour
     {
         [SerializeField]
-        private bool _useGPU = false;
+        private bool _useGPU;
         [SerializeField]
-        private bool _enableColoring = false;
+        private bool _enableColoring;
 
         [Space]
 
@@ -29,9 +29,11 @@ namespace Utils.Colors.Coloring
         {
             Color[] colors = new Color[_texture.width * _texture.height];
 
-            Texture2D texture = new Texture2D(_texture.width, _texture.height);
-            texture.wrapMode = TextureWrapMode.Clamp;
-            texture.filterMode = FilterMode.Point;
+            Texture2D texture = new Texture2D(_texture.width, _texture.height)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point
+            };
 
             if (_enableColoring)
             {

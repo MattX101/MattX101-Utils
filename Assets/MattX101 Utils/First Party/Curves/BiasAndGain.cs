@@ -2,13 +2,9 @@
 
 namespace Utils.Curves
 {
-    public static partial class BiasAndGain
+    public static class BiasAndGain
     {
-        public static ComputeShader Shader
-        {
-            get;
-            set;
-        }
+        public static ComputeShader Shader { get; set; }
 
         public static float Bias(float time, float bias)
         {
@@ -26,10 +22,10 @@ namespace Utils.Curves
         public static void ModifyValues(ref ComputeBuffer valuesBuffer, float bias, float gain)
         {
             int kernel = Shader.FindKernel("Values");
-            Shader.SetBuffer(kernel, "values", valuesBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("values"), valuesBuffer);
 
-            Shader.SetFloat("bias", bias);
-            Shader.SetFloat("gain", gain);
+            Shader.SetFloat(UnityEngine.Shader.PropertyToID("bias"), bias);
+            Shader.SetFloat(UnityEngine.Shader.PropertyToID("gain"), gain);
 
             Shader.Dispatch(kernel, Mathf.CeilToInt(valuesBuffer.count / 1024.0f), 1, 1);
         }
@@ -37,10 +33,10 @@ namespace Utils.Curves
         public static void ModifyImage(ref ComputeBuffer colorsBuffer, float bias, float gain)
         {
             int kernel = Shader.FindKernel("Texture");
-            Shader.SetBuffer(kernel, "image", colorsBuffer);
+            Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("image"), colorsBuffer);
 
-            Shader.SetFloat("bias", bias);
-            Shader.SetFloat("gain", gain);
+            Shader.SetFloat(UnityEngine.Shader.PropertyToID("bias"), bias);
+            Shader.SetFloat(UnityEngine.Shader.PropertyToID("gain"), gain);
 
             Shader.Dispatch(kernel, Mathf.CeilToInt(colorsBuffer.count / 1024.0f), 1, 1);
         }

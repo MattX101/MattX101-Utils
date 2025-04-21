@@ -8,11 +8,7 @@ namespace Utils.Noise
         private const float DefaultCanvasSize = 1000.0f;
 
         private static float _canvasToScreenRatio = 1.0f;
-        private static float CanvasToScreenRatio => _canvasToScreenRatio;
-
         private static float _canvasToWidthRatio, _canvasToHeightRatio;
-        private static float CanvasToWidthRatio => _canvasToWidthRatio;
-        private static float CanvasToHeightRatio => _canvasToHeightRatio;
 
         private static int _width, _height;
         private static float _halfWidth, _halfHeight;
@@ -33,10 +29,7 @@ namespace Utils.Noise
             _canvasToWidthRatio = DefaultCanvasSize / _width;
             _canvasToHeightRatio = DefaultCanvasSize / _height;
 
-            _canvasToScreenRatio =
-                CanvasToWidthRatio > CanvasToHeightRatio ?
-                CanvasToWidthRatio :
-                CanvasToHeightRatio;
+            _canvasToScreenRatio = Mathf.Max(_canvasToWidthRatio, _canvasToHeightRatio);
         }
 
         private static void Init(int width, int height, NoiseProfile noiseProfile, WarpProfile warpProfile = null, bool setPoints = true)
@@ -76,19 +69,19 @@ namespace Utils.Noise
                 _yNoisePoints[y] = (y - _halfHeight) / _noiseScaleY;
             }
 
-            if (warpProfile != null)
-            {
-                for (int x = 0; x < _width; x++)
-                {
-                    _xWarpPoints[x] = (_xNoisePoints[x] / _warpScaleX) + warpProfile.Offset.x;
-                    _xWarpPoints[x] /= CanvasToScreenRatio;
-                }
+            if (warpProfile == null)
+                return;
 
-                for (int y = 0; y < _height; y++)
-                {
-                    _yWarpPoints[y] = (_yNoisePoints[y] / _warpScaleY) + warpProfile.Offset.y;
-                    _yWarpPoints[y] /= CanvasToScreenRatio;
-                }
+            for (int x = 0; x < _width; x++)
+            {
+                _xWarpPoints[x] = (_xNoisePoints[x] / _warpScaleX) + warpProfile.Offset.x;
+                _xWarpPoints[x] /= _canvasToScreenRatio;
+            }
+
+            for (int y = 0; y < _height; y++)
+            {
+                _yWarpPoints[y] = (_yNoisePoints[y] / _warpScaleY) + warpProfile.Offset.y;
+                _yWarpPoints[y] /= _canvasToScreenRatio;
             }
         }
 
@@ -160,14 +153,14 @@ namespace Utils.Noise
             }
         }
 
-        private static float GetNoiseScaleX(NoiseProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToScreenRatio;
-        private static float GetNoiseScaleY(NoiseProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToScreenRatio;
+        private static float GetNoiseScaleX(NoiseProfile profile) => profile.Scale.x / profile.UniversalScale / _canvasToScreenRatio;
+        private static float GetNoiseScaleY(NoiseProfile profile) => profile.Scale.y / profile.UniversalScale / _canvasToScreenRatio;
 
-        private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / CanvasToScreenRatio;
-        private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / CanvasToScreenRatio;
+        private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / _canvasToScreenRatio;
+        private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / _canvasToScreenRatio;
 
-        internal static float RotateX(float x, float y) => x * _sin + y * _cos;
-        internal static float RotateY(float x, float y) => x * _cos - y * _sin;
+        private static float RotateX(float x, float y) => x * _sin + y * _cos;
+        private static float RotateY(float x, float y) => x * _cos - y * _sin;
 
         private static void CalculateAngles(float roll)
         {

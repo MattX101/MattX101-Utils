@@ -37,7 +37,7 @@ float4 CalculateBlurColor(float4 n1, float4 n2, float4 n3, float4 n4, float4 n5,
     );
 }
 
-void CalcualteBlurFloat(int x, int y, int i)
+void CalculateBlurFloat(int x, int y, int i)
 {
     int l = x - 1;
     int r = x + 1;
@@ -62,7 +62,7 @@ void CalcualteBlurFloat(int x, int y, int i)
     );
 }
 
-void CalcualteBlurColor(int x, int y, int i)
+void CalculateBlurColor(int x, int y, int i)
 {
     int l = x - 1;
     int r = x + 1;
@@ -105,13 +105,13 @@ float4 CalculateSharpColor(int i)
 [numthreads(32, 32, 1)]
 void BlurFloat(uint3 id : SV_DispatchThreadID)
 {
-    CalcualteBlurFloat(id.x, id.y, IndexOf(id.x, id.y));
+    CalculateBlurFloat(id.x, id.y, IndexOf(id.x, id.y));
 }
 
 [numthreads(32, 32, 1)]
 void BlurColor(uint3 id : SV_DispatchThreadID)
 {    
-    CalcualteBlurColor(id.x, id.y, IndexOf(id.x, id.y));
+    CalculateBlurColor(id.x, id.y, IndexOf(id.x, id.y));
 }
 
 [numthreads(32, 32, 1)]
@@ -119,7 +119,7 @@ void SharpFloat(uint3 id : SV_DispatchThreadID)
 {
     int i = IndexOf(id.x, id.y);
     
-    CalcualteBlurFloat(id.x, id.y, i);
+    CalculateBlurFloat(id.x, id.y, i);
     filterFloat[i] = CalculateSharpFloat(sourceFloat[i], filterFloat[i]);
 }
 
@@ -128,6 +128,6 @@ void SharpColor(uint3 id : SV_DispatchThreadID)
 {
     int i = IndexOf(id.x, id.y);
     
-    CalcualteBlurColor(id.x, id.y, i);
+    CalculateBlurColor(id.x, id.y, i);
     filterColor[i] = CalculateSharpColor(i);
 }

@@ -38,9 +38,11 @@ namespace Utils.Curves
         {
             _colorsBuffer = new ComputeBuffer(_texture.width * _texture.height, sizeof(float) * 4);
 
-            _previewTexture = new Texture2D(_texture.width, _texture.height);
-            _previewTexture.wrapMode = TextureWrapMode.Clamp;
-            _previewTexture.filterMode = FilterMode.Point;
+            _previewTexture = new Texture2D(_texture.width, _texture.height)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point
+            };
         }
 
         private void Start()
@@ -71,7 +73,7 @@ namespace Utils.Curves
             image.color = toggle ? Color.green : Color.red;
         }
 
-        public void Calcualte()
+        public void Calculate()
         {
             Color[] colors = _texture.GetPixels();
 

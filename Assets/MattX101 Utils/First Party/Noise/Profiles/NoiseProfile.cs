@@ -9,7 +9,7 @@ namespace Utils.Noise.Profiles
         [Space]
 
         [SerializeField]
-        private bool _normalized = false;
+        private bool _normalized;
         public bool Normalized => _normalized;
 
         [Space]
@@ -17,17 +17,23 @@ namespace Utils.Noise.Profiles
         [Header("Roll")]
 
         [SerializeField]
-        private bool _computeRoll = false;
+        private bool _computeRoll;
         public bool ComputeRoll => _computeRoll;
 
         [SerializeField, Range(0, 360)]
-        private float _roll = 0.0f;
-        public float Roll => _roll;
+        private float _roll;
+        public float Roll => (_roll + _externalRoll) % 360.0f;
+
+        private float _externalRoll;
+        public float ExternalRoll
+        {
+            set => _externalRoll = value;
+        }
 
         [Header("Warp")]
 
         [SerializeField]
-        private bool _warp = false;
+        private bool _warp;
         public bool Warp => _warp;
 
         public void Init()

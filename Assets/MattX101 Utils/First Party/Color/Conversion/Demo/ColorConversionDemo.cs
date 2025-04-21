@@ -107,7 +107,7 @@ namespace Utils.Colors
             HEX hex = ColorConversion.RGBToHex(_preview.color);
             _hex.text = "#" + hex.Hex;
 
-            Color rgb = ColorConversion.HEXToRGB(hex);
+            Color rgb = ColorConversion.HexToRGB(hex);
             _rgb.text = ((int)(rgb.r * 255)).ToString() + " - " + ((int)(rgb.g * 255)).ToString() + " - " + ((int)(rgb.b * 255)).ToString();
 
             Vector3 values = Vector3.zero;

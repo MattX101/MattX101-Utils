@@ -2,20 +2,10 @@
 
 namespace Utils.Curves
 {
-    public static partial class Curves
+    public static class Curves
     {
-        public static ComputeShader Shader
-        {
-            get;
-            set;
-        }
-
-        public static ComputeShader AnimationCurveShader
-        {
-            get;
-            set;
-        }
-
+        public static ComputeShader Shader { get; set; }
+        public static ComputeShader AnimationCurveShader { get; set; }
 
         private const int InterpolationCurvePoints = 32;
 
@@ -66,19 +56,19 @@ namespace Utils.Curves
 
         public static void SetToCurve(ref ComputeBuffer valuesBuffer, Equations mode, float power, bool isFloat)
         {
-            int kernel = 0;
+            int kernel;
             if (isFloat)
             {
                 kernel = Shader.FindKernel(GetEquationAsString(mode) + "_Single");
-                Shader.SetBuffer(kernel, "values", valuesBuffer);
+                Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("values"), valuesBuffer);
             }
             else
             {
                 kernel = Shader.FindKernel(GetEquationAsString(mode) + "_Image");
-                Shader.SetBuffer(kernel, "image", valuesBuffer);
+                Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("image"), valuesBuffer);
             }
 
-            Shader.SetFloat("power", power);
+            Shader.SetFloat(UnityEngine.Shader.PropertyToID("power"), power);
             Shader.Dispatch(kernel, Mathf.CeilToInt(valuesBuffer.count / 1024.0f), 1, 1);
         }
 
@@ -86,18 +76,18 @@ namespace Utils.Curves
         {
             return equation switch
             {
-                Equations.EaseIn => CurveFormules.EaseIn,
-                Equations.EaseInCirc => CurveFormules.EaseInCirc,
-                Equations.EaseInOut => CurveFormules.EaseInOut,
-                Equations.EaseInOutSine => CurveFormules.EaseInOutSine,
-                Equations.Sine => CurveFormules.Sine,
-                Equations.SineSqrt => CurveFormules.SineSqrt,
-                Equations.RepeatedSine => CurveFormules.RepeatedSine,
-                Equations.HalfDownUpSine => CurveFormules.HalfDownUpSine,
-                Equations.SineFrequency => CurveFormules.SineFrequency,
-                Equations.RadianArcSine => CurveFormules.RadianArcSine,
-                Equations.RadianArcSineSqrt => CurveFormules.RadianArcSineSqrt,
-                _ => CurveFormules.EaseIn
+                Equations.EaseIn => CurveFormulas.EaseIn,
+                Equations.EaseInCirc => CurveFormulas.EaseInCirc,
+                Equations.EaseInOut => CurveFormulas.EaseInOut,
+                Equations.EaseInOutSine => CurveFormulas.EaseInOutSine,
+                Equations.Sine => CurveFormulas.Sine,
+                Equations.SineSqrt => CurveFormulas.SineSqrt,
+                Equations.RepeatedSine => CurveFormulas.RepeatedSine,
+                Equations.HalfDownUpSine => CurveFormulas.HalfDownUpSine,
+                Equations.SineFrequency => CurveFormulas.SineFrequency,
+                Equations.RadianArcSine => CurveFormulas.RadianArcSine,
+                Equations.RadianArcSineSqrt => CurveFormulas.RadianArcSineSqrt,
+                _ => CurveFormulas.EaseIn
             };
         }
 
@@ -159,20 +149,20 @@ namespace Utils.Curves
             ComputeBuffer curveBuffer = new ComputeBuffer(InterpolationCurvePoints, sizeof(float) * 2);
             curveBuffer.SetData(InterpolateCurve(curve));
 
-            int kernel = 0;
+            int kernel;
             if (isFloat)
             {
                 kernel = AnimationCurveShader.FindKernel("SetToCurveFloat");
-                AnimationCurveShader.SetBuffer(kernel, "noise", valuesBuffer);
+                AnimationCurveShader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("noise"), valuesBuffer);
             }
             else
             {
                 kernel = AnimationCurveShader.FindKernel("SetToCurveColor");
-                AnimationCurveShader.SetBuffer(kernel, "color", valuesBuffer);
+                AnimationCurveShader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("color"), valuesBuffer);
             }
 
-            AnimationCurveShader.SetBuffer(kernel, "curve", curveBuffer);
-            AnimationCurveShader.SetInt("length", InterpolationCurvePoints - 1);
+            AnimationCurveShader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("curve"), curveBuffer);
+            AnimationCurveShader.SetInt(UnityEngine.Shader.PropertyToID("length"), InterpolationCurvePoints - 1);
 
             AnimationCurveShader.Dispatch(kernel, Mathf.CeilToInt((float)valuesBuffer.count / 1024.0f), 1, 1);
 
@@ -182,7 +172,7 @@ namespace Utils.Curves
         private static Vector2[] InterpolateCurve(AnimationCurve curve)
         {
             Vector2[] interpolation = new Vector2[InterpolationCurvePoints];
-            float time = 0.0f;
+            float time;
 
             for (int i = 0; i < InterpolationCurvePoints; i++)
             {

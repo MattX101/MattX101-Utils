@@ -205,7 +205,7 @@ MonoBehaviour:
     _warpAmp: 50
   _useGPU: 0
   _toggle3D: 0
-  _puase: 0
+  _pause: 0
   _noiseShift: {x: 0, y: 0, z: 0}
   _warpShift: {x: 0, y: 0, z: 0}
   _downScaler: 16
@@ -240,6 +240,7 @@ MonoBehaviour:
     m_NumColorKeys: 6
     m_NumAlphaKeys: 2
   _preview: {fileID: 1424845645}
+  _camera: {fileID: 863358006}
 --- !u!114 &764777269
 MonoBehaviour:
   m_ObjectHideFlags: 0
