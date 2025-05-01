@@ -39,32 +39,32 @@ namespace Utils.Mask
             _offset = Vector2.zero;
 
             _scale = settings.Scale;
-            _scale /= settings.Zoom;
-            _scale /= new Vector2(CanvasToScreenRatio, CanvasToScreenRatio);
+            _scale /= settings.ZoomOut;
+            _scale *= new Vector2(CanvasToScreenRatio, CanvasToScreenRatio);
 
             if (width > height)
             {
                 float ratio = (float)width / height;
 
-                _scale *= ratio;
+                _scale /= ratio;
 
-                _offset.y = (1.0f / ratio - 1.0f) / settings.Zoom;
+                _offset.y = (1.0f / ratio - 1.0f) * settings.ZoomOut;
                 _offset += settings.Offset / ratio;
-                _offset *= settings.Zoom;
+                _offset /= settings.ZoomOut;
             }
             else if (height > width)
             {
                 float ratio = (float)height / width;
 
-                _scale *= ratio;
+                _scale /= ratio;
 
-                _offset.x = (1.0f / ratio - 1.0f) / settings.Zoom;
+                _offset.x = (1.0f / ratio - 1.0f) * settings.ZoomOut;
                 _offset += settings.Offset / ratio;
-                _offset *= settings.Zoom;
+                _offset /= settings.ZoomOut;
             }
             else
             {
-                _offset += settings.Offset * settings.Zoom;
+                _offset += settings.Offset / settings.ZoomOut;
             }
 
             _offset *= CanvasToScreenRatio;
@@ -99,12 +99,12 @@ namespace Utils.Mask
 
             if (settings.ApplyNoise)
             {
-                settings.NoiseProfile.ExternalScale = Vector3.one * settings.Zoom;
-                settings.WarpProfile.ExternalScale = Vector3.one * settings.Zoom;
+                settings.NoiseProfile.ExternalScale = Vector3.one / settings.ZoomOut;
+                settings.WarpProfile.ExternalScale = Vector3.one / settings.ZoomOut;
 
                 Vector2 noiseOffset = DefaultCanvasSize / 2.0f * settings.Offset;
-                Vector3 noiseOffsetToScaleAdjustment = settings.NoiseProfile.Scale / settings.Zoom;
-                Vector3 warpOffsetToScaleAdjustment = settings.WarpProfile.Scale / settings.Zoom;
+                Vector3 noiseOffsetToScaleAdjustment = settings.NoiseProfile.Scale * settings.ZoomOut;
+                Vector3 warpOffsetToScaleAdjustment = settings.WarpProfile.Scale * settings.ZoomOut;
 
                 settings.NoiseProfile.ExternalOffset = -noiseOffset * settings.NoiseProfile.UniversalScale / noiseOffsetToScaleAdjustment;
                 settings.WarpProfile.ExternalOffset = -noiseOffset * settings.WarpProfile.UniversalScale / warpOffsetToScaleAdjustment;
@@ -213,12 +213,12 @@ namespace Utils.Mask
             if (settings.ApplyNoise)
             {
                 
-                settings.NoiseProfile.ExternalScale = (Vector3.one * settings.Zoom);
-                settings.WarpProfile.ExternalScale = (Vector3.one * settings.Zoom);
+                settings.NoiseProfile.ExternalScale = Vector3.one / settings.ZoomOut;
+                settings.WarpProfile.ExternalScale = Vector3.one / settings.ZoomOut;
                 
                 Vector2 noiseOffset = DefaultCanvasSize / 2.0f * settings.Offset;
-                Vector3 noiseOffsetToScaleAdjustment = settings.NoiseProfile.Scale / settings.Zoom;
-                Vector3 warpOffsetToScaleAdjustment = settings.WarpProfile.Scale / settings.Zoom;
+                Vector3 noiseOffsetToScaleAdjustment = settings.NoiseProfile.Scale * settings.ZoomOut;
+                Vector3 warpOffsetToScaleAdjustment = settings.WarpProfile.Scale * settings.ZoomOut;
 
                 settings.NoiseProfile.ExternalOffset = -noiseOffset * settings.NoiseProfile.UniversalScale / noiseOffsetToScaleAdjustment;
                 settings.WarpProfile.ExternalOffset = -noiseOffset * settings.WarpProfile.UniversalScale / warpOffsetToScaleAdjustment;
@@ -254,8 +254,8 @@ namespace Utils.Mask
         private static float GetValue(float x, float y, Vector2 scale)
         {
             return Mathf.Sqrt(
-                Mathf.Abs(Mathf.Pow(x * scale.x, 2)) + 
-                Mathf.Abs(Mathf.Pow(y * scale.y, 2))
+                Mathf.Abs(Mathf.Pow(x / scale.y, 2)) + 
+                Mathf.Abs(Mathf.Pow(y / scale.x, 2))
             );
         }
 

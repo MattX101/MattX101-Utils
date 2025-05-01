@@ -38,7 +38,7 @@ namespace Utils.Mask
 
             _mask = new float[width * height];
             _colors = new Color[width * height];
-
+            
             if (_useGPU)
             {
                 ComputeBuffer buffer = new ComputeBuffer(width * height, sizeof(float));

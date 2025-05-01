@@ -42,8 +42,8 @@ float InverseLerp(float a, float b, float t)
 float GetValue(float x, float y, float2 scale)
 {
     return sqrt(
-        abs(pow(x * scale.x, 2)) +
-        abs(pow(y * scale.y, 2))
+        abs(pow(x / scale.y, 2)) +
+        abs(pow(y / scale.x, 2))
     );
 }
 float GetValue_Noise(float value, float x, float y, float2 scale)

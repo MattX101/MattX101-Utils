@@ -279,7 +279,7 @@ MonoBehaviour:
   _camera: {fileID: 754375304}
   _image: {fileID: 692225624}
   _downScaler: 1
-  _useGPU: 0
+  _useGPU: 1
   _maskSettings:
     _invert: 1
     _power: 1
@@ -287,7 +287,7 @@ MonoBehaviour:
     _roll: 0
     _minValue: 0
     _maxValue: 1
-    _zoom: 0.5
+    _zoomOut: 10
     _scale: {x: 1, y: 1}
     _offset: {x: 0, y: 0}
     _applyNoise: 1

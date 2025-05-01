@@ -43,11 +43,11 @@ namespace Utils.Mask
         [Space]
 
         [SerializeField]
-        private float _zoom = 1.0f;
-        public float Zoom => MathF.Abs(_zoom * ExternalZoom);
+        private float _zoomOut = 1.0f;
+        public float ZoomOut => MathF.Abs(_zoomOut * ExternalZoomOut);
 
         [NonSerialized]
-        public float ExternalZoom = 1.0f;
+        public float ExternalZoomOut = 1.0f;
         
         [SerializeField]
         private Vector2 _scale = Vector2.one;
