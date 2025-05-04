@@ -153,11 +153,11 @@ namespace Utils.Noise
             }
         }
 
-        private static float GetNoiseScaleX(NoiseProfile profile) => profile.Scale.x / profile.UniversalScale / _canvasToScreenRatio;
-        private static float GetNoiseScaleY(NoiseProfile profile) => profile.Scale.y / profile.UniversalScale / _canvasToScreenRatio;
+        private static float GetNoiseScaleX(NoiseProfile profile) => profile.Scale.x * profile.UniversalScale / _canvasToScreenRatio;
+        private static float GetNoiseScaleY(NoiseProfile profile) => profile.Scale.y * profile.UniversalScale / _canvasToScreenRatio;
 
-        private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x / profile.UniversalScale / _canvasToScreenRatio;
-        private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y / profile.UniversalScale / _canvasToScreenRatio;
+        private static float GetWarpScaleX(WarpProfile profile) => profile.Scale.x * profile.UniversalScale / _canvasToScreenRatio;
+        private static float GetWarpScaleY(WarpProfile profile) => profile.Scale.y * profile.UniversalScale / _canvasToScreenRatio;
 
         private static float RotateX(float x, float y) => x * _sin + y * _cos;
         private static float RotateY(float x, float y) => x * _cos - y * _sin;

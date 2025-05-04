@@ -170,7 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _noiseProfile:
     _seed: 0
-    _universalScale: 0.2
+    _universalScale: 5
     _scale: {x: 1, y: 1, z: 1}
     _offset: {x: 1000, y: -400, z: 0}
     _type: 1
@@ -203,7 +203,7 @@ MonoBehaviour:
     _cellularDistance: 0
     _jitter: 1
     _warpAmp: 50
-  _useGPU: 0
+  _useGPU: 1
   _toggle3D: 0
   _pause: 0
   _noiseShift: {x: 0, y: 0, z: 0}

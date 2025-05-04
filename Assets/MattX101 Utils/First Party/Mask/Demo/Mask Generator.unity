@@ -287,14 +287,14 @@ MonoBehaviour:
     _roll: 0
     _minValue: 0
     _maxValue: 1
-    _zoomOut: 10
+    _zoomOut: 3
     _scale: {x: 1, y: 1}
     _offset: {x: 0, y: 0}
     _applyNoise: 1
     _warp: 1
     _noiseProfile:
       _seed: 0
-      _universalScale: 0.25
+      _universalScale: 4
       _scale: {x: 2, y: 0.75, z: 1}
       _offset: {x: 0, y: 0, z: 0}
       _type: 0
