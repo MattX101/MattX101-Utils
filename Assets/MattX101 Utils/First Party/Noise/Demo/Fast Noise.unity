@@ -186,7 +186,7 @@ MonoBehaviour:
     _normalized: 1
     _computeRoll: 0
     _roll: 0
-    _warp: 0
+    _warp: 1
   _warpProfile:
     _seed: 1
     _universalScale: 1
@@ -203,11 +203,11 @@ MonoBehaviour:
     _cellularDistance: 0
     _jitter: 1
     _warpAmp: 50
-  _useGPU: 1
+  _useGPU: 0
   _toggle3D: 0
   _pause: 0
-  _noiseShift: {x: 0, y: 0, z: 0}
-  _warpShift: {x: 0, y: 0, z: 0}
+  _noiseShift: {x: 6, y: 0, z: 0}
+  _warpShift: {x: 2, y: 3, z: 0}
   _downScaler: 16
   _colorPalette:
     serializedVersion: 2

@@ -4,7 +4,11 @@ namespace Utils.Filters.Blur
 {
     public static class BoxBlur
     {
-        public static ComputeShader Shader { get; set; }
+        public static ComputeShader Shader
+        {
+            get;
+            set;
+        }
 
         private static void Blur(ref float a, float n1, float n2, float n3, float n4, float n5, float n6, float n7, float n8, float n9)
         {

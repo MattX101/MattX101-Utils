@@ -5,7 +5,7 @@ namespace Utils.IO
 {
     public sealed class IOSelection
     {
-        private static readonly string DefaultDirectory = Paths.GetPath(Paths.Desktop);
+        private static string DefaultDirectory => Paths.GetPath(Paths.Desktop);
 
         public string SelectFile(string extension, bool multiSelect = false)
         {

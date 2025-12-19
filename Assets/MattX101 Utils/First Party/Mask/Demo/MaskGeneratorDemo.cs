@@ -5,6 +5,8 @@ namespace Utils.Mask
 {
     internal class MaskGeneratorDemo : MonoBehaviour
     {
+        private const float DefaultCanvasSize = 1000.0f;
+
         [SerializeField]
         private Camera _camera;
 
@@ -38,20 +40,28 @@ namespace Utils.Mask
 
             _mask = new float[width * height];
             _colors = new Color[width * height];
+
+            float canvasToWidthRatio = DefaultCanvasSize / width;
+            float canvasToHeightRatio = DefaultCanvasSize / height;
+
+            float canvasToScreenRatio =
+                canvasToWidthRatio > canvasToHeightRatio ?
+                canvasToWidthRatio :
+                canvasToHeightRatio;
             
             if (_useGPU)
             {
                 ComputeBuffer buffer = new ComputeBuffer(width * height, sizeof(float));
                 buffer.SetData(_mask);
 
-                MaskGenerator.Generate(ref buffer, width, height, _maskSettings);
+                MaskGenerator.Generate(ref buffer, width, height, _maskSettings, canvasToScreenRatio);
 
                 buffer.GetData(_mask);
                 buffer.Dispose();
             }
             else
             {
-                MaskGenerator.Generate(ref _mask, width, height, _maskSettings);
+                MaskGenerator.Generate(ref _mask, width, height, _maskSettings, canvasToScreenRatio);
             }
 
             for (int i = 0; i < _colors.Length; i++)

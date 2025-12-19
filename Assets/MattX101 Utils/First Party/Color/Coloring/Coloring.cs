@@ -4,9 +4,11 @@ namespace Utils.Colors.Coloring
 {
     public static class Coloring
     {
-        public static ComputeShader Shader { get; set; }
-
-        private const int InterpolationGradientPoints = 128;
+        public static ComputeShader Shader
+        {
+            get;
+            set;
+        }
 
         public enum Channel
         {
@@ -89,8 +91,9 @@ namespace Utils.Colors.Coloring
 
         public static void GradientColoring(ref ComputeBuffer colorsBuffer, ComputeBuffer valuesBuffer, Gradient gradient)
         {
+            const int InterpolationGradientPoints = 128;
             ComputeBuffer gradientBuffer = new ComputeBuffer(InterpolationGradientPoints, sizeof(float) * 4);
-            gradientBuffer.SetData(InterpolateGradient(gradient));
+            gradientBuffer.SetData(InterpolateGradient(gradient, InterpolationGradientPoints));
 
             int kernel = Shader.FindKernel("GradientColoring");
             Shader.SetBuffer(kernel, UnityEngine.Shader.PropertyToID("gradient"), gradientBuffer);
@@ -104,9 +107,9 @@ namespace Utils.Colors.Coloring
             gradientBuffer.Release();
         }
 
-        private static Vector4[] InterpolateGradient(Gradient gradient)
+        private static Vector4[] InterpolateGradient(Gradient gradient, int length)
         {
-            Vector4[] interpolation = new Vector4[InterpolationGradientPoints];
+            Vector4[] interpolation = new Vector4[length];
 
             for (int i = 0; i < interpolation.Length; i++)
             {

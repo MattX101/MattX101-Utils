@@ -278,12 +278,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 754375304}
   _image: {fileID: 692225624}
-  _downScaler: 1
+  _downScaler: 8
   _useGPU: 1
   _maskSettings:
     _invert: 1
     _power: 1
-    _computeRoll: 1
+    _computeRoll: 0
     _roll: 0
     _minValue: 0
     _maxValue: 1

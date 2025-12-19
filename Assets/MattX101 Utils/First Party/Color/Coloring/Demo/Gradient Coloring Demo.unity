@@ -386,10 +386,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fastNoise2D: {fileID: 7200000, guid: b0d94f2bf20d16540b02c7d43637db97, type: 3}
   _curves: {fileID: 7200000, guid: 2aaeca91b411c1a4986d5a39697a75cb, type: 3}
-  _biasAndGain: {fileID: 7200000, guid: 515f45268225b734aa2d223ece905a5f, type: 3}
   _animationCurve: {fileID: 7200000, guid: f1cc418f79974934793a2efea3b9f2e6, type: 3}
+  _biasAndGain: {fileID: 7200000, guid: 515f45268225b734aa2d223ece905a5f, type: 3}
+  _box: {fileID: 0}
+  _invert: {fileID: 0}
   _coloring: {fileID: 7200000, guid: 02cc1dc8eb7d93041aad509ba2f1aca3, type: 3}
   _colorMixer: {fileID: 7200000, guid: 0bb37478f3f2b254f85f8f1670abb3fb, type: 3}
+  _maskGenerator: {fileID: 0}
 --- !u!1 &1134264479
 GameObject:
   m_ObjectHideFlags: 0

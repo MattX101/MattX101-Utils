@@ -4,7 +4,11 @@ namespace Utils.Filters
 {
     public static class Invert
     {
-        public static ComputeShader Shader { get; set; }
+        public static ComputeShader Shader
+        {
+            get;
+            set;
+        }
 
         private static void Calculate(ref float v)
         {

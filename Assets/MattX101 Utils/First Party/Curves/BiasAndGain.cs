@@ -4,7 +4,11 @@ namespace Utils.Curves
 {
     public static class BiasAndGain
     {
-        public static ComputeShader Shader { get; set; }
+        public static ComputeShader Shader
+        {
+            get;
+            set;
+        }
 
         public static float Bias(float time, float bias)
         {

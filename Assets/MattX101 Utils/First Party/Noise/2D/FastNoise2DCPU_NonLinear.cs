@@ -42,23 +42,26 @@ namespace Utils.Noise
         {
             if (noiseProfile.ComputeRoll)
             {
-                for (int y = 0, i = 0; y < _height; y++)
+                float sin = 0, cos = 0;
+                CalculateAngles(ref sin, ref cos, noiseProfile.Roll);
+
+                for (int y = 0, i = 0; y < _yNoisePoints.Length; y++)
                 {
-                    for (int x = 0; x < _width; x++, i++)
+                    for (int x = 0; x < _xNoisePoints.Length; x++, i++)
                     {
                         noiseMap[i] = Single(
                             noiseProfile,
-                            RotateX(_xNoisePoints[x], _yNoisePoints[y]),
-                            RotateY(_xNoisePoints[x], _yNoisePoints[y])
+                            RotateX(_xNoisePoints[x], _yNoisePoints[y], sin, cos),
+                            RotateY(_xNoisePoints[x], _yNoisePoints[y], sin, cos)
                         );
                     }
                 }
             }
             else
             {
-                for (int y = 0, i = 0; y < _height; y++)
+                for (int y = 0, i = 0; y < _yNoisePoints.Length; y++)
                 {
-                    for (int x = 0; x < _width; x++, i++)
+                    for (int x = 0; x < _xNoisePoints.Length; x++, i++)
                     {
                         noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y]);
                     }
@@ -70,14 +73,17 @@ namespace Utils.Noise
         {
             if (noiseProfile.ComputeRoll)
             {
-                for (int y = 0, i = 0; y < _height; y++)
+                float sin = 0, cos = 0;
+                CalculateAngles(ref sin, ref cos, noiseProfile.Roll);
+
+                for (int y = 0, i = 0; y < _yNoisePoints.Length; y++)
                 {
-                    for (int x = 0; x < _width; x++, i++)
+                    for (int x = 0; x < _xNoisePoints.Length; x++, i++)
                     {
                         noiseMap[i] = Single(
                             noiseProfile,
-                            RotateX(_xNoisePoints[x], _yNoisePoints[y]),
-                            RotateY(_xNoisePoints[x], _yNoisePoints[y]),
+                            RotateX(_xNoisePoints[x], _yNoisePoints[y], sin, cos),
+                            RotateY(_xNoisePoints[x], _yNoisePoints[y], sin, cos),
                             noiseProfile.Offset.z
                         );
                     }
@@ -85,9 +91,9 @@ namespace Utils.Noise
             }
             else
             {
-                for (int y = 0, i = 0; y < _height; y++)
+                for (int y = 0, i = 0; y < _yNoisePoints.Length; y++)
                 {
-                    for (int x = 0; x < _width; x++, i++)
+                    for (int x = 0; x < _xNoisePoints.Length; x++, i++)
                     {
                         noiseMap[i] = Single(noiseProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z);
                     }
@@ -99,26 +105,29 @@ namespace Utils.Noise
         {
             if (noiseProfile.ComputeRoll)
             {
-                for (int y = 0, i = 0; y < _height; y++)
+                float sin = 0, cos = 0;
+                CalculateAngles(ref sin, ref cos, noiseProfile.Roll);
+
+                for (int y = 0, i = 0; y < _yNoisePoints.Length; y++)
                 {
-                    for (int x = 0; x < _width; x++, i++)
+                    for (int x = 0; x < _xNoisePoints.Length; x++, i++)
                     {
                         noiseMap[i] = Single(
                             noiseProfile,
                             warpProfile,
-                            RotateX(_xNoisePoints[x], _yNoisePoints[y]),
-                            RotateY(_xNoisePoints[x], _yNoisePoints[y]),
-                            RotateX(_xWarpPoints[x], _yWarpPoints[y]),
-                            RotateY(_xWarpPoints[x], _yWarpPoints[y])
+                            RotateX(_xNoisePoints[x], _yNoisePoints[y], sin, cos),
+                            RotateY(_xNoisePoints[x], _yNoisePoints[y], sin, cos),
+                            RotateX(_xWarpPoints[x], _yWarpPoints[y], sin, cos),
+                            RotateY(_xWarpPoints[x], _yWarpPoints[y], sin, cos)
                         );
                     }
                 }
             }
             else
             {
-                for (int y = 0, i = 0; y < _height; y++)
+                for (int y = 0, i = 0; y < _yNoisePoints.Length; y++)
                 {
-                    for (int x = 0; x < _width; x++, i++)
+                    for (int x = 0; x < _xNoisePoints.Length; x++, i++)
                     {
                         noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], _xWarpPoints[x], _yWarpPoints[y]);
                     }
@@ -130,18 +139,21 @@ namespace Utils.Noise
         {
             if (noiseProfile.ComputeRoll)
             {
-                for (int y = 0, i = 0; y < _height; y++)
+                float sin = 0, cos = 0;
+                CalculateAngles(ref sin, ref cos, noiseProfile.Roll);
+
+                for (int y = 0, i = 0; y < _yNoisePoints.Length; y++)
                 {
-                    for (int x = 0; x < _width; x++, i++)
+                    for (int x = 0; x < _xNoisePoints.Length; x++, i++)
                     {
                         noiseMap[i] = Single(
                             noiseProfile, 
                             warpProfile,
-                            RotateX(_xNoisePoints[x], _yNoisePoints[y]),
-                            RotateY(_xNoisePoints[x], _yNoisePoints[y]), 
+                            RotateX(_xNoisePoints[x], _yNoisePoints[y], sin, cos),
+                            RotateY(_xNoisePoints[x], _yNoisePoints[y], sin, cos), 
                             noiseProfile.Offset.z,
-                            RotateX(_xWarpPoints[x], _yWarpPoints[y]),
-                            RotateY(_xWarpPoints[x], _yWarpPoints[y]), 
+                            RotateX(_xWarpPoints[x], _yWarpPoints[y], sin, cos),
+                            RotateY(_xWarpPoints[x], _yWarpPoints[y], sin, cos), 
                             warpProfile.Offset.z
                         );
                     }
@@ -149,9 +161,9 @@ namespace Utils.Noise
             }
             else
             {
-                for (int y = 0, i = 0; y < _height; y++)
+                for (int y = 0, i = 0; y < _yNoisePoints.Length; y++)
                 {
-                    for (int x = 0; x < _width; x++, i++)
+                    for (int x = 0; x < _xNoisePoints.Length; x++, i++)
                     {
                         noiseMap[i] = Single(noiseProfile, warpProfile, _xNoisePoints[x], _yNoisePoints[y], noiseProfile.Offset.z, _xWarpPoints[x], _yWarpPoints[y], warpProfile.Offset.z);
                     }

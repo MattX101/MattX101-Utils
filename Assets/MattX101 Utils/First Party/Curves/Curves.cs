@@ -4,8 +4,17 @@ namespace Utils.Curves
 {
     public static class Curves
     {
-        public static ComputeShader Shader { get; set; }
-        public static ComputeShader AnimationCurveShader { get; set; }
+        public static ComputeShader Shader
+        {
+            get;
+            set;
+        }
+        
+        public static ComputeShader AnimationCurveShader
+        {
+            get;
+            set;
+        }
 
         private const int InterpolationCurvePoints = 32;
 

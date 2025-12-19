@@ -4,72 +4,53 @@ using UnityEngine;
 namespace Utils.Mask
 {
     public static class MaskGenerator
-    {
-        private const float DefaultCanvasSize = 1000.0f;
-
-        private static float CanvasToScreenRatio { get; set; } = 1.0f;
-
-        private static float CanvasToWidthRatio { get; set; }
-        private static float CanvasToHeightRatio { get; set; }
-
-        private static float _sin, _cos;
-
-        private static int _bound;
-
-        private static Vector2 _offset, _scale;
-        
+    {        
         public static ComputeShader Shader
         {
             get;
             set;
         }
 
-        private static void Init(int width, int height, MaskSettings settings)
+        private static void Init(int width, int height, MaskSettings settings, ref Vector2 offset, ref Vector2 scale)
         {
-            CanvasToWidthRatio = DefaultCanvasSize / width;
-            CanvasToHeightRatio = DefaultCanvasSize / height;
+            const float DefaultCanvasSize = 1000.0f;
+            float canvasToWidthRatio = DefaultCanvasSize / width;
+            float canvasToHeightRatio = DefaultCanvasSize / height;
 
-            CanvasToScreenRatio =
-                CanvasToWidthRatio > CanvasToHeightRatio ?
-                CanvasToWidthRatio :
-                CanvasToHeightRatio;
-
-            CalculateAngles(-settings.Roll);
+            float canvasToScreenRatio =
+                canvasToWidthRatio > canvasToHeightRatio ?
+                canvasToWidthRatio :
+                canvasToHeightRatio;
             
-            _offset = Vector2.zero;
-
-            _scale = settings.Scale;
-            _scale /= settings.ZoomOut;
-            _scale *= new Vector2(CanvasToScreenRatio, CanvasToScreenRatio);
+            scale /= settings.ZoomOut;
+            scale *= new Vector2(canvasToScreenRatio, canvasToScreenRatio);
 
             if (width > height)
             {
                 float ratio = (float)width / height;
 
-                _scale /= ratio;
+                scale /= ratio;
 
-                _offset.y = (1.0f / ratio - 1.0f) * settings.ZoomOut;
-                _offset += settings.Offset / ratio;
-                _offset /= settings.ZoomOut;
+                offset.y = (1.0f / ratio - 1.0f) * settings.ZoomOut;
+                offset += settings.Offset / ratio;
+                offset /= settings.ZoomOut;
             }
             else if (height > width)
             {
                 float ratio = (float)height / width;
 
-                _scale /= ratio;
+                scale /= ratio;
 
-                _offset.x = (1.0f / ratio - 1.0f) * settings.ZoomOut;
-                _offset += settings.Offset / ratio;
-                _offset /= settings.ZoomOut;
+                offset.x = (1.0f / ratio - 1.0f) * settings.ZoomOut;
+                offset += settings.Offset / ratio;
+                offset /= settings.ZoomOut;
             }
             else
             {
-                _offset += settings.Offset / settings.ZoomOut;
+                offset += settings.Offset / settings.ZoomOut;
             }
 
-            _offset *= CanvasToScreenRatio;
-
-            _bound = width > height ? width : height;
+            offset *= canvasToScreenRatio;
         }
 
         private static float[] GetPoints(int res, float offset, float ratio)
@@ -90,18 +71,25 @@ namespace Utils.Mask
             return points;
         }
 
-        public static void Generate(ref float[] values, int width, int height, MaskSettings settings)
+        public static void Generate(ref float[] values, int width, int height, MaskSettings settings, float canvasToScreenRatio)
         {
-            Init(width, height, settings);
+            float sin = 0, cos = 0;
+            CalculateAngles(ref sin, ref cos, settings.Roll);
 
-            float[] pointsX = GetPoints(_bound, _offset.x, CanvasToScreenRatio);
-            float[] pointsY = GetPoints(_bound, _offset.y, CanvasToScreenRatio);
+            Vector2 offset = Vector2.zero;
+            Vector2 scale = settings.Scale;
+            Init(width, height, settings, ref offset, ref scale);
+
+            int bound = width > height ? width : height;
+            float[] pointsX = GetPoints(bound, offset.x, canvasToScreenRatio);
+            float[] pointsY = GetPoints(bound, offset.y, canvasToScreenRatio);
 
             if (settings.ApplyNoise)
             {
                 settings.NoiseProfile.ExternalScale = Vector3.one / settings.ZoomOut;
                 settings.WarpProfile.ExternalScale = Vector3.one / settings.ZoomOut;
 
+                const float DefaultCanvasSize = 1000.0f;
                 Vector2 noiseOffset = DefaultCanvasSize / 2.0f * settings.Offset;
                 Vector3 noiseOffsetToScaleAdjustment = settings.NoiseProfile.Scale * settings.ZoomOut;
                 Vector3 warpOffsetToScaleAdjustment = settings.WarpProfile.Scale * settings.ZoomOut;
@@ -122,10 +110,10 @@ namespace Utils.Mask
                         {
                             GetValue_Noise(
                                 ref values[i],
-                                RotateX(pointsX[x], pointsY[y]),
-                                RotateY(pointsX[x], pointsY[y]),
+                                RotateX(pointsX[x], pointsY[y], sin, cos),
+                                RotateY(pointsX[x], pointsY[y], sin, cos),
                                 settings.Warp,
-                                _scale
+                                scale
                             );
                         }
                     }
@@ -136,7 +124,7 @@ namespace Utils.Mask
                     {
                         for (int x = 0; x < width; x++, i++)
                         {
-                            GetValue_Noise(ref values[i], pointsX[x], pointsY[y], settings.Warp, _scale);
+                            GetValue_Noise(ref values[i], pointsX[x], pointsY[y], settings.Warp, scale);
                         }
                     }
                 }
@@ -150,9 +138,9 @@ namespace Utils.Mask
                         for (int x = 0; x < width; x++, i++)
                         {
                             values[i] = GetValue(
-                                RotateX(pointsX[x], pointsY[y]),
-                                RotateY(pointsX[x], pointsY[y]),
-                                _scale
+                                RotateX(pointsX[x], pointsY[y], sin, cos),
+                                RotateY(pointsX[x], pointsY[y], sin, cos),
+                                scale
                             );
                         }
                     }
@@ -163,7 +151,7 @@ namespace Utils.Mask
                     {
                         for (int x = 0; x < width; x++, i++)
                         {
-                            values[i] = GetValue(pointsX[x], pointsY[y], _scale);
+                            values[i] = GetValue(pointsX[x], pointsY[y], scale);
                         }
                     }
                 }
@@ -189,33 +177,39 @@ namespace Utils.Mask
             }
         }
 
-        public static void Generate(ref ComputeBuffer buffer, int width, int height, MaskSettings settings)
+        public static void Generate(ref ComputeBuffer buffer, int width, int height, MaskSettings settings, float canvasToScreenRatio)
         {
-            Init(width, height, settings);
+            float sin = 0, cos = 0;
+            CalculateAngles(ref sin, ref cos, settings.Roll);
 
-            ComputeBuffer pointsXBuffer = new ComputeBuffer(_bound, sizeof(float));
-            ComputeBuffer pointsYBuffer = new ComputeBuffer(_bound, sizeof(float));
-            pointsXBuffer.SetData(GetPoints(_bound, _offset.x, CanvasToScreenRatio));
-            pointsYBuffer.SetData(GetPoints(_bound, _offset.y, CanvasToScreenRatio));
+            Vector2 offset = Vector2.zero;
+            Vector2 scale = settings.Scale;
+            Init(width, height, settings, ref offset, ref scale);
 
-            Shader.SetFloat(UnityEngine.Shader.PropertyToID("sin"), _sin);
-            Shader.SetFloat(UnityEngine.Shader.PropertyToID("cos"), _cos);
+            int bound = width > height ? width : height;
+            ComputeBuffer pointsXBuffer = new ComputeBuffer(bound, sizeof(float));
+            ComputeBuffer pointsYBuffer = new ComputeBuffer(bound, sizeof(float));
+            pointsXBuffer.SetData(GetPoints(bound, offset.x, canvasToScreenRatio));
+            pointsYBuffer.SetData(GetPoints(bound, offset.y, canvasToScreenRatio));
+
+            Shader.SetFloat(UnityEngine.Shader.PropertyToID("sin"), sin);
+            Shader.SetFloat(UnityEngine.Shader.PropertyToID("cos"), cos);
             Shader.SetFloat(UnityEngine.Shader.PropertyToID("width"), width);
             Shader.SetFloat(UnityEngine.Shader.PropertyToID("height"), height);
             Shader.SetFloat(UnityEngine.Shader.PropertyToID("warp"), settings.Warp);
             Shader.SetFloat(UnityEngine.Shader.PropertyToID("power"), settings.Power);
-            Shader.SetFloat(UnityEngine.Shader.PropertyToID("ratio"), CanvasToScreenRatio);
+            Shader.SetFloat(UnityEngine.Shader.PropertyToID("ratio"), canvasToScreenRatio);
             
-            Shader.SetFloats(UnityEngine.Shader.PropertyToID("scale"), _scale.x, _scale.y);
+            Shader.SetFloats(UnityEngine.Shader.PropertyToID("scale"), scale.x, scale.y);
             Shader.SetFloats(UnityEngine.Shader.PropertyToID("range"), settings.MinValue, settings.MaxValue);
 
             int kernel;
             if (settings.ApplyNoise)
             {
-                
                 settings.NoiseProfile.ExternalScale = Vector3.one / settings.ZoomOut;
                 settings.WarpProfile.ExternalScale = Vector3.one / settings.ZoomOut;
                 
+                const float DefaultCanvasSize = 1000.0f;
                 Vector2 noiseOffset = DefaultCanvasSize / 2.0f * settings.Offset;
                 Vector3 noiseOffsetToScaleAdjustment = settings.NoiseProfile.Scale * settings.ZoomOut;
                 Vector3 warpOffsetToScaleAdjustment = settings.WarpProfile.Scale * settings.ZoomOut;
@@ -266,13 +260,13 @@ namespace Utils.Mask
             value = Mathf.InverseLerp(0, warp + 1, value);
         }
 
-        private static float RotateX(float x, float y) => x * _sin + y * _cos;
-        private static float RotateY(float x, float y) => x * _cos - y * _sin;
+        private static float RotateX(float x, float y, float sin, float cos) => x * sin + y * cos;
+        private static float RotateY(float x, float y, float sin, float cos) => x * cos - y * sin;
 
-        private static void CalculateAngles(float roll)
+        private static void CalculateAngles(ref float sin, ref float cos, float roll)
         {
-            _sin = Mathf.Sin(roll * Mathf.Deg2Rad);
-            _cos = Mathf.Cos(roll * Mathf.Deg2Rad);
+            sin = Mathf.Sin(roll * Mathf.Deg2Rad);
+            cos = Mathf.Cos(roll * Mathf.Deg2Rad);
         }
     }
 }
