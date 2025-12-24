@@ -40,7 +40,7 @@ namespace Utils.Noise
 
         private static void Noise2D(ref float[] noiseMap, NoiseProfile noiseProfile)
         {
-            if (noiseProfile.ComputeRoll)
+            if (noiseProfile.computeRoll)
             {
                 float sin = 0, cos = 0;
                 CalculateAngles(ref sin, ref cos, noiseProfile.Roll);
@@ -71,7 +71,7 @@ namespace Utils.Noise
 
         private static void Noise3D(ref float[] noiseMap, NoiseProfile noiseProfile)
         {
-            if (noiseProfile.ComputeRoll)
+            if (noiseProfile.computeRoll)
             {
                 float sin = 0, cos = 0;
                 CalculateAngles(ref sin, ref cos, noiseProfile.Roll);
@@ -103,7 +103,7 @@ namespace Utils.Noise
 
         private static void WarpedNoise2D(ref float[] noiseMap, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
-            if (noiseProfile.ComputeRoll)
+            if (noiseProfile.computeRoll)
             {
                 float sin = 0, cos = 0;
                 CalculateAngles(ref sin, ref cos, noiseProfile.Roll);
@@ -137,7 +137,7 @@ namespace Utils.Noise
 
         private static void WarpedNoise3D(ref float[] noiseMap, NoiseProfile noiseProfile, WarpProfile warpProfile)
         {
-            if (noiseProfile.ComputeRoll)
+            if (noiseProfile.computeRoll)
             {
                 float sin = 0, cos = 0;
                 CalculateAngles(ref sin, ref cos, noiseProfile.Roll);

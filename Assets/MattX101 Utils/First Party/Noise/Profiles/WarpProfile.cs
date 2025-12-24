@@ -8,38 +8,36 @@ namespace Utils.Noise.Profiles
     {
         [Header("Warp")]
 
-        [SerializeField]
-        private float _warpAmp = 1.0f;
-        public float WarpAmp => _warpAmp;
+        public float warpAmp = 1.0f;
 
         public void Init()
         {
-            FastNoise.SetSeed(Seed);
+            FastNoise.SetSeed(seed);
             FastNoise.SetFrequency(Frequency);
-            FastNoise.SetNoiseType(GetNoiseType(Type));
+            FastNoise.SetNoiseType(GetNoiseType(type));
 
             // Fractal
-            FastNoise.SetFractalType(GetFractalType(Fractal));
-            FastNoise.SetFractalOctaves(Octaves);
-            FastNoise.SetFractalLacunarity(Lacunarity);
-            FastNoise.SetFractalGain(Gain);
-            FastNoise.SetFractalWeightedStrength(WeightedStrength);
-            FastNoise.SetFractalPingPongStrength(PingPongStrength);
+            FastNoise.SetFractalType(GetFractalType(fractal));
+            FastNoise.SetFractalOctaves(octaves);
+            FastNoise.SetFractalLacunarity(lacunarity);
+            FastNoise.SetFractalGain(gain);
+            FastNoise.SetFractalWeightedStrength(weightedStrength);
+            FastNoise.SetFractalPingPongStrength(pingPongStrength);
 
             // Cellular
-            FastNoise.SetCellularReturnType(CellularReturn);
-            FastNoise.SetCellularDistanceFunction(CellularDistance);
-            FastNoise.SetCellularJitter(Jitter);
+            FastNoise.SetCellularReturnType(cellularReturn);
+            FastNoise.SetCellularDistanceFunction(cellularDistance);
+            FastNoise.SetCellularJitter(jitter);
         }
 
         internal float GetWarp2D(float x, float y)
         {
-            return FastNoise.GetNoise(x, y) * WarpAmp;
+            return FastNoise.GetNoise(x, y) * warpAmp;
         }
 
         internal float GetWarp3D(float x, float y, float z)
         {
-            return FastNoise.GetNoise(x, y, z) * WarpAmp;
+            return FastNoise.GetNoise(x, y, z) * warpAmp;
         }
     }
 }

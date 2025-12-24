@@ -281,52 +281,52 @@ MonoBehaviour:
   _downScaler: 8
   _useGPU: 1
   _maskSettings:
-    _invert: 1
-    _power: 1
-    _computeRoll: 0
+    invert: 1
+    power: 1
+    computeRoll: 0
     _roll: 0
-    _minValue: 0
-    _maxValue: 1
+    minValue: 0
+    maxValue: 1
     _zoomOut: 3
     _scale: {x: 1, y: 1}
     _offset: {x: 0, y: 0}
-    _applyNoise: 1
+    applyNoise: 1
     _warp: 1
-    _noiseProfile:
-      _seed: 0
-      _universalScale: 4
-      _scale: {x: 2, y: 0.75, z: 1}
+    noiseProfile:
+      seed: 0
+      _universalScale: 3.8
+      _scale: {x: 1.6, y: 1, z: 1}
       _offset: {x: 0, y: 0, z: 0}
-      _type: 0
-      _fractal: 0
-      _octaves: 3
-      _lacunarity: 2
-      _gain: 0.5
-      _weightedStrength: 0
-      _pingPongStrength: 2
-      _cellularReturn: 1
-      _cellularDistance: 0
-      _jitter: 1
-      _normalized: 0
-      _computeRoll: 0
+      type: 0
+      fractal: 0
+      octaves: 3
+      lacunarity: 2
+      gain: 0.5
+      weightedStrength: 0
+      pingPongStrength: 2
+      cellularReturn: 1
+      cellularDistance: 0
+      jitter: 1
+      normalized: 0
+      computeRoll: 0
       _roll: 0
-      _warp: 1
-    _warpProfile:
-      _seed: 0
+      warp: 0
+    warpProfile:
+      seed: 0
       _universalScale: 1
       _scale: {x: 1, y: 1, z: 1}
       _offset: {x: 0, y: 0, z: 0}
-      _type: 0
-      _fractal: 0
-      _octaves: 3
-      _lacunarity: 2
-      _gain: 0.5
-      _weightedStrength: 0
-      _pingPongStrength: 2
-      _cellularReturn: 1
-      _cellularDistance: 0
-      _jitter: 1
-      _warpAmp: 1
+      type: 0
+      fractal: 0
+      octaves: 3
+      lacunarity: 2
+      gain: 0.5
+      weightedStrength: 0
+      pingPongStrength: 2
+      cellularReturn: 1
+      cellularDistance: 0
+      jitter: 1
+      warpAmp: 1
 --- !u!114 &692225624
 MonoBehaviour:
   m_ObjectHideFlags: 0

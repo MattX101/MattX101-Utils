@@ -53,7 +53,7 @@ namespace Utils.Noise.Preview
 
             _noiseMap = new float[_width * _height];
 
-            if (_noiseProfile.Warp)
+            if (_noiseProfile.warp)
             {
                 _noiseProfile.Init();
                 _warpProfile.Init();

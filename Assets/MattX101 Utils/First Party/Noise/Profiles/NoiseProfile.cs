@@ -8,49 +8,51 @@ namespace Utils.Noise.Profiles
     {
         [Space]
 
-        [SerializeField]
-        private bool _normalized;
-        public bool Normalized => _normalized;
+        public bool normalized;
 
         [Space]
 
         [Header("Roll")]
-
-        [SerializeField]
-        private bool _computeRoll;
-        public bool ComputeRoll => _computeRoll;
+        public bool computeRoll;
 
         [SerializeField, Range(0, 360)]
         private float _roll;
-        public float Roll => (_roll + ExternalRoll) % 360.0f;
+        public float Roll
+        {
+            get
+            {
+                return (_roll + ExternalRoll) % 360.0f;
+            }
+            set
+            {
+                _roll = value;
+            }
+        }
 
         [NonSerialized]
         public float ExternalRoll;
 
         [Header("Warp")]
-
-        [SerializeField]
-        private bool _warp;
-        public bool Warp => _warp;
+        public bool warp;
 
         public void Init()
         {
-            FastNoise.SetSeed(Seed);
+            FastNoise.SetSeed(seed);
             FastNoise.SetFrequency(Frequency);
-            FastNoise.SetNoiseType(GetNoiseType(Type));
+            FastNoise.SetNoiseType(GetNoiseType(type));
 
             // Fractal
-            FastNoise.SetFractalType(GetFractalType(Fractal));
-            FastNoise.SetFractalOctaves(Octaves);
-            FastNoise.SetFractalLacunarity(Lacunarity);
-            FastNoise.SetFractalGain(Gain);
-            FastNoise.SetFractalWeightedStrength(WeightedStrength);
-            FastNoise.SetFractalPingPongStrength(PingPongStrength);
+            FastNoise.SetFractalType(GetFractalType(fractal));
+            FastNoise.SetFractalOctaves(octaves);
+            FastNoise.SetFractalLacunarity(lacunarity);
+            FastNoise.SetFractalGain(gain);
+            FastNoise.SetFractalWeightedStrength(weightedStrength);
+            FastNoise.SetFractalPingPongStrength(pingPongStrength);
 
             // Cellular
-            FastNoise.SetCellularReturnType(CellularReturn);
-            FastNoise.SetCellularDistanceFunction(CellularDistance);
-            FastNoise.SetCellularJitter(Jitter);
+            FastNoise.SetCellularReturnType(cellularReturn);
+            FastNoise.SetCellularDistanceFunction(cellularDistance);
+            FastNoise.SetCellularJitter(jitter);
         }
 
         internal float GetNoise2D(float x, float y)

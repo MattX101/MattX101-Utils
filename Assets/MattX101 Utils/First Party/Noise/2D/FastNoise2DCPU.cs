@@ -38,9 +38,9 @@ namespace Utils.Noise
                 SetPoints(noiseScaleX, noiseScaleY);
             }
 
-            if (noiseProfile.Normalized)
+            if (noiseProfile.normalized)
             {
-                if (noiseProfile.Warp)
+                if (noiseProfile.warp)
                 {
                     if (warpProfile == null)
                         return;
@@ -70,7 +70,7 @@ namespace Utils.Noise
             }
             else
             {
-                if (noiseProfile.Warp)
+                if (noiseProfile.warp)
                 {
                     if (warpProfile == null)
                         return;

@@ -9,43 +9,69 @@ namespace Utils.Noise.Profiles
     {
         internal FastNoiseLite FastNoise { get; } = new();
 
-        [SerializeField]
-        private int _seed;
-        public int Seed => _seed;
+        public int seed;
 
         public float Frequency => 0.01f;
 
         [SerializeField]
-        private float _universalScale = 1.0f;
-        public float UniversalScale => _universalScale * ExternalUniversalScale;
+        public float _universalScale = 1.0f;
+        public float UniversalScale
+        {
+            get
+            {
+                return _universalScale * ExternalUniversalScale;
+            }
+            set
+            {
+                _universalScale = value;
+            }
+        }
 
         [NonSerialized] 
         public float ExternalUniversalScale = 1.0f;
         
         [SerializeField]
         private Vector3 _scale = Vector3.one;
-        public Vector3 Scale =>
-            new(
-                _scale.x * ExternalScale.x,
-                _scale.y * ExternalScale.y,
-                _scale.z * ExternalScale.z
-            );
+        public Vector3 Scale
+        {
+            get
+            {
+                return new
+                (
+                    _scale.x * ExternalScale.x,
+                    _scale.y * ExternalScale.y,
+                    _scale.z * ExternalScale.z
+                );
+            }
+            set
+            {
+                _scale = value;
+            }
+        }
         
         [NonSerialized]
         public Vector3 ExternalScale = Vector3.one;
 
         [SerializeField]
         private Vector3 _offset = Vector3.zero;
-        public Vector3 Offset => _offset - ExternalOffset;
+        public Vector3 Offset
+        {
+            get
+            {
+                return _offset - ExternalOffset;
+            }
+            set
+            {
+                _offset = value;
+            }
+        }
         
         [NonSerialized]
         public Vector3 ExternalOffset = Vector3.zero;
         
         [Header("Fractal")]
 
-        [SerializeField]
-        private NoiseType _type = NoiseType.Perlin;
-        public NoiseType Type => _type;
+        public NoiseType type = NoiseType.Perlin;
         public enum NoiseType
         {
             Perlin,
@@ -54,9 +80,7 @@ namespace Utils.Noise.Profiles
             Cellular
         }
 
-        [SerializeField]
-        private FractalType _fractal = FractalType.FBm;
-        public FractalType Fractal => _fractal;
+        public FractalType fractal = FractalType.FBm;
         public enum FractalType
         {
             FBm,
@@ -64,44 +88,28 @@ namespace Utils.Noise.Profiles
             PingPong
         }
 
-        [SerializeField, Range(1, 10)]
-        private int _octaves = 3;
-        public int Octaves => _octaves;
+        [Range(1, 10)]
+        public int octaves = 3;
 
-        [SerializeField, Range(1, 10)]
-        private float _lacunarity = 2.0f;
-        public float Lacunarity => _lacunarity;
+        [Range(1, 10)]
+        public float lacunarity = 2.0f;
 
-        [SerializeField, Range(0, 1)]
-        private float _gain = 0.5f;
-        public float Gain => _gain;
+        [Range(0, 1)]
+        public float gain = 0.5f;
 
-        [SerializeField, Range(0, 1)]
-        private float _weightedStrength;
-        public float WeightedStrength => _weightedStrength;
+        [Range(0, 1)]
+        public float weightedStrength;
 
-        [SerializeField, Range(0.5f, 5)]
-        private float _pingPongStrength = 2.0f;
-        public float PingPongStrength => _pingPongStrength;
+        [Range(0.5f, 5)]
+        public float pingPongStrength = 2.0f;
 
         [Header("Cellular")]
 
-        [SerializeField]
-        private FastNoiseLite.CellularReturnType _cellularReturn = FastNoiseLite.CellularReturnType.Distance;
-        public FastNoiseLite.CellularReturnType CellularReturn => _cellularReturn;
+        public FastNoiseLite.CellularReturnType cellularReturn = FastNoiseLite.CellularReturnType.Distance;
+        public FastNoiseLite.CellularDistanceFunction cellularDistance = FastNoiseLite.CellularDistanceFunction.Euclidean;
 
-        [SerializeField]
-        private FastNoiseLite.CellularDistanceFunction _cellularDistance = FastNoiseLite.CellularDistanceFunction.Euclidean;
-        public FastNoiseLite.CellularDistanceFunction CellularDistance => _cellularDistance;
-
-        [SerializeField, Range(0, 1)] 
-        private float _jitter = 1.0f;
-        public float Jitter => _jitter;
-
-        public void SetSeed(int seed)
-        {
-            _seed = seed;
-        }
+        [Range(0, 1)] 
+        public float jitter = 1.0f;
         
         // Noise Types
         internal FastNoiseLite.NoiseType GetNoiseType(NoiseType type)
@@ -116,10 +124,10 @@ namespace Utils.Noise.Profiles
             };
         }
 
-        public void SetNoiseType_Perlin() => _type = NoiseType.Perlin;
-        public void SetNoiseType_Simplex() => _type = NoiseType.Simplex;
-        public void SetNoiseType_Value() => _type = NoiseType.Value;
-        public void SetNoiseType_Cellular() => _type = NoiseType.Cellular;
+        public void SetNoiseType_Perlin() => type = NoiseType.Perlin;
+        public void SetNoiseType_Simplex() => type = NoiseType.Simplex;
+        public void SetNoiseType_Value() => type = NoiseType.Value;
+        public void SetNoiseType_Cellular() => type = NoiseType.Cellular;
 
         // Fractal Types
         internal FastNoiseLite.FractalType GetFractalType(FractalType fractal)
@@ -133,24 +141,24 @@ namespace Utils.Noise.Profiles
             };
         }
 
-        public void SetFractalType_FBm() => _fractal = FractalType.FBm;
-        public void SetFractalType_Ridged() => _fractal = FractalType.Ridged;
-        public void SetFractalType_PingPong() => _fractal = FractalType.PingPong;
+        public void SetFractalType_FBm() => fractal = FractalType.FBm;
+        public void SetFractalType_Ridged() => fractal = FractalType.Ridged;
+        public void SetFractalType_PingPong() => fractal = FractalType.PingPong;
 
         // Cellular
-        public void SetCellular_Cell() => _cellularReturn = FastNoiseLite.CellularReturnType.CellValue;
-        public void SetCellular_Distance() => _cellularReturn = FastNoiseLite.CellularReturnType.Distance;
-        public void SetCellular_Distance2() => _cellularReturn = FastNoiseLite.CellularReturnType.Distance2;
-        public void SetCellular_Distance2Add() => _cellularReturn = FastNoiseLite.CellularReturnType.Distance2Add;
-        public void SetCellular_Distance2Sub() => _cellularReturn = FastNoiseLite.CellularReturnType.Distance2Sub;
-        public void SetCellular_Distance2Mul() => _cellularReturn = FastNoiseLite.CellularReturnType.Distance2Mul;
-        public void SetCellular_Distance2Div() => _cellularReturn = FastNoiseLite.CellularReturnType.Distance2Div;
+        public void SetCellular_Cell() => cellularReturn = FastNoiseLite.CellularReturnType.CellValue;
+        public void SetCellular_Distance() => cellularReturn = FastNoiseLite.CellularReturnType.Distance;
+        public void SetCellular_Distance2() => cellularReturn = FastNoiseLite.CellularReturnType.Distance2;
+        public void SetCellular_Distance2Add() => cellularReturn = FastNoiseLite.CellularReturnType.Distance2Add;
+        public void SetCellular_Distance2Sub() => cellularReturn = FastNoiseLite.CellularReturnType.Distance2Sub;
+        public void SetCellular_Distance2Mul() => cellularReturn = FastNoiseLite.CellularReturnType.Distance2Mul;
+        public void SetCellular_Distance2Div() => cellularReturn = FastNoiseLite.CellularReturnType.Distance2Div;
 
         // Cellular Distance Function
-        public void SetCellularDistanceFunction_Euclidean() => _cellularDistance = FastNoiseLite.CellularDistanceFunction.Euclidean;
-        public void SetCellularDistanceFunction_EuclideanSq() => _cellularDistance = FastNoiseLite.CellularDistanceFunction.EuclideanSq;
-        public void SetCellularDistanceFunction_Manhattan() => _cellularDistance = FastNoiseLite.CellularDistanceFunction.Manhattan;
-        public void SetCellularDistanceFunction_Hybrid() => _cellularDistance = FastNoiseLite.CellularDistanceFunction.Hybrid;
+        public void SetCellularDistanceFunction_Euclidean() => cellularDistance = FastNoiseLite.CellularDistanceFunction.Euclidean;
+        public void SetCellularDistanceFunction_EuclideanSq() => cellularDistance = FastNoiseLite.CellularDistanceFunction.EuclideanSq;
+        public void SetCellularDistanceFunction_Manhattan() => cellularDistance = FastNoiseLite.CellularDistanceFunction.Manhattan;
+        public void SetCellularDistanceFunction_Hybrid() => cellularDistance = FastNoiseLite.CellularDistanceFunction.Hybrid;
 
         public void AnimateOffset(Vector3 shift)
         {
