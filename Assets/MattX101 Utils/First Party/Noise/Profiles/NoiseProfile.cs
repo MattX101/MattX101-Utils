@@ -37,7 +37,7 @@ namespace Utils.Noise.Profiles
 
         public void Init()
         {
-            FastNoise.SetSeed(seed);
+            FastNoise.SetSeed(Seed);
             FastNoise.SetFrequency(Frequency);
             FastNoise.SetNoiseType(GetNoiseType(type));
 

@@ -90,7 +90,7 @@ namespace Utils.Noise
         private static void InitNoiseProfile(ComputeShader noiseShader, NoiseProfile noiseProfile, float canvasToScreenRatio)
         {
             // Noise
-            noiseShader.SetInt(UnityEngine.Shader.PropertyToID("seed"), noiseProfile.seed);
+            noiseShader.SetInt(UnityEngine.Shader.PropertyToID("seed"), noiseProfile.Seed);
             noiseShader.SetFloat(UnityEngine.Shader.PropertyToID("frequency"), noiseProfile.Frequency);
             noiseShader.SetFloats(UnityEngine.Shader.PropertyToID("scale"), GetNoiseScaleX(noiseProfile, canvasToScreenRatio), GetNoiseScaleY(noiseProfile, canvasToScreenRatio));
             noiseShader.SetFloats(UnityEngine.Shader.PropertyToID("offset"), noiseProfile.Offset.x, noiseProfile.Offset.y, noiseProfile.Offset.z);
@@ -115,7 +115,7 @@ namespace Utils.Noise
             noiseShader.SetFloat(UnityEngine.Shader.PropertyToID("warpAmp"), warpProfile.warpAmp);
 
             // Noise
-            noiseShader.SetInt(UnityEngine.Shader.PropertyToID("warpSeed"), warpProfile.seed);
+            noiseShader.SetInt(UnityEngine.Shader.PropertyToID("warpSeed"), warpProfile.Seed);
             noiseShader.SetFloat(UnityEngine.Shader.PropertyToID("warpFrequency"), warpProfile.Frequency);
             noiseShader.SetFloats(UnityEngine.Shader.PropertyToID("warpScale"), GetWarpScaleX(warpProfile, canvasToScreenRatio), GetWarpScaleY(warpProfile, canvasToScreenRatio));
             noiseShader.SetFloats(UnityEngine.Shader.PropertyToID("warpOffset"), warpProfile.Offset.x, warpProfile.Offset.y, warpProfile.Offset.z);

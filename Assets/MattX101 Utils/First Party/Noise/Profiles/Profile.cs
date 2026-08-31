@@ -9,7 +9,19 @@ namespace Utils.Noise.Profiles
     {
         internal FastNoiseLite FastNoise { get; } = new();
 
-        public int seed;
+        [SerializeField]
+        public int _seed = 0;
+        public int Seed
+        {
+            get
+            {
+                return _seed;
+            }
+            set
+            {
+                _seed = value;
+            }
+        }
 
         public float Frequency => 0.01f;
 
